@@ -10,6 +10,7 @@ import { MitigationForm } from './forms/MitigationForm';
 import { OsoForm } from './forms/OsoForm';
 import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
+import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
@@ -104,6 +105,13 @@ export function SoraForm() {
       case 'final-grc':
         return (
           <GroundRiskAttenuation
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
+      case 'initial-arc':
+        return (
+          <DeterminationARCInitial
             assessment={formData.riskAssessment}
             onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
           />
