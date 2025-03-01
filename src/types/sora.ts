@@ -29,8 +29,7 @@ export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type OperationalScenario = 'VLOS' | 'BVLOS';
 export type PopulationDensity = 'low' | 'moderate' | 'high';
-export type airspaceClasses = ['Classe A', 'Classe B', 'Classe C', 'Classe D', 'Classe E', 'Classe F', 'Classe G', 'U-Space', 'Autre, Préciser'];
-
+export const airspaceClasses = ['Classe A', 'Classe B', 'Classe C', 'Classe D', 'Classe E', 'Classe F', 'Classe G', 'U-Space', 'Autre, Préciser'];
 
 export type assessmentTypeHauteurVol =
   | 'Hauteur de vol suivant trajectoire(s)'
@@ -128,8 +127,8 @@ export interface RiskAssessmentInfo {
   populationDensity?: PopulationDensity;
 }
 
-export interface DeterminationARCInitialInfo {
-  airspaceClasses: airspaceClasses;
+export interface ARCInitialInfo {
+  airspaceClasses: typeof airspaceClasses;
   uspaceProvider: string;
   otherDetails: string;
   OperationalVolumeLevel: string;

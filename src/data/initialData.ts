@@ -119,7 +119,16 @@ export const initialSoraForm: SoraForm = {
   },
   mitigationMeasures: initialMitigationMeasures,
   osos: initialOsos,
-  determinationARCInitial: initialDeterminationARCInitial,
+  ARCInitial: {
+  airspaceClasses: ['Classe A'],
+  uspaceProvider: '',
+  otherDetails: '',
+  OperationalVolumeLevel: '',
+  AdjacentVolumeLevel: '',
+  detectAndAvoid: '',
+  trafficDetection: '',
+  additionalDetails: '',
+	},
   RiskAssessment: {
     assessmentTypeHauteurVol: 'Calcul selon les table SORA',
     assessmentCriticalArea: '',

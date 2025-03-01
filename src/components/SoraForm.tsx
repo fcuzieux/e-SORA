@@ -116,6 +116,41 @@ export function SoraForm() {
             onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
           />
         );
+      case 'final-arc':
+        return (
+          <DeterminationARCFinal
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
+      case 'tactical-mitigation':
+        return (
+          <TacticalMitigation
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
+      case 'sail':
+        return (
+          <isOperatorInfoValid
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
+      case 'oso':
+        return (
+          <OSOForm
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
+      case 'adjacent-areas':
+        return (
+          <AdjacentAreas
+            assessment={formData.riskAssessment}
+            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          />
+        );
       case 'summary':
         return <SummaryView formData={formData} />;
       default:

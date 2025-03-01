@@ -1,6 +1,7 @@
 import React from 'react';
 import { RiskAssessmentInfo } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
+import { useStudyContext } from '../../contexts/StudyContext';
 
 interface RiskAssessmentNextPageProps {
   assessment: RiskAssessmentInfo;
@@ -11,6 +12,22 @@ export function RiskAssessmentNextPage({
   assessment,
   onChange,
 }: RiskAssessmentNextPageProps) {
+  const { formData, setFormData } = useStudyContext();
+
+  const handleChange = (value: string) => {
+    setFormData({
+      ...formData,
+      riskAssessment: {
+        ...formData.riskAssessment,
+        mitigationStrategique: value,
+      },
+    });
+    onChange({
+      ...assessment,
+      mitigationStrategique: value,
+    });
+  };
+
   return (
     <div className="space-y-8">
       <h2 className="text-xl font-semibold">Mitigation Stratégique</h2>
@@ -24,13 +41,8 @@ export function RiskAssessmentNextPage({
               </label>
             </Tooltip>
             <select
-              value={assessment.mitigationStrategique}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  mitigationStrategique: e.target.value,
-                })
-              }
+              value={formData.riskAssessment.mitigationStrategique}
+              onChange={(e) => handleChange(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="Non">Non</option>

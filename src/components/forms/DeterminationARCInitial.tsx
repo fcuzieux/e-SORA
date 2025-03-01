@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip } from '../common/Tooltip';
-import { DeterminationARCInitialInfo } from '../../types/sora';
+import { ARCInitialInfo, airspaceClasses } from '../../types/sora';
 
 interface DeterminationARCInitialProps {
-  initialData?: DeterminationARCInitialInfo;
-  onChange: (data: DeterminationARCInitialInfo) => void;
+  assessment: ARCInitialInfo;
+  onChange: (data: ARCInitialInfo) => void;
 }
 
-export function DeterminationARCInitial({ initialData, onChange }: DeterminationARCInitialProps) {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(initialData?.airspaceClasses || []);
-  const [uspaceProviderState, setUspaceProvider] = useState<string>(initialData?.uspaceProvider || '');
-  const [otherDetailsState, setOtherDetails] = useState<string>(initialData?.otherDetails || '');
-  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(initialData?.OperationalVolumeLevel || 'ARC-a');
-  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(initialData?.AdjacentVolumeLevel || 'ARC-a');
-  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(initialData?.detectAndAvoid || '');
-  const [trafficDetectionState, setTrafficDetection] = useState<string>(initialData?.trafficDetection || '');
-  const [additionalDetailsState, setAdditionalDetails] = useState<string>(initialData?.additionalDetails || '');
+export function DeterminationARCInitial({ assessment, onChange }: DeterminationARCInitialProps) {
+  const [selectedClasses, setSelectedClasses] = useState<string[]>(assessment?.airspaceClasses || []);
+  const [uspaceProviderState, setUspaceProvider] = useState<string>(assessment?.uspaceProvider || '');
+  const [otherDetailsState, setOtherDetails] = useState<string>(assessment?.otherDetails || '');
+  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(assessment?.OperationalVolumeLevel || 'ARC-a');
+  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(assessment?.AdjacentVolumeLevel || 'ARC-a');
+  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(assessment?.detectAndAvoid || '');
+  const [trafficDetectionState, setTrafficDetection] = useState<string>(assessment?.trafficDetection || '');
+  const [additionalDetailsState, setAdditionalDetails] = useState<string>(assessment?.additionalDetails || '');
 
   useEffect(() => {
     const savedData = localStorage.getItem('determinationARCInitial');
