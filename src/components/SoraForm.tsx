@@ -11,12 +11,13 @@ import { OsoForm } from './forms/OsoForm';
 import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
-import { DeterminationARCFinal } from './forms/DeterminationARCFinal'; // Import the missing component
-import { TacticalMitigation } from './forms/TacticalMitigation'; // Import the TacticalMitigation component
+import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
+import { TacticalMitigation } from './forms/TacticalMitigation';
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
 import { useStudyContext } from '../contexts/StudyContext';
+import { Sail } from './forms/Sail'; // Ensure Sail is imported correctly
 
 export function SoraForm() {
   const { formData, setFormData } = useStudyContext();
