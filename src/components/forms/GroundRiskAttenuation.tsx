@@ -24,7 +24,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             onChange={(e) =>
               onChange({
                 ...assessment,
-                mitigationStrategique: e.target.value,
+                mitigationStrategique: e.target.value as mitigationStrategique,
               })
             }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -48,7 +48,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
               onChange={(e) =>
                 onChange({
                   ...assessment,
-                  reduceImpactAttenuation: e.target.value,
+                  reduceImpactAttenuation: e.target.value as reduceImpactAttenuation,
                 })
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -71,7 +71,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
               onChange={(e) =>
                 onChange({
                   ...assessment,
-                  necessaryToReduceRisk: e.target.value,
+                  necessaryToReduceRisk: e.target.value as 'OUI' | 'NON',
                 })
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -93,7 +93,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             onChange={(e) =>
               onChange({
                 ...assessment,
-                planInterventionUrgence: e.target.value,
+                planInterventionUrgence: e.target.value as mitigationStrategique,
               })
             }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -116,7 +116,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             onChange={(e) =>
               onChange({
                 ...assessment,
-                confinementRequirements: e.target.value,
+                confinementRequirements: e.target.value as 'Basiques' | 'Amélioré',
               })
             }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"

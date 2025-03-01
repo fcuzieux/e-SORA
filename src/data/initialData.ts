@@ -144,5 +144,7 @@ export const initialSoraForm: SoraForm = {
     detectAndAvoid: '',
     trafficDetection: '',
     additionalDetails: '',
+    operationalScenario: 'VLOS',
+    populationDensity: 'low',
   },
 };

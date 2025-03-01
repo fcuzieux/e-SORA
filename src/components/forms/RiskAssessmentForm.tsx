@@ -5,6 +5,8 @@ import {
   assessmentCriticalArea,
   PopulationDensityModulation,
   SailLevel,
+  OperationalScenario,
+  PopulationDensity,
 } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
 import { Upload, Clock } from 'lucide-react';
@@ -294,7 +296,16 @@ export function RiskAssessmentForm({
             <label className="block text-sm font-medium text-gray-700">
               Scénario opérationnel
             </label>
-            <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <select
+              value={assessment.operationalScenario || 'VLOS'}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  operationalScenario: e.target.value as OperationalScenario,
+                })
+              }
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
               <option value="VLOS">VLOS</option>
               <option value="BVLOS">BVLOS</option>
             </select>
@@ -303,7 +314,16 @@ export function RiskAssessmentForm({
             <label className="block text-sm font-medium text-gray-700">
               Densité de population
             </label>
-            <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <select
+              value={assessment.populationDensity || 'low'}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  populationDensity: e.target.value as PopulationDensity,
+                })
+              }
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
               <option value="low">Faible</option>
               <option value="moderate">Modérée</option>
               <option value="high">Élevée</option>

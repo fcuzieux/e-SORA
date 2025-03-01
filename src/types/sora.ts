@@ -27,6 +27,8 @@ export type mitigationStrategique = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Ou
 export type reduceImpactAttenuation = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
 export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
+export type OperationalScenario = 'VLOS' | 'BVLOS';
+export type PopulationDensity = 'low' | 'moderate' | 'high';
 
 export type assessmentTypeHauteurVol =
   | 'Hauteur de vol suivant trajectoire(s)'
@@ -120,6 +122,9 @@ export interface RiskAssessmentInfo {
   detectAndAvoid: string;
   trafficDetection: string;
   additionalDetails: string;
+  operationalScenario?: OperationalScenario;
+  populationDensity?: PopulationDensity;
+  
 }
 
 export interface DeterminationARCInitialInfo {
