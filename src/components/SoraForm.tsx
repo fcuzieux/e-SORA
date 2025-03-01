@@ -11,13 +11,10 @@ import { OsoForm } from './forms/OsoForm';
 import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
-import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
-import { TacticalMitigation } from './forms/TacticalMitigation';
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
 import { useStudyContext } from '../contexts/StudyContext';
-import { Sail } from './forms/Sail'; // Ensure Sail is imported correctly
 
 export function SoraForm() {
   const { formData, setFormData } = useStudyContext();
@@ -119,41 +116,13 @@ export function SoraForm() {
             onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
           />
         );
-      case 'final-arc':
-        return (
-          <DeterminationARCFinal
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-          />
-        );
-      case 'tactical-mitigation':
-        return (
-          <TacticalMitigation
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-          />
-        );
-      case 'sail':
-        return (
-          <Sail
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-          />
-        );
-      case 'oso':
-        return (
-          <OsoForm
-            osos={formData.riskAssessment.osos} // Ensure osos is passed correctly
-            onChange={(osos) => setFormData({ ...formData, riskAssessment: { ...formData.riskAssessment, osos } })}
-          />
-        );
-      case 'adjacent-areas':
-        return (
-          <AdjacentAreas
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-          />
-        );
+        case 'initial-arc':
+          return (
+            <DeterminationARCInitial
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
       case 'summary':
         return <SummaryView formData={formData} />;
       default:
