@@ -11,6 +11,11 @@ import { OsoForm } from './forms/OsoForm';
 import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
+import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
+import { TacticalMitigation } from './forms/TacticalMitigation';
+import { Sail } from './forms/Sail';
+//import { OsoForm } from './forms/OsoForm';
+//import { AdjacentAreas } from './forms/AdjacentAreas';
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
@@ -118,7 +123,42 @@ export function SoraForm() {
         );
         case 'initial-arc':
           return (
-            <DeterminationARCInitial
+            <DeterminationARCFinal
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
+        case 'final-arc':
+          return (
+            <DeterminationARCFinal
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
+        case 'tactical-mitigation':
+          return (
+            <TacticalMitigation
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
+        case 'sail':
+          return (
+            <Sail
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
+        case 'oso':
+          return (
+            <OsoForm
+              assessment={formData.riskAssessment}
+              onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            />
+          );
+        case 'adjacent-areas':
+          return (
+            <AdjacentAreas
               assessment={formData.riskAssessment}
               onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
             />
