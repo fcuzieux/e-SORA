@@ -11,6 +11,8 @@ import { OsoForm } from './forms/OsoForm';
 import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
+import { DeterminationARCFinal } from './forms/DeterminationARCFinal'; // Import the missing component
+import { TacticalMitigation } from './forms/TacticalMitigation'; // Import the TacticalMitigation component
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
@@ -132,16 +134,16 @@ export function SoraForm() {
         );
       case 'sail':
         return (
-          <isOperatorInfoValid
+          <Sail
             assessment={formData.riskAssessment}
             onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
           />
         );
       case 'oso':
         return (
-          <OSOForm
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          <OsoForm
+            osos={formData.riskAssessment.osos} // Ensure osos is passed correctly
+            onChange={(osos) => setFormData({ ...formData, riskAssessment: { ...formData.riskAssessment, osos } })}
           />
         );
       case 'adjacent-areas':
