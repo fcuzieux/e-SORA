@@ -23,6 +23,10 @@ export type DangerousGoods = 'OUI' | 'NON';
 export type PopulationDensityModulation = 'OUI' | 'NON';
 export type DayNightOperation = 'Jour' | 'Nuit' | 'Jour & Nuit';
 export type ConfinementLevel = 'Basic' | 'Enhanced';
+export type mitigationStrategique = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
+export type reduceImpactAttenuation = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
+export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
+export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 
 export type assessmentTypeHauteurVol =
   | 'Hauteur de vol suivant trajectoire(s)'
@@ -109,4 +113,22 @@ export interface RiskAssessmentInfo {
   otherPersonnelCompetency: string;
   reportableEvents: string;
   trajgeoFiles: File[];
+  mitigationStrategique: mitigationStrategique;
+  reduceImpactAttenuation: reduceImpactAttenuation;
+  OperationalVolumeLevel: OperationalVolumeLevel;
+  AdjacentVolumeLevel: AdjacentVolumeLevel;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface DeterminationARCInitialInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
 }

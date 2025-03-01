@@ -1,46 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip } from '../common/Tooltip';
+import { DeterminationARCInitialInfo } from '../../types/sora';
 
 interface DeterminationARCInitialProps {
-  airspaceClasses?: string[];
-  uspaceProvider?: string;
-  otherDetails?: string;
-  OperationalVolumeLevel?: string;
-  AdjacentVolumeLevel?: string;
-  detectAndAvoid?: string;
-  trafficDetection?: string;
-  additionalDetails?: string;
-  onChange: (data: {
-    airspaceClasses: string[];
-    uspaceProvider: string;
-    otherDetails: string;
-    OperationalVolumeLevel: string;
-    AdjacentVolumeLevel: string;
-    detectAndAvoid: string;
-    trafficDetection: string;
-    additionalDetails: string;
-  }) => void;
+  initialData?: DeterminationARCInitialInfo;
+  onChange: (data: DeterminationARCInitialInfo) => void;
 }
 
 export function DeterminationARCInitial({
-  airspaceClasses = [],
-  uspaceProvider = '',
-  otherDetails = '',
-  OperationalVolumeLevel = 'ARC-a',
-  AdjacentVolumeLevel = 'ARC-a',
-  detectAndAvoid = '',
-  trafficDetection = '',
-  additionalDetails = '',
+  initialData = {
+    airspaceClasses: [],
+    uspaceProvider: '',
+    otherDetails: '',
+    OperationalVolumeLevel: 'ARC-a',
+    AdjacentVolumeLevel: 'ARC-a',
+    detectAndAvoid: '',
+    trafficDetection: '',
+    additionalDetails: '',
+  },
   onChange,
 }: DeterminationARCInitialProps) {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(airspaceClasses);
-  const [uspaceProviderState, setUspaceProvider] = useState<string>(uspaceProvider);
-  const [otherDetailsState, setOtherDetails] = useState<string>(otherDetails);
-  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(OperationalVolumeLevel);
-  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(AdjacentVolumeLevel);
-  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(detectAndAvoid);
-  const [trafficDetectionState, setTrafficDetection] = useState<string>(trafficDetection);
-  const [additionalDetailsState, setAdditionalDetails] = useState<string>(additionalDetails);
+  const [selectedClasses, setSelectedClasses] = useState<string[]>(initialData.airspaceClasses);
+  const [uspaceProviderState, setUspaceProvider] = useState<string>(initialData.uspaceProvider);
+  const [otherDetailsState, setOtherDetails] = useState<string>(initialData.otherDetails);
+  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(initialData.OperationalVolumeLevel);
+  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(initialData.AdjacentVolumeLevel);
+  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(initialData.detectAndAvoid);
+  const [trafficDetectionState, setTrafficDetection] = useState<string>(initialData.trafficDetection);
+  const [additionalDetailsState, setAdditionalDetails] = useState<string>(initialData.additionalDetails);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('determinationARCInitial');
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setSelectedClasses(parsedData.selectedClasses);
+      setUspaceProvider(parsedData.uspaceProviderState);
+      setOtherDetails(parsedData.otherDetailsState);
+      setOperationalVolumeLevel(parsedData.OperationalVolumeLevelState);
+      setAdjacentVolumeLevel(parsedData.AdjacentVolumeLevelState);
+      setDetectAndAvoid(parsedData.detectAndAvoidState);
+      setTrafficDetection(parsedData.trafficDetectionState);
+      setAdditionalDetails(parsedData.additionalDetailsState);
+    }
+  }, []);
 
   useEffect(() => {
     onChange({
@@ -53,6 +55,17 @@ export function DeterminationARCInitial({
       trafficDetection: trafficDetectionState,
       additionalDetails: additionalDetailsState,
     });
+
+    localStorage.setItem('determinationARCInitial', JSON.stringify({
+      selectedClasses,
+      uspaceProviderState,
+      otherDetailsState,
+      OperationalVolumeLevelState,
+      AdjacentVolumeLevelState,
+      detectAndAvoidState,
+      trafficDetectionState,
+      additionalDetailsState,
+    }));
   }, [
     selectedClasses,
     uspaceProviderState,

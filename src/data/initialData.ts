@@ -1,4 +1,4 @@
-import { SoraForm, MitigationMeasure, Oso } from '../types/sora';
+import { SoraForm, MitigationMeasure, Oso, DeterminationARCInitialInfo } from '../types/sora';
 
 export const initialMitigationMeasures: MitigationMeasure[] = [
   {
@@ -37,6 +37,17 @@ export const initialOsos: Oso[] = [
     evidence: '',
   },
 ];
+
+export const initialDeterminationARCInitial: DeterminationARCInitialInfo = {
+  airspaceClasses: [],
+  uspaceProvider: '',
+  otherDetails: '',
+  OperationalVolumeLevel: 'ARC-a',
+  AdjacentVolumeLevel: 'ARC-a',
+  detectAndAvoid: '',
+  trafficDetection: '',
+  additionalDetails: '',
+};
 
 export const initialSoraForm: SoraForm = {
   operator: {
@@ -108,6 +119,7 @@ export const initialSoraForm: SoraForm = {
   },
   mitigationMeasures: initialMitigationMeasures,
   osos: initialOsos,
+  determinationARCInitial: initialDeterminationARCInitial,
   RiskAssessment: {
     assessmentTypeHauteurVol: 'Calcul selon les table SORA',
     assessmentCriticalArea: '',
@@ -125,5 +137,12 @@ export const initialSoraForm: SoraForm = {
     airRisk: 1,
     sailLevel: 'I',
     trajgeoFiles: [],
+    mitigationStrategique: 'NON',
+    reduceImpactAttenuation: 'NON',
+    OperationalVolumeLevel: 'ARC-a',
+    AdjacentVolumeLevel: 'ARC-a',
+    detectAndAvoid: '',
+    trafficDetection: '',
+    additionalDetails: '',
   },
 };
