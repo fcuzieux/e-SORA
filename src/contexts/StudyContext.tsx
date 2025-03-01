@@ -28,6 +28,16 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
       ...initialSoraForm.riskAssessment,
       assessmentStartTime: '',
     },
+    determinationARCInitial: {
+      airspaceClasses: [],
+      uspaceProvider: '',
+      otherDetails: '',
+      OperationalVolumeLevel: 'ARC-a',
+      AdjacentVolumeLevel: 'ARC-a',
+      detectAndAvoid: '',
+      trafficDetection: '',
+      additionalDetails: '',
+    },
   });
   const [saving, setSaving] = useState(false);
 

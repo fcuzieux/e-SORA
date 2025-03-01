@@ -3,6 +3,13 @@ import { Tooltip } from '../common/Tooltip';
 
 interface DeterminationARCInitialProps {
   airspaceClasses?: string[];
+  uspaceProvider?: string;
+  otherDetails?: string;
+  OperationalVolumeLevel?: string;
+  AdjacentVolumeLevel?: string;
+  detectAndAvoid?: string;
+  trafficDetection?: string;
+  additionalDetails?: string;
   onChange: (data: {
     airspaceClasses: string[];
     uspaceProvider: string;
@@ -15,36 +22,46 @@ interface DeterminationARCInitialProps {
   }) => void;
 }
 
-export function DeterminationARCInitial({ airspaceClasses = [], onChange }: DeterminationARCInitialProps) {
+export function DeterminationARCInitial({
+  airspaceClasses = [],
+  uspaceProvider = '',
+  otherDetails = '',
+  OperationalVolumeLevel = 'ARC-a',
+  AdjacentVolumeLevel = 'ARC-a',
+  detectAndAvoid = '',
+  trafficDetection = '',
+  additionalDetails = '',
+  onChange,
+}: DeterminationARCInitialProps) {
   const [selectedClasses, setSelectedClasses] = useState<string[]>(airspaceClasses);
-  const [uspaceProvider, setUspaceProvider] = useState<string>('');
-  const [otherDetails, setOtherDetails] = useState<string>('');
-  const [OperationalVolumeLevel, setOperationalVolumeLevel] = useState<string>('ARC-a');
-  const [AdjacentVolumeLevel, setAdjacentVolumeLevel] = useState<string>('ARC-a');
-  const [detectAndAvoid, setDetectAndAvoid] = useState<string>('');
-  const [trafficDetection, setTrafficDetection] = useState<string>('');
-  const [additionalDetails, setAdditionalDetails] = useState<string>('');
+  const [uspaceProviderState, setUspaceProvider] = useState<string>(uspaceProvider);
+  const [otherDetailsState, setOtherDetails] = useState<string>(otherDetails);
+  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(OperationalVolumeLevel);
+  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(AdjacentVolumeLevel);
+  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(detectAndAvoid);
+  const [trafficDetectionState, setTrafficDetection] = useState<string>(trafficDetection);
+  const [additionalDetailsState, setAdditionalDetails] = useState<string>(additionalDetails);
 
   useEffect(() => {
     onChange({
       airspaceClasses: selectedClasses,
-      uspaceProvider,
-      otherDetails,
-      OperationalVolumeLevel,
-      AdjacentVolumeLevel,
-      detectAndAvoid,
-      trafficDetection,
-      additionalDetails,
+      uspaceProvider: uspaceProviderState,
+      otherDetails: otherDetailsState,
+      OperationalVolumeLevel: OperationalVolumeLevelState,
+      AdjacentVolumeLevel: AdjacentVolumeLevelState,
+      detectAndAvoid: detectAndAvoidState,
+      trafficDetection: trafficDetectionState,
+      additionalDetails: additionalDetailsState,
     });
   }, [
     selectedClasses,
-    uspaceProvider,
-    otherDetails,
-    OperationalVolumeLevel,
-    AdjacentVolumeLevel,
-    detectAndAvoid,
-    trafficDetection,
-    additionalDetails,
+    uspaceProviderState,
+    otherDetailsState,
+    OperationalVolumeLevelState,
+    AdjacentVolumeLevelState,
+    detectAndAvoidState,
+    trafficDetectionState,
+    additionalDetailsState,
     onChange,
   ]);
 
@@ -93,7 +110,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
                   {cls === 'U-Space' && selectedClasses.includes(cls) && (
                     <input
                       type="text"
-                      value={uspaceProvider}
+                      value={uspaceProviderState}
                       onChange={(e) => setUspaceProvider(e.target.value)}
                       className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Fournisseur de service USSP"
@@ -102,7 +119,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
                   {cls === 'Autre, Préciser' && selectedClasses.includes(cls) && (
                     <input
                       type="text"
-                      value={otherDetails}
+                      value={otherDetailsState}
                       onChange={(e) => setOtherDetails(e.target.value)}
                       className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Préciser la nature de l'espace aérien"
@@ -122,7 +139,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
               </label>
             </Tooltip>
             <select
-              value={OperationalVolumeLevel}
+              value={OperationalVolumeLevelState}
               onChange={(e) => setOperationalVolumeLevel(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -139,7 +156,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
               </label>
             </Tooltip>
             <select
-              value={AdjacentVolumeLevel}
+              value={AdjacentVolumeLevelState}
               onChange={(e) => setAdjacentVolumeLevel(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
@@ -158,7 +175,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
             </label>
             <input
               type="text"
-              value={detectAndAvoid}
+              value={detectAndAvoidState}
               onChange={(e) => setDetectAndAvoid(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Detect And Avoid"
@@ -170,7 +187,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
             </label>
             <input
               type="text"
-              value={trafficDetection}
+              value={trafficDetectionState}
               onChange={(e) => setTrafficDetection(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Détection du trafic environnant"
@@ -182,7 +199,7 @@ export function DeterminationARCInitial({ airspaceClasses = [], onChange }: Dete
             </label>
             <input
               type="text"
-              value={additionalDetails}
+              value={additionalDetailsState}
               onChange={(e) => setAdditionalDetails(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Autre, préciser"
