@@ -22,16 +22,16 @@ export function SoraForm() {
 
   // Synchroniser l'heure de démarrage entre l'opération et l'évaluation des risques
   useEffect(() => {
-    if (formData.operation.operationStartTime !== formData.riskAssessment.assessmentStartTime) {
+    if (formData.operation?.operationStartTime !== formData.riskAssessment?.assessmentStartTime) {
       setFormData({
         ...formData,
         riskAssessment: {
           ...formData.riskAssessment,
-          assessmentStartTime: formData.operation.operationStartTime
+          assessmentStartTime: formData.operation?.operationStartTime || ''
         }
       });
     }
-  }, [formData.operation.operationStartTime]);
+  }, [formData.operation?.operationStartTime]);
 
   const isOperatorInfoValid = () => {
     const { operator } = formData;
@@ -126,7 +126,7 @@ export function SoraForm() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <HomeButton />
-      
+
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">{currentStepInfo.title}</h1>
         <p className="mt-2 text-gray-600">

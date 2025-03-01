@@ -18,7 +18,17 @@ const StudyContext = createContext<StudyContextType | undefined>(undefined);
 export function StudyProvider({ children }: { children: React.ReactNode }) {
   const [studyId, setStudyId] = useState<string | null>(null);
   const [studyName, setStudyName] = useState('');
-  const [formData, setFormData] = useState<SoraForm>(initialSoraForm);
+  const [formData, setFormData] = useState<SoraForm>({
+    ...initialSoraForm,
+    operation: {
+      ...initialSoraForm.operation,
+      operationStartTime: '',
+    },
+    riskAssessment: {
+      ...initialSoraForm.riskAssessment,
+      assessmentStartTime: '',
+    },
+  });
   const [saving, setSaving] = useState(false);
 
   return (
