@@ -7,27 +7,15 @@ interface DeterminationARCInitialProps {
   onChange: (data: DeterminationARCInitialInfo) => void;
 }
 
-export function DeterminationARCInitial({
-  initialData = {
-    airspaceClasses: [],
-    uspaceProvider: '',
-    otherDetails: '',
-    OperationalVolumeLevel: 'ARC-a',
-    AdjacentVolumeLevel: 'ARC-a',
-    detectAndAvoid: '',
-    trafficDetection: '',
-    additionalDetails: '',
-  },
-  onChange,
-}: DeterminationARCInitialProps) {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(initialData.airspaceClasses);
-  const [uspaceProviderState, setUspaceProvider] = useState<string>(initialData.uspaceProvider);
-  const [otherDetailsState, setOtherDetails] = useState<string>(initialData.otherDetails);
-  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(initialData.OperationalVolumeLevel);
-  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(initialData.AdjacentVolumeLevel);
-  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(initialData.detectAndAvoid);
-  const [trafficDetectionState, setTrafficDetection] = useState<string>(initialData.trafficDetection);
-  const [additionalDetailsState, setAdditionalDetails] = useState<string>(initialData.additionalDetails);
+export function DeterminationARCInitial({ initialData, onChange }: DeterminationARCInitialProps) {
+  const [selectedClasses, setSelectedClasses] = useState<string[]>(initialData?.airspaceClasses || []);
+  const [uspaceProviderState, setUspaceProvider] = useState<string>(initialData?.uspaceProvider || '');
+  const [otherDetailsState, setOtherDetails] = useState<string>(initialData?.otherDetails || '');
+  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(initialData?.OperationalVolumeLevel || 'ARC-a');
+  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(initialData?.AdjacentVolumeLevel || 'ARC-a');
+  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(initialData?.detectAndAvoid || '');
+  const [trafficDetectionState, setTrafficDetection] = useState<string>(initialData?.trafficDetection || '');
+  const [additionalDetailsState, setAdditionalDetails] = useState<string>(initialData?.additionalDetails || '');
 
   useEffect(() => {
     const savedData = localStorage.getItem('determinationARCInitial');
