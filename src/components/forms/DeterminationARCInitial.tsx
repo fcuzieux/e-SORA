@@ -16,35 +16,34 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
   const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(assessment?.detectAndAvoid || '');
   const [trafficDetectionState, setTrafficDetection] = useState<string>(assessment?.trafficDetection || '');
   const [additionalDetailsState, setAdditionalDetails] = useState<string>(assessment?.additionalDetails || '');
+  const [dataLoaded, setDataLoaded] = useState(false);
 
+  // Load saved data from localStorage only once on component mount
   useEffect(() => {
     const savedData = localStorage.getItem('determinationARCInitial');
     if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setSelectedClasses(parsedData.selectedClasses);
-      setUspaceProvider(parsedData.uspaceProviderState);
-      setOtherDetails(parsedData.otherDetailsState);
-      setOperationalVolumeLevel(parsedData.OperationalVolumeLevelState);
-      setAdjacentVolumeLevel(parsedData.AdjacentVolumeLevelState);
-      setDetectAndAvoid(parsedData.detectAndAvoidState);
-      setTrafficDetection(parsedData.trafficDetectionState);
-      setAdditionalDetails(parsedData.additionalDetailsState);
+      try {
+        const parsedData = JSON.parse(savedData);
+        setSelectedClasses(parsedData.selectedClasses || []);
+        setUspaceProvider(parsedData.uspaceProviderState || '');
+        setOtherDetails(parsedData.otherDetailsState || '');
+        setOperationalVolumeLevel(parsedData.OperationalVolumeLevelState || 'ARC-a');
+        setAdjacentVolumeLevel(parsedData.AdjacentVolumeLevelState || 'ARC-a');
+        setDetectAndAvoid(parsedData.detectAndAvoidState || '');
+        setTrafficDetection(parsedData.trafficDetectionState || '');
+        setAdditionalDetails(parsedData.additionalDetailsState || '');
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+      }
     }
+    setDataLoaded(true);
   }, []);
 
+  // Update parent component and save to localStorage when data changes
   useEffect(() => {
-    onChange({
-      airspaceClasses: selectedClasses,
-      uspaceProvider: uspaceProviderState,
-      otherDetails: otherDetailsState,
-      OperationalVolumeLevel: OperationalVolumeLevelState,
-      AdjacentVolumeLevel: AdjacentVolumeLevelState,
-      detectAndAvoid: detectAndAvoidState,
-      trafficDetection: trafficDetectionState,
-      additionalDetails: additionalDetailsState,
-    });
+    if (!dataLoaded) return;
 
-    localStorage.setItem('determinationARCInitial', JSON.stringify({
+    const dataToSave = {
       selectedClasses,
       uspaceProviderState,
       otherDetailsState,
@@ -53,8 +52,24 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       detectAndAvoidState,
       trafficDetectionState,
       additionalDetailsState,
-    }));
+    };
+
+    localStorage.setItem('determinationARCInitial', JSON.stringify(dataToSave));
+
+    const updatedAssessment = {
+      airspaceClasses: selectedClasses,
+      uspaceProvider: uspaceProviderState,
+      otherDetails: otherDetailsState,
+      OperationalVolumeLevel: OperationalVolumeLevelState,
+      AdjacentVolumeLevel: AdjacentVolumeLevelState,
+      detectAndAvoid: detectAndAvoidState,
+      trafficDetection: trafficDetectionState,
+      additionalDetails: additionalDetailsState,
+    };
+
+    onChange(updatedAssessment);
   }, [
+    dataLoaded,
     selectedClasses,
     uspaceProviderState,
     otherDetailsState,
@@ -63,7 +78,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
     detectAndAvoidState,
     trafficDetectionState,
     additionalDetailsState,
-    onChange,
+    onChange
   ]);
 
   const handleCheckboxChange = (className: string) => {

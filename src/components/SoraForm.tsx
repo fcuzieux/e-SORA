@@ -13,6 +13,7 @@ import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
 import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
 import { TacticalMitigation } from './forms/TacticalMitigation';
+import { AdjacentAreas } from './forms/AdjacentAreas';
 import { Sail } from './forms/Sail';
 //import { OsoForm } from './forms/OsoForm';
 //import { AdjacentAreas } from './forms/AdjacentAreas';

@@ -125,10 +125,18 @@ export interface RiskAssessmentInfo {
   additionalDetails: string;
   operationalScenario?: OperationalScenario;
   populationDensity?: PopulationDensity;
+  necessaryToReduceRisk?: 'OUI' | 'NON';
+  planInterventionUrgence?: mitigationStrategique;
+  confinementRequirements?: 'Basiques' | 'Amélioré';
+  additionalRemarks?: string;
+  intrinsicGroundRisk?: number;
+  finalGroundRisk?: number;
+  airRisk?: number;
+  sailLevel?: string;
 }
 
 export interface ARCInitialInfo {
-  airspaceClasses: typeof airspaceClasses;
+  airspaceClasses: string[];
   uspaceProvider: string;
   otherDetails: string;
   OperationalVolumeLevel: string;
@@ -136,4 +144,110 @@ export interface ARCInitialInfo {
   detectAndAvoid: string;
   trafficDetection: string;
   additionalDetails: string;
+}
+
+export interface ARCFinalInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface TacticalMitigationInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface SailInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface AdjacentAreasInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface DeterminationARCInitialInfo {
+  airspaceClasses: string[];
+  uspaceProvider: string;
+  otherDetails: string;
+  OperationalVolumeLevel: string;
+  AdjacentVolumeLevel: string;
+  detectAndAvoid: string;
+  trafficDetection: string;
+  additionalDetails: string;
+}
+
+export interface OperatorInfo {
+  name: string;
+  managerName: string;
+  operationalContact: string;
+  registrationNumber: string;
+  address: string;
+  phone: string;
+  email: string;
+  startDate?: string;
+  endDate?: string;
+  locations?: string;
+  riskAssessmentVersion?: string;
+}
+
+export type OsoRobustnessLevel = 'Low' | 'Medium' | 'High';
+
+export interface MitigationMeasure {
+  id: string;
+  name: string;
+  description: string;
+  implemented: boolean;
+  robustnessLevel: OsoRobustnessLevel;
+}
+
+export interface Oso {
+  id: string;
+  number: string;
+  description: string;
+  requiredLevel: OsoRobustnessLevel;
+  status: OsoRobustnessLevel;
+  evidence: string;
+}
+
+export interface RiskAssessment {
+  intrinsicGroundRisk: number;
+  finalGroundRisk: number;
+  airRisk: number;
+  sailLevel: string;
+}
+
+export interface SoraForm {
+  operator: OperatorInfo;
+  drone: DroneInfo;
+  operation: OperationInfo;
+  mitigationMeasures: MitigationMeasure[];
+  osos: Oso[];
+  riskAssessment: RiskAssessmentInfo;
+  ARCInitial?: ARCInitialInfo;
+  determinationARCInitial?: DeterminationARCInitialInfo;
 }

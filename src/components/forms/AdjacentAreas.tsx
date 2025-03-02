@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip } from '../common/Tooltip';
-import { ARCFinalInfo, airspaceClasses } from '../../types/sora';
+import { AdjacentAreasInfo } from '../../types/sora';
 
-interface DeterminationARCFinalProps {
-  assessment: ARCFinalInfo;
-  onChange: (data: ARCFinalInfo) => void;
+interface AdjacentAreasProps {
+  assessment: AdjacentAreasInfo;
+  onChange: (data: AdjacentAreasInfo) => void;
 }
 
-export function DeterminationARCFinal({ assessment, onChange }: DeterminationARCFinalProps) {
+export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
   const [selectedClasses, setSelectedClasses] = useState<string[]>(assessment?.airspaceClasses || []);
   const [uspaceProviderState, setUspaceProvider] = useState<string>(assessment?.uspaceProvider || '');
   const [otherDetailsState, setOtherDetails] = useState<string>(assessment?.otherDetails || '');
@@ -20,7 +20,7 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
 
   // Load saved data from localStorage only once on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem('determinationARCFinal');
+    const savedData = localStorage.getItem('adjacentAreas');
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
@@ -54,7 +54,7 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
       additionalDetailsState,
     };
 
-    localStorage.setItem('determinationARCFinal', JSON.stringify(dataToSave));
+    localStorage.setItem('adjacentAreas', JSON.stringify(dataToSave));
 
     const updatedAssessment = {
       airspaceClasses: selectedClasses,
