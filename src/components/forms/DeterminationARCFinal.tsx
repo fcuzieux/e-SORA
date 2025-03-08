@@ -112,6 +112,7 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
               <option value="ARC-d">ARC-d</option>
             </select>
           </div>
+        </div>
       </div>
     </div>
   );
