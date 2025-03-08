@@ -148,7 +148,8 @@ export interface ARCInitialInfo {
 
 export interface ARCFinalInfo {
   StrategicMitigationAvailable: string;
-  AdjacentVolumeLevel: string;
+  StrategicMitigationJustification: string;
+  OperationalVolumeLevelMitigated: string;
 }
 
 export interface TacticalMitigationInfo {
