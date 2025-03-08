@@ -147,14 +147,8 @@ export interface ARCInitialInfo {
 }
 
 export interface ARCFinalInfo {
-  airspaceClasses: string[];
-  uspaceProvider: string;
-  otherDetails: string;
-  OperationalVolumeLevel: string;
+  StrategicMitigationAvailable: string;
   AdjacentVolumeLevel: string;
-  detectAndAvoid: string;
-  trafficDetection: string;
-  additionalDetails: string;
 }
 
 export interface TacticalMitigationInfo {

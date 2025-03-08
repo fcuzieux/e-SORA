@@ -29,12 +29,12 @@ export const STEPS: StepInfo[] = [
   {
     id: 'final-arc',
     title: 'Étape 5 : Atténuation du risque air et ARC Final',
-    description: 'Déterminez le risque air final après atténuation'
+    description: 'Déterminez le risque air final après atténuation par Mitigation Strategique '
   },
   {
     id: 'tactical-mitigation',
     title: 'Étape 6 : Atténuation tactique du risque « air »',
-    description: 'Définissez les mesures tactiques d\'atténuation'
+    description: 'Définissez les mesures tactiques d\'atténuation du risque Air'
   },
   {
     id: 'sail',
