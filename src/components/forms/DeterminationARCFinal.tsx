@@ -8,7 +8,7 @@ interface DeterminationARCFinalProps {
 }
 
 export function DeterminationARCFinal({ assessment, onChange }: DeterminationARCFinalProps) {
-  const [StrategicMitigationAvailableState, setStrategicMitigationAvailable] = useState<string>(assessment?.StrategicMitigationAvailable || 'ARC-a');
+  const [StrategicMitigationAvailableState, setStrategicMitigationAvailable] = useState<string>(assessment?.StrategicMitigationAvailable || 'NON');
   const [OperationalVolumeLevelMitigatedState, setOperationalVolumeLevelMitigated] = useState<string>(assessment?.OperationalVolumeLevelMitigated || 'ARC-a');
   const [StrategicMitigationJustification, setStrategicMitigationJustification] = useState<string>('');
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -19,7 +19,7 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        setStrategicMitigationAvailable(parsedData.StrategicMitigationAvailableState || 'ARC-a');
+        setStrategicMitigationAvailable(parsedData.StrategicMitigationAvailableState || 'NON');
         setOperationalVolumeLevelMitigated(parsedData.OperationalVolumeLevelMitigatedState || 'ARC-a');
         setStrategicMitigationJustification(parsedData.StrategicMitigationJustification || '');
       } catch (error) {

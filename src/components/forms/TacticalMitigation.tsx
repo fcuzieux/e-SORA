@@ -5,13 +5,15 @@ import { ARCFinalInfo } from '../../types/sora';
 
 interface TacticalMitigationProps {
   assessment: TacticalMitigationInfo;
+	assessmentARCFinalInfo: ARCFinalInfo; 
   onChange: (data: TacticalMitigationInfo) => void;
 }
 
-export function TacticalMitigation({ assessment, onChange }: TacticalMitigationProps) {
-  const [TacticalMitigationAvailableState, setTacticalMitigationAvailable] = useState<string>(assessment?.TacticalMitigationAvailable || 'ARC-a');
+export function TacticalMitigation({ assessment, assessmentARCFinalInfo, onChange }: TacticalMitigationProps) {
+  const [TacticalMitigationAvailableState, setTacticalMitigationAvailable] = useState<string>(assessment?.TacticalMitigationAvailable || 'NON');
   const [TacticalMitigationJustification, setTacticalMitigationJustification] = useState<string>('');
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [OperationalVolumeLevelState, setOperationalVolumeLevelState] = useState<string>(assessmentARCFinalInfo?.OperationalVolumeLevelState || 'ARC-b');
 
   // Load saved data from localStorage only once on component mount
   useEffect(() => {
@@ -19,7 +21,7 @@ export function TacticalMitigation({ assessment, onChange }: TacticalMitigationP
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
-        setTacticalMitigationAvailable(parsedData.TacticalMitigationAvailableState || 'ARC-a');
+        setTacticalMitigationAvailable(parsedData.TacticalMitigationAvailableState || 'NON');
         setTacticalMitigationJustification(parsedData.TacticalMitigationJustification || '');
       } catch (error) {
         console.error('Error loading saved data:', error);
@@ -121,8 +123,8 @@ export function TacticalMitigation({ assessment, onChange }: TacticalMitigationP
               />
             </div>
           )}
-        </div>  
-      </div>    
+        </div>
+      </div>
     </div>
   );
 }
