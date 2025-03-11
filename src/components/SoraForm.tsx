@@ -8,7 +8,7 @@ import { DroneForm } from './forms/DroneForm';
 import { OperationForm } from './forms/OperationForm';
 import { MitigationForm } from './forms/MitigationForm';
 import { OsoForm } from './forms/OsoForm';
-import { RiskAssessmentForm } from './forms/RiskAssessmentForm';
+import GroundRiskInitial from './forms/GroundRiskInitial';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
 import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
@@ -101,13 +101,13 @@ export function SoraForm() {
           </div>
         );
       case 'initial-grc':
-        return (
-          <RiskAssessmentForm
-            assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-            showOnly={['intrinsicGroundRisk']}
-          />
-        );
+return (
+  <GroundRiskInitial
+    assessment={formData.riskAssessment}
+    onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+    showOnly={['intrinsicGroundRisk']}
+  />
+);
       case 'final-grc':
         return (
           <GroundRiskAttenuation

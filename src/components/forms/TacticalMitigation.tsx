@@ -13,7 +13,7 @@ export function TacticalMitigation({ assessment, assessmentARCFinalInfo, onChang
   const [TacticalMitigationAvailableState, setTacticalMitigationAvailable] = useState<string>(assessment?.TacticalMitigationAvailable || 'NON');
   const [TacticalMitigationJustification, setTacticalMitigationJustification] = useState<string>('');
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [OperationalVolumeLevelState, setOperationalVolumeLevelState] = useState<string>(assessmentARCFinalInfo?.OperationalVolumeLevelState || 'ARC-b');
+  const [OperationalVolumeLevelState, setOperationalVolumeLevelState] = useState<string>(assessmentARCFinalInfo?.OperationalVolumeLevelMitigated || 'ARC-a');
 
   // Load saved data from localStorage only once on component mount
   useEffect(() => {
@@ -23,6 +23,7 @@ export function TacticalMitigation({ assessment, assessmentARCFinalInfo, onChang
         const parsedData = JSON.parse(savedData);
         setTacticalMitigationAvailable(parsedData.TacticalMitigationAvailableState || 'NON');
         setTacticalMitigationJustification(parsedData.TacticalMitigationJustification || '');
+        setOperationalVolumeLevelState(parsedData.determinationARCFinal  || 'ARC-a');
       } catch (error) {
         console.error('Error loading saved data:', error);
       }
@@ -37,6 +38,7 @@ export function TacticalMitigation({ assessment, assessmentARCFinalInfo, onChang
     const dataToSave = {
       TacticalMitigationAvailableState,
       TacticalMitigationJustification,
+      OperationalVolumeLevelState,
     };
 
     localStorage.setItem('tacticalMitigation', JSON.stringify(dataToSave));
@@ -50,6 +52,7 @@ export function TacticalMitigation({ assessment, assessmentARCFinalInfo, onChang
     dataLoaded,
     TacticalMitigationAvailableState,
     TacticalMitigationJustification,
+    OperationalVolumeLevelState,
     onChange
   ]);
 
