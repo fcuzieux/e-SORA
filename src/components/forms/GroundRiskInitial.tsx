@@ -334,3 +334,5 @@ export function RiskAssessmentForm({
     </div>
   );
 }
+
+export default RiskAssessmentForm;
