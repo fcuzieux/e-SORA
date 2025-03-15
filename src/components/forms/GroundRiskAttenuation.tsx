@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiskAssessmentInfo } from '../../types/sora';
+import { RiskAssessmentInfo,mitigationStrategique,reduceImpactAttenuation,necessaryToReduceRisk,GRC_Final } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
 
 interface GroundRiskAttenuationProps {
@@ -71,7 +71,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
               onChange={(e) =>
                 onChange({
                   ...assessment,
-                  necessaryToReduceRisk: e.target.value as 'OUI' | 'NON',
+                  necessaryToReduceRisk: e.target.value as necessaryToReduceRisk,
                 })
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -146,6 +146,39 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           ></textarea>
         </div>
       </div>
+      <h2 className="text-2xl font-semibold">GRC Final</h2>
+
+      <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+        <div>
+          <Tooltip text="GRC Final.">
+            <label className="block text-sm font-medium text-gray-700">
+              GRC
+            </label>
+          </Tooltip>
+          <select
+            value={assessment.GRC_Final}
+            onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GRC_Final: e.target.value as GRC_Final,
+                          })
+                        }
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </div>
+      </div>
+
     </div>
+    
+    
   );
 }

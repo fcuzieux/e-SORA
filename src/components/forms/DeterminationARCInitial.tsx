@@ -1,93 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Tooltip } from '../common/Tooltip';
-import { ARCInitialInfo, airspaceClasses } from '../../types/sora';
+import { RiskAssessmentInfo, airspaceClasses, OperationalVolumeLevel, AdjacentVolumeLevel } from '../../types/sora';
 
 interface DeterminationARCInitialProps {
-  assessment: ARCInitialInfo;
-  onChange: (data: ARCInitialInfo) => void;
+  assessment: RiskAssessmentInfo;
+  onChange: (assessment: RiskAssessmentInfo) => void;
 }
 
 export function DeterminationARCInitial({ assessment, onChange }: DeterminationARCInitialProps) {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(assessment?.airspaceClasses || []);
-  const [uspaceProviderState, setUspaceProvider] = useState<string>(assessment?.uspaceProvider || '');
-  const [otherDetailsState, setOtherDetails] = useState<string>(assessment?.otherDetails || '');
-  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(assessment?.OperationalVolumeLevel || 'ARC-a');
-  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(assessment?.AdjacentVolumeLevel || 'ARC-a');
-  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(assessment?.detectAndAvoid || '');
-  const [trafficDetectionState, setTrafficDetection] = useState<string>(assessment?.trafficDetection || '');
-  const [additionalDetailsState, setAdditionalDetails] = useState<string>(assessment?.additionalDetails || '');
-  const [dataLoaded, setDataLoaded] = useState(false);
-
-  // Load saved data from localStorage only once on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('determinationARCInitial');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setSelectedClasses(parsedData.selectedClasses || []);
-        setUspaceProvider(parsedData.uspaceProviderState || '');
-        setOtherDetails(parsedData.otherDetailsState || '');
-        setOperationalVolumeLevel(parsedData.OperationalVolumeLevelState || 'ARC-a');
-        setAdjacentVolumeLevel(parsedData.AdjacentVolumeLevelState || 'ARC-a');
-        setDetectAndAvoid(parsedData.detectAndAvoidState || '');
-        setTrafficDetection(parsedData.trafficDetectionState || '');
-        setAdditionalDetails(parsedData.additionalDetailsState || '');
-      } catch (error) {
-        console.error('Error loading saved data:', error);
-      }
-    }
-    setDataLoaded(true);
-  }, []);
-
-  // Update parent component and save to localStorage when data changes
-  useEffect(() => {
-    if (!dataLoaded) return;
-
-    const dataToSave = {
-      selectedClasses,
-      uspaceProviderState,
-      otherDetailsState,
-      OperationalVolumeLevelState,
-      AdjacentVolumeLevelState,
-      detectAndAvoidState,
-      trafficDetectionState,
-      additionalDetailsState,
-    };
-
-    localStorage.setItem('determinationARCInitial', JSON.stringify(dataToSave));
-
-    const updatedAssessment = {
-      airspaceClasses: selectedClasses,
-      uspaceProvider: uspaceProviderState,
-      otherDetails: otherDetailsState,
-      OperationalVolumeLevel: OperationalVolumeLevelState,
-      AdjacentVolumeLevel: AdjacentVolumeLevelState,
-      detectAndAvoid: detectAndAvoidState,
-      trafficDetection: trafficDetectionState,
-      additionalDetails: additionalDetailsState,
-    };
-
-    onChange(updatedAssessment);
-  }, [
-    dataLoaded,
-    selectedClasses,
-    uspaceProviderState,
-    otherDetailsState,
-    OperationalVolumeLevelState,
-    AdjacentVolumeLevelState,
-    detectAndAvoidState,
-    trafficDetectionState,
-    additionalDetailsState,
-    onChange
-  ]);
-
-  const handleCheckboxChange = (className: string) => {
-    setSelectedClasses((prevSelected) =>
-      prevSelected.includes(className)
-        ? prevSelected.filter((cls) => cls !== className)
-        : [...prevSelected, className]
-    );
-  };
 
   const checkboxes = [
     'Classe - A',
@@ -118,25 +38,40 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
                 <div key={cls} className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={selectedClasses.includes(cls)}
-                    onChange={() => handleCheckboxChange(cls)}
+                    checked={(assessment.airspaceClasses || []).includes(cls)}
+                    onChange={
+                      (e) =>
+                        onChange({
+                          ...assessment,
+                          airspaceClasses: e.target.checked
+                            ? [...(assessment.airspaceClasses || []), cls]
+                            : (assessment.airspaceClasses || []).filter((c) => c !== cls),
+                        })}
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                   />
                   <label className="ml-2 text-sm text-gray-700">{cls}</label>
-                  {cls === 'U-Space' && selectedClasses.includes(cls) && (
+                  {cls === 'U-Space' && (assessment.airspaceClasses || []).includes('U-Space') && (
                     <input
                       type="text"
-                      value={uspaceProviderState}
-                      onChange={(e) => setUspaceProvider(e.target.value)}
+                      value={assessment.uspaceProvider}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          uspaceProvider: e.target.value,
+                        })}
                       className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Fournisseur de service USSP"
                     />
                   )}
-                  {cls === 'Autre, Préciser' && selectedClasses.includes(cls) && (
+                  {cls === 'Autre, Préciser' && (assessment.airspaceClasses || []).includes('Autre, Préciser') && (
                     <input
                       type="text"
-                      value={otherDetailsState}
-                      onChange={(e) => setOtherDetails(e.target.value)}
+                      value={assessment.otherDetails}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          otherDetails: e.target.value,
+                        })}
                       className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder="Préciser la nature de l'espace aérien"
                     />
@@ -155,8 +90,13 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
               </label>
             </Tooltip>
             <select
-              value={OperationalVolumeLevelState}
-              onChange={(e) => setOperationalVolumeLevel(e.target.value)}
+              value={assessment.OperationalVolumeLevel}
+              onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              OperationalVolumeLevel: e.target.value as OperationalVolumeLevel,
+                            })
+                          }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="ARC-a">ARC-a</option>
@@ -172,8 +112,13 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
               </label>
             </Tooltip>
             <select
-              value={AdjacentVolumeLevelState}
-              onChange={(e) => setAdjacentVolumeLevel(e.target.value)}
+              value={assessment.AdjacentVolumeLevel}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  AdjacentVolumeLevel: e.target.value as AdjacentVolumeLevel,
+                })
+              }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="ARC-a">ARC-a</option>
@@ -191,8 +136,12 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             </label>
             <input
               type="text"
-              value={detectAndAvoidState}
-              onChange={(e) => setDetectAndAvoid(e.target.value)}
+              value={assessment.detectAndAvoid}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  detectAndAvoid: e.target.value,
+                })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Detect And Avoid"
             />
@@ -203,8 +152,12 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             </label>
             <input
               type="text"
-              value={trafficDetectionState}
-              onChange={(e) => setTrafficDetection(e.target.value)}
+              value={assessment.trafficDetection}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  trafficDetection: e.target.value,
+                })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Détection du trafic environnant"
             />
@@ -215,8 +168,12 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             </label>
             <input
               type="text"
-              value={additionalDetailsState}
-              onChange={(e) => setAdditionalDetails(e.target.value)}
+              value={assessment.additionalDetails}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  additionalDetails: e.target.value,
+                })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Autre, préciser"
             />

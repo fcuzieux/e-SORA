@@ -21,6 +21,7 @@ export type OperationType =
   | 'BVLOS – Vol hors vue';
 export type DangerousGoods = 'OUI' | 'NON';
 export type PopulationDensityModulation = 'OUI' | 'NON';
+export type necessaryToReduceRisk = 'OUI' | 'NON';
 export type DayNightOperation = 'Jour' | 'Nuit' | 'Jour & Nuit';
 export type ConfinementLevel = 'Basic' | 'Enhanced';
 export type mitigationStrategique = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
@@ -29,12 +30,15 @@ export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type OperationalScenario = 'VLOS' | 'BVLOS';
 export type PopulationDensity = 'low' | 'moderate' | 'high';
-export const airspaceClasses = ['Classe A', 'Classe B', 'Classe C', 'Classe D', 'Classe E', 'Classe F', 'Classe G', 'U-Space', 'Autre, Préciser'];
-
+export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
+export type StrategicMitigationAvailable = 'OUI' | 'NON';
+export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
+export type TacticalMitigationAvailable = 'OUI' | 'NON';
 export type assessmentTypeHauteurVol =
   | 'Hauteur de vol suivant trajectoire(s)'
   | 'Hauteur de vol en suivi de terrain';
-
+export type iGRC = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
+export type GRC_Final = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type assessmentCriticalArea =
   | 'Calcul selon les table SORA'
   | 'Spécifiée par le déposant';
@@ -118,14 +122,9 @@ export interface RiskAssessmentInfo {
   trajgeoFiles: File[];
   mitigationStrategique: mitigationStrategique;
   reduceImpactAttenuation: reduceImpactAttenuation;
-  OperationalVolumeLevel: OperationalVolumeLevel;
-  AdjacentVolumeLevel: AdjacentVolumeLevel;
-  detectAndAvoid: string;
-  trafficDetection: string;
-  additionalDetails: string;
   operationalScenario?: OperationalScenario;
   populationDensity?: PopulationDensity;
-  necessaryToReduceRisk?: 'OUI' | 'NON';
+  necessaryToReduceRisk: necessaryToReduceRisk
   planInterventionUrgence?: mitigationStrategique;
   confinementRequirements?: 'Basiques' | 'Amélioré';
   additionalRemarks?: string;
@@ -133,10 +132,7 @@ export interface RiskAssessmentInfo {
   finalGroundRisk?: number;
   airRisk?: number;
   sailLevel?: string;
-}
-
-export interface ARCInitialInfo {
-  airspaceClasses: string[];
+  airspaceClasses: airspaceClasses;
   uspaceProvider: string;
   otherDetails: string;
   OperationalVolumeLevel: string;
@@ -144,18 +140,16 @@ export interface ARCInitialInfo {
   detectAndAvoid: string;
   trafficDetection: string;
   additionalDetails: string;
-}
-
-export interface ARCFinalInfo {
-  StrategicMitigationAvailable: string;
+  StrategicMitigationAvailable: StrategicMitigationAvailable;
   StrategicMitigationJustification: string;
-  OperationalVolumeLevelMitigated: string;
+  OperationalVolumeLevelMitigated: OperationalVolumeLevelMitigated;
+  TacticalMitigationAvailable: TacticalMitigationAvailable;
+  TacticalMitigationJustification: string;
+  iGRC: string;
+  GRC_Final: string;
+  SAILJustification: string;
 }
 
-export interface TacticalMitigationInfo {
-  TacticalMitigationAvailable: string;
-  TacticalMitigationJustification: string;
-}
 
 export interface SailInfo {
   airspaceClasses: string[];
@@ -237,6 +231,4 @@ export interface SoraForm {
   mitigationMeasures: MitigationMeasure[];
   osos: Oso[];
   riskAssessment: RiskAssessmentInfo;
-  ARCInitial?: ARCInitialInfo;
-  determinationARCInitial?: DeterminationARCInitialInfo;
 }

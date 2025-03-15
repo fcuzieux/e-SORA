@@ -1,228 +1,138 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Tooltip } from '../common/Tooltip';
-import { SailInfo } from '../../types/sora';
+import { RiskAssessmentInfo } from '../../types/sora';
 
 interface SailProps {
-  assessment: SailInfo;
-  onChange: (data: SailInfo) => void;
+  assessment: RiskAssessmentInfo;
+  onChange: (assessment: RiskAssessmentInfo) => void;
 }
 
 export function Sail({ assessment, onChange }: SailProps) {
-  const [selectedClasses, setSelectedClasses] = useState<string[]>(assessment?.airspaceClasses || []);
-  const [uspaceProviderState, setUspaceProvider] = useState<string>(assessment?.uspaceProvider || '');
-  const [otherDetailsState, setOtherDetails] = useState<string>(assessment?.otherDetails || '');
-  const [OperationalVolumeLevelState, setOperationalVolumeLevel] = useState<string>(assessment?.OperationalVolumeLevel || 'ARC-a');
-  const [AdjacentVolumeLevelState, setAdjacentVolumeLevel] = useState<string>(assessment?.AdjacentVolumeLevel || 'ARC-a');
-  const [detectAndAvoidState, setDetectAndAvoid] = useState<string>(assessment?.detectAndAvoid || '');
-  const [trafficDetectionState, setTrafficDetection] = useState<string>(assessment?.trafficDetection || '');
-  const [additionalDetailsState, setAdditionalDetails] = useState<string>(assessment?.additionalDetails || '');
-  const [dataLoaded, setDataLoaded] = useState(false);
+  
+ 
+   const tableData = [
+     { GRC_Final:'<=2' ,ARC_a: 'I',   ARC_b: 'II', ARC_c: 'IV', ARC_d: 'VI', }, 
+     { GRC_Final:'3'   ,ARC_a: 'II',  ARC_b: 'II', ARC_c: 'IV', ARC_d: 'VI', }, 
+     { GRC_Final:'4'   ,ARC_a: 'III', ARC_b: 'III',ARC_c: 'IV', ARC_d: 'VI', }, 
+     { GRC_Final:'5'   ,ARC_a: 'IV',  ARC_b: 'IV', ARC_c: 'IV', ARC_d: 'VI', }, 
+     { GRC_Final:'6'   ,ARC_a: 'V' ,  ARC_b: 'IV', ARC_c: 'V',  ARC_d: 'VI', },
+     { GRC_Final:'7'   ,ARC_a: 'VI',  ARC_b: 'VI', ARC_c: 'VI', ARC_d: 'VI', },
+   ];
+   // FinalGRCint == Traduction de assessment.GRC_Final en cas équivalent du Tableau d'évaluation SORA :
+   let FinalGRCint ='0'
+   switch (assessment.GRC_Final) {
+    case '1':
+         FinalGRCint ='<=2'
+        break;
+    case '2':
+         FinalGRCint ='<=2'
+        break;
+    case '3':
+         FinalGRCint ='3'
+        break;
+    case '4':
+         FinalGRCint ='4'
+        break;
+    case '5':
+         FinalGRCint ='5'
+        break;
+    case '6':
+         FinalGRCint ='6'
+        break;
+    case '7':
+         FinalGRCint ='7'
+        break;
+    case '8':
+         FinalGRCint ='>7'
+        break;
+    default:
+         FinalGRCint ='0'
+   }
+        return (
+     <div className="space-y-8">
+       <div className="space-y-8">
+         <h2 className="text-2xl font-semibold">Détermination du SAIL</h2>
 
-  // Load saved data from localStorage only once on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('sail');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setSelectedClasses(parsedData.selectedClasses || []);
-        setUspaceProvider(parsedData.uspaceProviderState || '');
-        setOtherDetails(parsedData.otherDetailsState || '');
-        setOperationalVolumeLevel(parsedData.OperationalVolumeLevelState || 'ARC-a');
-        setAdjacentVolumeLevel(parsedData.AdjacentVolumeLevelState || 'ARC-a');
-        setDetectAndAvoid(parsedData.detectAndAvoidState || '');
-        setTrafficDetection(parsedData.trafficDetectionState || '');
-        setAdditionalDetails(parsedData.additionalDetailsState || '');
-      } catch (error) {
-        console.error('Error loading saved data:', error);
-      }
-    }
-    setDataLoaded(true);
-  }, []);
+         <table className="min-w-full bg-white">
+           <thead>
 
-  // Update parent component and save to localStorage when data changes
-  useEffect(() => {
-    if (!dataLoaded) return;
+              <tr className="bg-blue-500 text-white">
+                <th className='bg-blue-900  py-2 px-4 border-b'></th>
+                <th colspan="4" className='  py-2 px-4 border-b'>ARC Final</th>
+              </tr>
+             <tr className="bg-blue-500 text-white">
+               <th className="bg-blue-400 py-2 px-4 border-b">GRC Final</th>
+               <th className="py-2 px-4 border-b">ARC-a</th>
+               <th className="py-2 px-4 border-b">ARC-b</th>
+               <th className="py-2 px-4 border-b">ARC-c</th>
+               <th className="py-2 px-4 border-b">ARC-d</th>
+             </tr>
+           </thead>
+           <tbody>
+             {tableData.map((row, index) => (
+               <tr className='bg-gray-200'>
+                 <th className="bg-blue-400 py-2 px-4 border-b">{row.GRC_Final}</th>
 
-    const dataToSave = {
-      selectedClasses,
-      uspaceProviderState,
-      otherDetailsState,
-      OperationalVolumeLevelState,
-      AdjacentVolumeLevelState,
-      detectAndAvoidState,
-      trafficDetectionState,
-      additionalDetailsState,
-    };
+                 
+                 
+                  <th className={
+                     row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-a'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     ? 'bg-red-700  text-white'
+                     : 'bg-gray-200 text-gray-400'
+                  }>{row.ARC_a}    </th>
 
-    localStorage.setItem('sail', JSON.stringify(dataToSave));
-
-    const updatedAssessment = {
-      airspaceClasses: selectedClasses,
-      uspaceProvider: uspaceProviderState,
-      otherDetails: otherDetailsState,
-      OperationalVolumeLevel: OperationalVolumeLevelState,
-      AdjacentVolumeLevel: AdjacentVolumeLevelState,
-      detectAndAvoid: detectAndAvoidState,
-      trafficDetection: trafficDetectionState,
-      additionalDetails: additionalDetailsState,
-    };
-
-    onChange(updatedAssessment);
-  }, [
-    dataLoaded,
-    selectedClasses,
-    uspaceProviderState,
-    otherDetailsState,
-    OperationalVolumeLevelState,
-    AdjacentVolumeLevelState,
-    detectAndAvoidState,
-    trafficDetectionState,
-    additionalDetailsState,
-    onChange
-  ]);
-
-  const handleCheckboxChange = (className: string) => {
-    setSelectedClasses((prevSelected) =>
-      prevSelected.includes(className)
-        ? prevSelected.filter((cls) => cls !== className)
-        : [...prevSelected, className]
-    );
-  };
-
-  const checkboxes = [
-    'Classe - A',
-    'Classe - B',
-    'Classe - C',
-    'Classe - D',
-    'Classe - E',
-    'Classe - F',
-    'Classe - G',
-    'U-Space',
-    'Autre, Préciser',
-  ];
-
-  return (
-    <div className="space-y-8">
-      <div className="space-y-8">
-        <h2 className="text-2xl font-semibold">Volume d'espace aérien</h2>
-
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div>
-            <Tooltip text="Sélectionnez une ou plusieurs des neuf options. Sélectionnez 'Autre' si aucune des options précédentes ne s'applique (par exemple, les zones militaires).">
-              <label className="block text-sm font-medium text-gray-700">
-                Classe d'espace aérien de l'opération envisagée
-              </label>
-            </Tooltip>
-            <div className="mt-1 space-y-2">
-              {checkboxes.map((cls) => (
-                <div key={cls} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedClasses.includes(cls)}
-                    onChange={() => handleCheckboxChange(cls)}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  />
-                  <label className="ml-2 text-sm text-gray-700">{cls}</label>
-                  {cls === 'U-Space' && selectedClasses.includes(cls) && (
-                    <input
-                      type="text"
-                      value={uspaceProviderState}
-                      onChange={(e) => setUspaceProvider(e.target.value)}
-                      className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      placeholder="Fournisseur de service USSP"
-                    />
-                  )}
-                  {cls === 'Autre, Préciser' && selectedClasses.includes(cls) && (
-                    <input
-                      type="text"
-                      value={otherDetailsState}
-                      onChange={(e) => setOtherDetails(e.target.value)}
-                      className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      placeholder="Préciser la nature de l'espace aérien"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <h2 className="text-2xl font-semibold">Niveau de Risque Résiduel</h2>
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div>
-            <Tooltip text="Sélectionnez le niveau de risque résiduel pour l'opération envisagée.">
-              <label className="block text-sm font-medium text-gray-700">
-                Volume Opérationnel
-              </label>
-            </Tooltip>
-            <select
-              value={OperationalVolumeLevelState}
-              onChange={(e) => setOperationalVolumeLevel(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="ARC-a">ARC-a</option>
-              <option value="ARC-b">ARC-b</option>
-              <option value="ARC-c">ARC-c</option>
-              <option value="ARC-d">ARC-d</option>
-            </select>
-          </div>
-          <div>
-            <Tooltip text="Sélectionnez le niveau de risque résiduel pour le volume adjacent.">
-              <label className="block text-sm font-medium text-gray-700">
-                Volume Adjacent
-              </label>
-            </Tooltip>
-            <select
-              value={AdjacentVolumeLevelState}
-              onChange={(e) => setAdjacentVolumeLevel(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="ARC-a">ARC-a</option>
-              <option value="ARC-b">ARC-b</option>
-              <option value="ARC-c">ARC-c</option>
-              <option value="ARC-d">ARC-d</option>
-            </select>
-          </div>
-        </div>
-        <h2 className="text-2xl font-semibold">Solutions Additionnels</h2>
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Detect And Avoid
-            </label>
-            <input
-              type="text"
-              value={detectAndAvoidState}
-              onChange={(e) => setDetectAndAvoid(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Detect And Avoid"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Détection du trafic environnant
-            </label>
-            <input
-              type="text"
-              value={trafficDetectionState}
-              onChange={(e) => setTrafficDetection(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Détection du trafic environnant"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Autre, préciser
-            </label>
-            <input
-              type="text"
-              value={additionalDetailsState}
-              onChange={(e) => setAdditionalDetails(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Autre, préciser"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+                  <th className={
+                     row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     ? 'bg-red-700 text-white'
+                     : 'bg-gray-200 text-gray-400'
+                  }>{row.ARC_b}    </th>
+                 <th className={
+                     row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-c'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     ? 'bg-red-700 text-white'
+                     : 'bg-gray-200 text-gray-400'
+                  }>{row.ARC_c}    </th>
+                 <th className={
+                     row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-d'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     ? 'bg-red-700 text-white'
+                     : 'bg-gray-200 text-gray-400'
+                  }>{row.ARC_d}    </th>
+              </tr> 
+             ))}
+             <tr>
+              <th className="bg-blue-400 py-2 px-4 border-b" >&#62;7</th>
+              <th  className={
+                     FinalGRCint.includes('>7') && assessment.OperationalVolumeLevelMitigated === 'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     ? 'bg-red-700 text-white'
+                     : 'bg-gray-200 text-gray-400'
+                  }  colspan="5">Opération en catégorie certifiée</th>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+       <div className="space-y-8">
+         <h2 className="text-2xl font-semibold">Commentaires additionnels</h2>
+         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                    
+             <div>
+               <Tooltip text="En quelques phrases, vous pouvez apporter des commentaires additionnels sur le niveau de SAIL de l'opération envisagée">
+                 <label className="block text-sm font-medium text-gray-700">
+                   Apporter vos commentaires sur le niveau de SAIL si vous le souhaitez :
+                 </label>
+               </Tooltip>
+               <textarea
+                 value={assessment.SAILJustification}
+                 onChange={(e) =>
+                   onChange({
+                     ...assessment,
+                     SAILJustification: e.target.value,
+                   })}
+                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                 rows={4}
+               />
+             </div>
+           
+         </div>
+       </div>
+     </div>
   );
 }

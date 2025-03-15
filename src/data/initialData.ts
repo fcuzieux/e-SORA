@@ -1,4 +1,4 @@
-import { SoraForm, MitigationMeasure, Oso, DeterminationARCInitialInfo } from '../types/sora';
+import { SoraForm, MitigationMeasure, Oso, DeterminationARCInitialInfo, airspaceClasses } from '../types/sora';
 
 export const initialMitigationMeasures: MitigationMeasure[] = [
   {
@@ -132,10 +132,10 @@ export const initialSoraForm: SoraForm = {
   RiskAssessment: {
     assessmentTypeHauteurVol: 'Calcul selon les table SORA',
     assessmentCriticalArea: '',
-    CriticalArea: 0,
     followTerrainHeight: 0,
     PopulationDensityModulation: 'NON',
     assessmentStartTime: '',
+    CriticalArea: 0,
     maxDistanceFromPilot: 0,
     confinementLevel: 'Basic',
     pilotCompetency: '',
@@ -155,5 +155,17 @@ export const initialSoraForm: SoraForm = {
     additionalDetails: '',
     operationalScenario: 'VLOS',
     populationDensity: 'low',
+    necessaryToReduceRisk: 'NON',
+    planInterventionUrgence: 'NON',
+    confinementRequirements: 'Basiques',
+    additionalRemarks: '',
+    airspaceClasses: ['Classe A'],
+    uspaceProvider: '',
+    otherDetails: '',
+    StrategicMitigationAvailable: '',
+    StrategicMitigationJustification: '',
+    OperationalVolumeLevelMitigated: '',
+    TacticalMitigationAvailable: '',
+    TacticalMitigationJustification: '',
   },
 };

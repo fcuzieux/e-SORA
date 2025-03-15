@@ -1,59 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Tooltip } from '../common/Tooltip';
-import { ARCFinalInfo } from '../../types/sora';
+import { RiskAssessmentInfo, StrategicMitigationAvailable, OperationalVolumeLevelMitigated } from '../../types/sora';
 
 interface DeterminationARCFinalProps {
-  assessment: ARCFinalInfo;
-  onChange: (data: ARCFinalInfo) => void;
+  assessment: RiskAssessmentInfo;
+  onChange: (assessment: RiskAssessmentInfo) => void;
 }
 
 export function DeterminationARCFinal({ assessment, onChange }: DeterminationARCFinalProps) {
-  const [StrategicMitigationAvailableState, setStrategicMitigationAvailable] = useState<string>(assessment?.StrategicMitigationAvailable || 'NON');
-  const [OperationalVolumeLevelMitigatedState, setOperationalVolumeLevelMitigated] = useState<string>(assessment?.OperationalVolumeLevelMitigated || 'ARC-a');
-  const [StrategicMitigationJustification, setStrategicMitigationJustification] = useState<string>('');
-  const [dataLoaded, setDataLoaded] = useState(false);
-
-  // Load saved data from localStorage only once on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('determinationARCFinal');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setStrategicMitigationAvailable(parsedData.StrategicMitigationAvailableState || 'NON');
-        setOperationalVolumeLevelMitigated(parsedData.OperationalVolumeLevelMitigatedState || 'ARC-a');
-        setStrategicMitigationJustification(parsedData.StrategicMitigationJustification || '');
-      } catch (error) {
-        console.error('Error loading saved data:', error);
-      }
-    }
-    setDataLoaded(true);
-  }, []);
-
-  // Update parent component and save to localStorage when data changes
-  useEffect(() => {
-    if (!dataLoaded) return;
-
-    const dataToSave = {
-      StrategicMitigationAvailableState,
-      OperationalVolumeLevelMitigatedState,
-      StrategicMitigationJustification,
-    };
-
-    localStorage.setItem('determinationARCFinal', JSON.stringify(dataToSave));
-
-    const updatedAssessment = {
-      StrategicMitigationAvailable: StrategicMitigationAvailableState,
-      OperationalVolumeLevelMitigated: OperationalVolumeLevelMitigatedState,
-    };
-
-    onChange(updatedAssessment);
-  }, [
-    dataLoaded,
-    StrategicMitigationAvailableState,
-    OperationalVolumeLevelMitigatedState,
-    StrategicMitigationJustification,
-    onChange
-  ]);
 
   return (
     <div className="space-y-8">
@@ -67,15 +21,19 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
               </label>
             </Tooltip>
             <select
-              value={StrategicMitigationAvailableState}
-              onChange={(e) => setStrategicMitigationAvailable(e.target.value)}
+              value={assessment.StrategicMitigationAvailable}
+              onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              StrategicMitigationAvailable: e.target.value as StrategicMitigationAvailable,
+                            })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="OUI">OUI</option>
               <option value="NON">NON</option>
             </select>
           </div>
-          {StrategicMitigationAvailableState === 'OUI' && (
+          {assessment.StrategicMitigationAvailable === 'OUI' && (
             <div>
               <Tooltip text="En quelques phrases, veuillez décrire les moyens et StrategicMitigationJustifications de Mitigation Stratégique du risque Air">
                 <label className="block text-sm font-medium text-gray-700">
@@ -83,8 +41,12 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
                 </label>
               </Tooltip>
               <textarea
-                value={StrategicMitigationJustification}
-                onChange={(e) => setStrategicMitigationJustification(e.target.value)}
+                value={assessment.StrategicMitigationJustification}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    StrategicMitigationJustification: e.target.value,
+                  })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 rows={4}
               />
@@ -102,14 +64,18 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
               </label>
             </Tooltip>
             <select
-              value={OperationalVolumeLevelMitigatedState}
-              onChange={(e) => setOperationalVolumeLevelMitigated(e.target.value)}
+              value={assessment.OperationalVolumeLevelMitigated}
+              onChange={(e) =>
+                onChange({
+                  ...assessment,
+                  OperationalVolumeLevelMitigated: e.target.value as OperationalVolumeLevelMitigated,
+                })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
-              <option value="ARC-a">ARC-a</option>
-              <option value="ARC-b">ARC-b</option>
-              <option value="ARC-c">ARC-c</option>
-              <option value="ARC-d">ARC-d</option>
+              <option value='ARC-a'>ARC-a</option>
+              <option value='ARC-b'>ARC-b</option>
+              <option value='ARC-c'>ARC-c</option>
+              <option value='ARC-d'>ARC-d</option>
             </select>
           </div>
         </div>

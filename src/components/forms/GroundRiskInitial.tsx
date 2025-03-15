@@ -7,6 +7,7 @@ import {
   SailLevel,
   OperationalScenario,
   PopulationDensity,
+  iGRC,
 } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
 import { Upload, Clock } from 'lucide-react';
@@ -230,7 +231,7 @@ export function RiskAssessmentForm({
 
       <section className="space-y-4">
         <h3 className="text-lg font-medium">
-          iGRC : Intrinsic Ground Risk Class
+          Determination de l'iGRC : Intrinsic Ground Risk Class 
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -330,6 +331,35 @@ export function RiskAssessmentForm({
             </select>
           </div>
         </div>
+        <h2 className="text-2xl font-semibold">iGRC</h2>
+          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+            <div>
+              <Tooltip text="Veuillez entrer le niveau GRC Initial calculé à l'aide de l'outil (c)DROSERA.">
+                <label className="block text-sm font-medium text-gray-700">
+                  iGRC
+                </label>
+              </Tooltip>
+              <select
+                value={assessment.iGRC}
+                onChange={(e) =>
+                              onChange({
+                                ...assessment,
+                                iGRC: e.target.value as iGRC,
+                              })
+                            }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+              </select>
+            </div>
+          </div>
       </section>
     </div>
   );

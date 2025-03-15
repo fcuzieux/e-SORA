@@ -101,13 +101,13 @@ export function SoraForm() {
           </div>
         );
       case 'initial-grc':
-return (
-  <GroundRiskInitial
-    assessment={formData.riskAssessment}
-    onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
-    showOnly={['intrinsicGroundRisk']}
-  />
-);
+      return (
+        <GroundRiskInitial
+          assessment={formData.riskAssessment}
+          onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+          showOnly={['intrinsicGroundRisk']}
+        />
+      );
       case 'final-grc':
         return (
           <GroundRiskAttenuation
