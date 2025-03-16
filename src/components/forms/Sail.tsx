@@ -101,7 +101,7 @@ export function Sail({ assessment, onChange }: SailProps) {
              <tr>
               <th className="bg-blue-400 py-2 px-4 border-b" >&#62;7</th>
               <th  className={
-                     FinalGRCint.includes('>7') && assessment.OperationalVolumeLevelMitigated === 'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                     FinalGRCint.includes('>7')
                      ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                   }  colspan="5">Opération en catégorie certifiée</th>
