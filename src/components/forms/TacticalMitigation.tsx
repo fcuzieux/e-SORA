@@ -34,13 +34,13 @@ export function TacticalMitigation({ assessment, onChange }: TacticalMitigationP
                 key={index}
                 className={
                     row.ARC === assessment.OperationalVolumeLevelMitigated//'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                    ? 'bg-red-700 text-white'
+                    ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                 }
               >
-                <td className="py-2 px-4 border-b">{row.ARC}</td>
-                <td className="py-2 px-4 border-b">{row.Attenuation}</td>
-                <td className="py-2 px-4 border-b">{row.Robustness}</td>
+                <th className="py-2 px-4 border-b">{row.ARC}</th>
+                <th className="py-2 px-4 border-b">{row.Attenuation}</th>
+                <th className="py-2 px-4 border-b">{row.Robustness}</th>
               </tr>
             ))}
           </tbody>

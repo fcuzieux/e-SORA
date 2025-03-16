@@ -57,7 +57,7 @@ export function Sail({ assessment, onChange }: SailProps) {
            <thead>
 
               <tr className="bg-blue-500 text-white">
-                <th className='bg-blue-900  py-2 px-4 border-b'></th>
+                <th className='bg-white  py-2 px-4 border-b'></th>
                 <th colspan="4" className='  py-2 px-4 border-b'>ARC Final</th>
               </tr>
              <tr className="bg-blue-500 text-white">
@@ -77,23 +77,23 @@ export function Sail({ assessment, onChange }: SailProps) {
                  
                   <th className={
                      row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-a'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                     ? 'bg-red-700  text-white'
+                     ? 'bg-blue-900  text-white'
                      : 'bg-gray-200 text-gray-400'
                   }>{row.ARC_a}    </th>
 
                   <th className={
                      row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                     ? 'bg-red-700 text-white'
+                     ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                   }>{row.ARC_b}    </th>
                  <th className={
                      row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-c'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                     ? 'bg-red-700 text-white'
+                     ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                   }>{row.ARC_c}    </th>
                  <th className={
                      row.GRC_Final.includes(FinalGRCint) && assessment.OperationalVolumeLevelMitigated === 'ARC-d'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                     ? 'bg-red-700 text-white'
+                     ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                   }>{row.ARC_d}    </th>
               </tr> 
@@ -102,7 +102,7 @@ export function Sail({ assessment, onChange }: SailProps) {
               <th className="bg-blue-400 py-2 px-4 border-b" >&#62;7</th>
               <th  className={
                      FinalGRCint.includes('>7') && assessment.OperationalVolumeLevelMitigated === 'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                     ? 'bg-red-700 text-white'
+                     ? 'bg-blue-900 text-white'
                      : 'bg-gray-200 text-gray-400'
                   }  colspan="5">Opération en catégorie certifiée</th>
              </tr>
