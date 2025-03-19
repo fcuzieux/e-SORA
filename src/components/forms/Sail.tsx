@@ -15,7 +15,7 @@ export function Sail({ assessment, onChange }: SailProps) {
      { GRC_Final:'3'   ,ARC_a: 'II',  ARC_b: 'II', ARC_c: 'IV', ARC_d: 'VI', }, 
      { GRC_Final:'4'   ,ARC_a: 'III', ARC_b: 'III',ARC_c: 'IV', ARC_d: 'VI', }, 
      { GRC_Final:'5'   ,ARC_a: 'IV',  ARC_b: 'IV', ARC_c: 'IV', ARC_d: 'VI', }, 
-     { GRC_Final:'6'   ,ARC_a: 'V' ,  ARC_b: 'IV', ARC_c: 'V',  ARC_d: 'VI', },
+     { GRC_Final:'6'   ,ARC_a: 'V' ,  ARC_b: 'V' , ARC_c: 'V',  ARC_d: 'VI', },
      { GRC_Final:'7'   ,ARC_a: 'VI',  ARC_b: 'VI', ARC_c: 'VI', ARC_d: 'VI', },
    ];
    // FinalGRCint == Traduction de assessment.GRC_Final en cas équivalent du Tableau d'évaluation SORA :
@@ -23,30 +23,130 @@ export function Sail({ assessment, onChange }: SailProps) {
    switch (assessment.GRC_Final) {
     case '1':
          FinalGRCint ='<=2'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 1' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 2' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '2':
          FinalGRCint ='<=2'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 1' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 2' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '3':
          FinalGRCint ='3'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 2' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 2' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '4':
          FinalGRCint ='4'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 3' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 3' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '5':
          FinalGRCint ='5'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 4' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '6':
          FinalGRCint ='6'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 5' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 5' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 5' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '7':
          FinalGRCint ='7'
+         switch (assessment.OperationalVolumeLevelMitigated) {
+           case 'ARC-a':
+             assessment.SAIL = 'SAIL 6' 
+             break;
+           case 'ARC-b':
+             assessment.SAIL = 'SAIL 6' 
+             break;
+           case 'ARC-c':
+             assessment.SAIL = 'SAIL 6' 
+             break;
+           case 'ARC-d':
+             assessment.SAIL = 'SAIL 6' 
+             break;            
+         } 
         break;
     case '8':
          FinalGRCint ='>7'
+         assessment.SAIL = 'Certifié' 
         break;
     default:
          FinalGRCint ='0'
+         assessment.SAIL = 'Certifié' 
    }
         return (
      <div className="space-y-8">

@@ -6,7 +6,7 @@ import { exportToExcel } from '../utils/excelExport';
 import { OperatorForm } from './forms/OperatorForm';
 import { DroneForm } from './forms/DroneForm';
 import { OperationForm } from './forms/OperationForm';
-import { MitigationForm } from './forms/MitigationForm';
+//import { MitigationForm } from './forms/MitigationForm';
 import { OsoForm } from './forms/OsoForm';
 import GroundRiskInitial from './forms/GroundRiskInitial';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
@@ -82,7 +82,18 @@ export function SoraForm() {
           <div className="space-y-8">
             <DroneForm
               drone={formData.drone}
-              onChange={(drone) => setFormData({ ...formData, drone })}
+              onChange={(drone) => { 
+                setFormData({
+                  ...formData,
+                  drone,
+                  riskAssessment: {
+                    ...formData.riskAssessment,
+                    maxCharacteristicDimension: drone.maxCharacteristicDimension,
+                    maxSpeed: drone.maxSpeed,
+                    MTOW: drone.MTOW,
+                  }
+                });
+              }}
             />
             <hr className="border-gray-200 my-8" />
             <OperationForm
@@ -146,8 +157,9 @@ export function SoraForm() {
       case 'oso':
         return (
           <OsoForm
+            osos={formData.osos}
             assessment={formData.riskAssessment}
-            onChange={(riskAssessment) => setFormData({ ...formData, riskAssessment })}
+            onChange={(osos) => setFormData({ ...formData, osos })}
           />
         );
       case 'adjacent-areas':

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiskAssessmentInfo,mitigationStrategique,reduceImpactAttenuation,necessaryToReduceRisk,GRC_Final } from '../../types/sora';
+import { RiskAssessmentInfo, mitigationStrategique, reduceImpactAttenuation, necessaryToReduceRisk, GRC_Final } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
 
 interface GroundRiskAttenuationProps {
@@ -8,8 +8,76 @@ interface GroundRiskAttenuationProps {
 }
 
 export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenuationProps) {
+
+  const tableData = [
+    { Integrity: 'Intégrité faible ', InsuranceLow: 'Robustesse faible', InsuranceMedium: 'Robustesse Faible ', InsuranceHigh: 'Robustesse Faible '  },
+    { Integrity: 'Intégrité moyenne', InsuranceLow: 'Robustesse faible', InsuranceMedium: 'Robustesse Moyenne', InsuranceHigh: 'Robustesse Moyenne'  },
+    { Integrity: 'Intégrité haute  ', InsuranceLow: 'Robustesse faible', InsuranceMedium: 'Robustesse Moyenne', InsuranceHigh: 'Robustesse Haute  '  },
+  ];
+
+  const CalculGRCFinal = () => {
+    if (!assessment || !assessment.iGRC || !assessment.mitigationStrategique || !assessment.reduceImpactAttenuation || !assessment.planInterventionUrgence || !assessment.confinementRequirements) {
+      return Number(assessment.iGRC);// Return a default value or handle the error as needed
+    }
+
+    let FinalGRCint = Number(assessment.iGRC);
+    if (assessment.mitigationStrategique.includes('faible')) {
+      FinalGRCint = FinalGRCint - 1;
+    } else if (assessment.mitigationStrategique.includes('moyenne')) {
+      FinalGRCint = FinalGRCint - 2;
+    } else if (assessment.mitigationStrategique.includes('élevée')) {
+      FinalGRCint = FinalGRCint - 4;
+    } else {FinalGRCint = FinalGRCint - 0;}
+
+    if (assessment.reduceImpactAttenuation.includes('faible')) {
+      FinalGRCint = FinalGRCint - 0;
+    } else if (assessment.reduceImpactAttenuation.includes('moyenne')) {
+      FinalGRCint = FinalGRCint - 1;
+    } else if (assessment.reduceImpactAttenuation.includes('élevée')) {
+      FinalGRCint = FinalGRCint - 2;
+    } else {FinalGRCint = FinalGRCint - 0;}
+    
+    if (assessment.planInterventionUrgence.includes('faible')) {
+      FinalGRCint = FinalGRCint + 1;
+    } else if (assessment.planInterventionUrgence.includes('moyenne')) {
+      FinalGRCint = FinalGRCint - 0;
+    } else if (assessment.planInterventionUrgence.includes('élevée')) {
+      FinalGRCint = FinalGRCint - 1;
+    } else {FinalGRCint = FinalGRCint +1;}
+    // if ()
+    return FinalGRCint;
+  };
+
   return (
     <div className="space-y-8">
+      <h2 className="text-2xl font-semibold">Tableau de Mitigation Tactique</h2>
+      <table className="min-w-full bg-white">
+        <thead>
+          <tr className="bg-blue-500 text-white">
+            <th className="py-2 px-4 border-b"> </th>
+            <th className="py-2 px-4 border-b">Assurance faible</th>
+            <th className="py-2 px-4 border-b">Assurance moyenne</th>
+            <th className="py-2 px-4 border-b">Assurance haute</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, index) => (
+            <tr
+              key={index}
+              className={
+                index % 2 === 0
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-gray-200 text-gray-800'
+              }
+            >
+              <td className="py-2 px-4 border-b">{row.Integrity}</td>
+              <td className="py-2 px-4 border-b">{row.InsuranceLow}</td>
+              <td className="py-2 px-4 border-b">{row.InsuranceMedium}</td>
+              <td className="py-2 px-4 border-b">{row.InsuranceHigh}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <h2 className="text-2xl font-semibold">Atténuation du risque sol</h2>
 
       <div className="bg-gray-50 p-4 rounded-lg space-y-4">
@@ -21,12 +89,13 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           </Tooltip>
           <select
             value={assessment.mitigationStrategique}
-            onChange={(e) =>
+            onChange={(e) =>{
               onChange({
                 ...assessment,
                 mitigationStrategique: e.target.value as mitigationStrategique,
-              })
-            }
+              });
+              CalculGRCFinal();
+            }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="Non">Non</option>
@@ -45,12 +114,13 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             </Tooltip>
             <select
               value={assessment.reduceImpactAttenuation}
-              onChange={(e) =>
+              onChange={(e) =>{
                 onChange({
                   ...assessment,
                   reduceImpactAttenuation: e.target.value as reduceImpactAttenuation,
-                })
-              }
+                });
+                CalculGRCFinal();
+              }}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="Non">Non</option>
@@ -68,12 +138,13 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             </Tooltip>
             <select
               value={assessment.necessaryToReduceRisk}
-              onChange={(e) =>
+              onChange={(e) =>{
                 onChange({
                   ...assessment,
                   necessaryToReduceRisk: e.target.value as necessaryToReduceRisk,
-                })
-              }
+                });
+                CalculGRCFinal();
+              }}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="NON">NON</option>
@@ -90,12 +161,13 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           </Tooltip>
           <select
             value={assessment.planInterventionUrgence}
-            onChange={(e) =>
+            onChange={(e) =>{
               onChange({
                 ...assessment,
                 planInterventionUrgence: e.target.value as mitigationStrategique,
-              })
-            }
+              });
+              CalculGRCFinal();
+            }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="Non">Non</option>
@@ -113,12 +185,14 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           </Tooltip>
           <select
             value={assessment.confinementRequirements}
-            onChange={(e) =>
+            onChange={(e) =>{
               onChange({
                 ...assessment,
                 confinementRequirements: e.target.value as 'Basiques' | 'Amélioré',
-              })
-            }
+              });
+              CalculGRCFinal();
+            }}
+            
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="Basiques">Basiques</option>
@@ -148,6 +222,15 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
       </div>
       <h2 className="text-2xl font-semibold">GRC Final</h2>
 
+      <div>
+        <Tooltip text="GRC Final calculé...">
+          <label className="block text-sm font-medium text-gray-700">
+            GRC Final Calculé :
+          </label>
+        </Tooltip>
+        <h2 className="text-2xl font-semibold">{CalculGRCFinal()}</h2>
+      </div>
+
       <div className="bg-gray-50 p-4 rounded-lg space-y-4">
         <div>
           <Tooltip text="GRC Final.">
@@ -158,11 +241,11 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           <select
             value={assessment.GRC_Final}
             onChange={(e) =>
-                          onChange({
-                            ...assessment,
-                            GRC_Final: e.target.value as GRC_Final,
-                          })
-                        }
+              onChange({
+                ...assessment,
+                GRC_Final: e.target.value as GRC_Final,
+              })
+            }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="1">1</option>
@@ -176,9 +259,6 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           </select>
         </div>
       </div>
-
     </div>
-    
-    
   );
 }

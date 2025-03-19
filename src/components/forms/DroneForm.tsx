@@ -8,7 +8,7 @@ interface DroneFormProps {
   onChange: (drone: DroneInfo) => void;
 }
 
-const droneClasses: DroneClass[] = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'];
+const droneClasses: DroneClass[] = ['Sans', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'Prototype'];
 const uasTypes: UasType[] = ['Avion', 'Hélicoptère', 'Multirotor', 'Hybride/VTOL', 'Plus léger que l\'air', 'Autre'];
 
 export function DroneForm({ drone, onChange }: DroneFormProps) {
@@ -166,6 +166,7 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
             type="number"
             value={drone.maxCharacteristicDimension}
             onChange={(e) => onChange({ ...drone, maxCharacteristicDimension: parseFloat(e.target.value) })}
+            step="0.1" // Ajoutez cet attribut pour définir l'incrément de l'input
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
@@ -181,7 +182,9 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Vitesse maximale (m/s)</label>
+          <Tooltip text="Vitesse Sol maximale du drone en opération en (m/s) ">
+            <label className="block text-sm font-medium text-gray-700">Vitesse maximale (m/s)</label>
+          </Tooltip>
           <input
             type="number"
             value={drone.maxSpeed}
@@ -189,9 +192,21 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
-
         <div>
-          <label className="block text-sm font-medium text-gray-700">Identification de Classe</label>
+          <Tooltip text="Masse Maximale au décolage MTOW (kg) ">
+            <label className="block text-sm font-medium text-gray-700">MTOW (kg)</label>
+          </Tooltip>
+          <input
+            type="number"
+            value={drone.MTOW}
+            onChange={(e) => onChange({ ...drone, MTOW: parseFloat(e.target.value) })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <Tooltip text="Si une classe est apposée sur le drone">
+            <label className="block text-sm font-medium text-gray-700">Identification de Classe</label>
+          </Tooltip>  
           <select
             value={drone.classIdentification || ''}
             onChange={(e) => onChange({ 

@@ -1,4 +1,4 @@
-export type DroneClass = 'C1' | 'C2' | 'C3' | 'C4' | 'C5' | 'C6';
+export type DroneClass = 'Sans' | 'C1' | 'C2' | 'C3' | 'C4' | 'C5' | 'C6' | 'Prototype';
 
 export type SailLevel =
   | 'SAIL 1'
@@ -6,7 +6,8 @@ export type SailLevel =
   | 'SAIL 3'
   | 'SAIL 4'
   | 'SAIL 5'
-  | 'SAIL 6';
+  | 'SAIL 6'
+  | 'Certifié';
 
 export type UasType =
   | 'Avion'
@@ -21,6 +22,10 @@ export type OperationType =
   | 'BVLOS – Vol hors vue';
 export type DangerousGoods = 'OUI' | 'NON';
 export type PopulationDensityModulation = 'OUI' | 'NON';
+export type ObstaclesModulation = 'OUI' | 'NON';
+export type GlidingCapability = 'OUI' | 'NON';
+export type HighImpactAngle = 'OUI' | 'NON';
+export type DetailedJarusModel = 'OUI' | 'NON';
 export type necessaryToReduceRisk = 'OUI' | 'NON';
 export type DayNightOperation = 'Jour' | 'Nuit' | 'Jour & Nuit';
 export type ConfinementLevel = 'Basic' | 'Enhanced';
@@ -40,7 +45,8 @@ export type assessmentTypeHauteurVol =
 export type iGRC = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type GRC_Final = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type assessmentCriticalArea =
-  | 'Calcul selon les table SORA'
+  | 'Calcul selon les tables SORA'
+  | 'Calcul selon les Modèles JARUS'
   | 'Spécifiée par le déposant';
 
 export interface DroneDimensions {
@@ -68,7 +74,7 @@ export interface DroneInfo {
   airworthinessCertificateNumber: string;
   acousticCertificateNumber: string;
   technicalDocuments: File[];
-  mass: number;
+  MTOW: number;
   maxSpeed: number;
   minSpeed: number;
   maxCharacteristicDimension: number;
@@ -119,27 +125,27 @@ export interface RiskAssessmentInfo {
   pilotCompetency: string;
   otherPersonnelCompetency: string;
   reportableEvents: string;
-  trajgeoFiles: File[];
-  mitigationStrategique: mitigationStrategique;
-  reduceImpactAttenuation: reduceImpactAttenuation;
-  operationalScenario?: OperationalScenario;
-  populationDensity?: PopulationDensity;
-  necessaryToReduceRisk: necessaryToReduceRisk
-  planInterventionUrgence?: mitigationStrategique;
-  confinementRequirements?: 'Basiques' | 'Amélioré';
-  additionalRemarks?: string;
   intrinsicGroundRisk?: number;
   finalGroundRisk?: number;
   airRisk?: number;
   sailLevel?: string;
-  airspaceClasses: airspaceClasses;
-  uspaceProvider: string;
-  otherDetails: string;
+  trajgeoFiles: File[];
+  mitigationStrategique: mitigationStrategique;
+  reduceImpactAttenuation: reduceImpactAttenuation;
   OperationalVolumeLevel: string;
   AdjacentVolumeLevel: string;
   detectAndAvoid: string;
   trafficDetection: string;
   additionalDetails: string;
+  operationalScenario?: OperationalScenario;
+  populationDensity?: PopulationDensity;
+  necessaryToReduceRisk: necessaryToReduceRisk
+  planInterventionUrgence: mitigationStrategique;
+  confinementRequirements: 'Basiques' | 'Amélioré';
+  additionalRemarks?: string;
+  airspaceClasses: airspaceClasses;
+  uspaceProvider: string;
+  otherDetails: string;
   StrategicMitigationAvailable: StrategicMitigationAvailable;
   StrategicMitigationJustification: string;
   OperationalVolumeLevelMitigated: OperationalVolumeLevelMitigated;
@@ -148,6 +154,18 @@ export interface RiskAssessmentInfo {
   iGRC: string;
   GRC_Final: string;
   SAILJustification: string;
+  iGRCcomputation: number;
+  SAIL: SailLevel;
+  maxCharacteristicDimension: number;
+  maxSpeed: number;
+  ObstaclesModulation: ObstaclesModulation;
+  GlidingCapability: GlidingCapability;
+  HighImpactAngle:HighImpactAngle;
+  dGlide: number;
+  dSlideReduced: number;
+  DetailedJarusModel:DetailedJarusModel;
+  ThetaGlide: number;
+  MTOW: number;
 }
 
 
@@ -198,7 +216,7 @@ export interface OperatorInfo {
   riskAssessmentVersion?: string;
 }
 
-export type OsoRobustnessLevel = 'Low' | 'Medium' | 'High';
+export type OsoRobustnessLevel = 'Non Requis' | 'Faible' | 'Moyen' | 'Élevé';
 
 export interface MitigationMeasure {
   id: string;
@@ -215,6 +233,7 @@ export interface Oso {
   requiredLevel: OsoRobustnessLevel;
   status: OsoRobustnessLevel;
   evidence: string;
+  tooltip: string;
 }
 
 export interface RiskAssessment {

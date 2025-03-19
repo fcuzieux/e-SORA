@@ -1,14 +1,218 @@
 import React from 'react';
+import { Tooltip } from '../common/Tooltip';
 import { Oso, OsoRobustnessLevel } from '../../types/sora';
+import { RiskAssessmentInfo } from '../../types/sora';
 
 interface OsoFormProps {
   osos: Oso[];
+    assessment: RiskAssessmentInfo;
   onChange: (osos: Oso[]) => void;
 }
 
-export function OsoForm({ osos, onChange }: OsoFormProps) {
+export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
   if (!osos) {
     return <div>Loading...</div>;
+  } else {
+    const ReqInfoSail = ['Non Requis' , 'Faible' , 'Moyen' , 'Élevé'];
+    let Tableau: number[] = [];
+    // switch (assessment.SAIL.toString()) {
+    //   case 'SAIL 1':
+    //     Tableau = [0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0];
+    //     break;
+    //   case 'SAIL 2':
+    //     Tableau = [0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0];
+    //     break;
+    // }
+    
+     if (assessment.SAIL.toString().includes('SAIL 1')) {
+        Tableau=[0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0] ;
+     } else if (assessment.SAIL.toString().includes('SAIL 2')) {
+        Tableau=[1,0,1,0,0,1,1,2,1,1,2,1,1,2,1,1,1,0,0] ;
+     } else if (assessment.SAIL.toString().includes('SAIL 3')) {
+        Tableau=[2,1,2,0,1,1,2,3,2,2,3,2,2,3,2,2,2,1,1] ;
+     } else if (assessment.SAIL.toString().includes('SAIL 4')) {
+        Tableau=[3,2,2,1,2,2,2,3,2,2,3,2,3,3,2,2,2,2,2] ;
+     } else if (assessment.SAIL.toString().includes('SAIL 5')) {
+        Tableau=[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2] ;
+     } else if (assessment.SAIL.toString().includes('SAIL 6')) {
+        Tableau=[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3] ;
+     } else if (assessment.SAIL.toString().includes('Certifié')) {
+        Tableau=[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3] ;
+     }
+     const SAILMap=Tableau;
+    osos = [
+      {
+        id: 'OSO1',
+        number: '01',
+        description: 'Opérateur UAS compétent et/ou approuvé',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(0)),
+        status: 'Faible',
+        evidence: '',
+        tooltip:'<div>Elément de réponse attendu :<br /> (a) Plan de formation générale. <br /> (b) Formation de l’équipage spécifique sur l’UAS concerné. <br />(c) Expérience de l’opérateur et précédentes opérations. <br />(d) Checklist et manuel d’entretien</div>',
+      },
+      {
+        id: 'OSO2',
+        number: '02',
+        description: 'Constructeur UAS compétent et/ou approuvé',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO3',
+        number: '03',
+        description: 'Maintenance UAS assurée par une entité compétente et/ou approuvée',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO4',
+        number: '04',
+        description: 'UAS développé selon des standards reconnus par l’autorité',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO5',
+        number: '05',
+        description: 'UAS conçu selon des standards de fiabilité et de sécurité',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO6',
+        number: '06',
+        description: 'Performances du Lien C3 appropriées pour la mission',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO7',
+        number: '07',
+        description: 'Inspections de l’UAS pour assurer la validité du ConOps',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO8',
+        number: '08',
+        description: 'Procédures opérationnelles définies, validées et appliquées',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO9',
+        number: '09',
+        description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO10',
+        number: '10',
+        description: 'Retour à la normale en toute sécurité après un problème technique',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO11',
+        number: '11',
+        description: 'Des procédures sont en place pour supporter la détérioration des systèmes externes de soutien à l’opération',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO12',
+        number: '12',
+        description: 'L’UAS est conçu pour supporter la détérioration des systèmes externes de soutien',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO13',
+        number: '13',
+        description: 'Les systèmes externes de soutien sont adéquats pour l’opération',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO14',
+        number: '14',
+        description: 'Procédures opérationnelles définies, validées et appliquées',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO15',
+        number: '15',
+        description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO16',
+        number: '16',
+        description: 'Coordination intra-équipage',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO17',
+        number: '17',
+        description: 'Equipage en capacité d’exploiter',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO18',
+        number: '18',
+        description: 'Protection automatique de l’enveloppe de vol, résistance à l’erreur humaine',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+      {
+        id: 'OSO19',
+        number: '19',
+        description: 'Retour à la normale en toute sécurité après une erreur humaine',
+        requiredLevel: 'Faible',
+        status: 'Faible',
+        evidence: '',
+        tooltip:'Elément de réponse attendu : ',
+      },
+    ];
   }
 
   const handleOsoChange = (index: number, updates: Partial<Oso>) => {
@@ -55,14 +259,21 @@ export function OsoForm({ osos, onChange }: OsoFormProps) {
           </div>
 
           <div>
+          <Tooltip
+            text={
+              <div dangerouslySetInnerHTML={{ __html: oso.tooltip }} />
+            }
+          >
             <label className="block text-sm font-medium text-gray-700">
               Justification / Preuves
-            </label>
+            </label></Tooltip>
             <textarea
               value={oso.evidence}
               onChange={(e) => handleOsoChange(index, { evidence: e.target.value })}
-              rows={3}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                rows={4}
+
+              //placeholder={oso.tooltip}
             />
           </div>
         </div>
