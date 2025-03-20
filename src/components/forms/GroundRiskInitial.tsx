@@ -92,7 +92,7 @@ export function RiskAssessmentForm({
       let Knonlethal =290.0;
       //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
       let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
-      // Coefficient of restitution 0.65
+      // Coefficient of restitution 0.8 //0.65
       let coefficient_of_restitution=0.8-0.42*(assessment.ThetaGlide-10.0)/70.0;
       // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
       let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
