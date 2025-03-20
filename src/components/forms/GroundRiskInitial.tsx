@@ -55,12 +55,18 @@ export function RiskAssessmentForm({
 
   const CalculJARUSCriticalArea = () => {
     let Ac = Number(5);
-    let rPerson = 0.5;
-    let rD=rPerson+0.5*assessment.maxCharacteristicDimension/2.0;
+    let rPerson = 0.3;
+    let rD=rPerson+assessment.maxCharacteristicDimension/2.0;
+    let Modulation=1.0;
+    if (assessment.ObstaclesModulation === 'OUI') {
+      Modulation=0.6;
+    } else {
+      Modulation=1.0;
+    }
     if (assessment.maxCharacteristicDimension<=1.0) {
       Ac = 2.0*rD*assessment.dGlide+Math.PI*Math.pow(rD, 2);
     } else if (assessment.maxCharacteristicDimension<8.0) {
-      Ac = 0.6*(2*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*Math.pow(rD, 2));
+      Ac = Modulation*(2*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*Math.pow(rD, 2));
     } else if (assessment.maxCharacteristicDimension>=8.0) {
       Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*Math.pow(rD, 2);
     }
@@ -68,6 +74,56 @@ export function RiskAssessmentForm({
     return Ac;
   }
 
+
+  const AdviceThetaGlide = () => {
+    if (assessment.maxCharacteristicDimension<=1.0) {
+      //assessment.ThetaGlide = 35.0;
+      return 35.0;
+    } else {
+      //assessment.ThetaGlide = 10.0;
+      return 10.0;    
+    }
+  }
+
+  const AdvicedSlideReduced = () => {
+    if (assessment.DetailedJarusModel == 'OUI') {
+      // Non-lethal kinetic energy limit : (290.0 J)
+      let Knonlethal =290.0;
+      //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
+      let vnonlethal    = Math.sqrt(2 * Knonlethal            /assessment.MTOW);
+      // Coefficient of restitution 0.65
+      let coefficient_of_restitution=0.65;
+      // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
+      let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
+      if (assessment.maxCharacteristicDimension>1.0) {
+        let Vglide = assessment.maxSpeed*0.65;
+        vhorizontale = Vglide;
+      }
+      // Coefficient of friction 0.75
+      let Cg = 0.75;
+      let GRAVITY = 9.81;
+      let acceleration = Cg * GRAVITY;
+      // t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
+      let tsafe = Math.max((coefficient_of_restitution          * vhorizontale            - vnonlethal       ) / acceleration,0.0);
+      // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
+      let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
+      assessment.dSlideReduced = dslide_reduced;
+      return dslide_reduced;
+    } else {
+      return 0.0;
+    }
+  }
+
+  const AdvicedGlide = () => {
+    let hPerson = 1.8;
+    if (assessment.DetailedJarusModel == 'OUI') {
+      assessment.dGlide=hPerson/Math.tan(assessment.ThetaGlide*Math.PI/180.0);
+      return assessment.dGlide
+      
+    } else {
+      return 0.0;
+    }
+  }
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -496,7 +552,7 @@ export function RiskAssessmentForm({
                     {assessment.DetailedJarusModel === 'OUI' && (
                       
                       <div>
-                      <Tooltip text="Angle d'impact (de plané/fauché.)">
+                      <Tooltip text="Angle d'impact (de plané/fauché.) NB: Si Dimensions caractéristiques maximales ≤ 1m prendre 35°, et pour les appareil plus grand prendre 10°.">
                         <label className="block text-sm font-medium text-gray-700">
                           Theta_Glide (deg)
                         </label>
@@ -510,8 +566,9 @@ export function RiskAssessmentForm({
                             ThetaGlide: parseFloat(e.target.value) || 0.000
                           })
                         }
-                        step="0.001"
+                        step="0.1"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder={AdviceThetaGlide().toString()}
                       />     
                       
                         <label className="block text-sm font-medium text-gray-700">
@@ -520,6 +577,25 @@ export function RiskAssessmentForm({
                         <div className="mt-1 p-2 bg-gray-50 rounded-md">
                           {assessment.MTOW}
                         </div>                 
+                      </div>
+                    )}
+                    {assessment.DetailedJarusModel === 'OUI' && (
+                      <div>
+                        <Tooltip text="Si votre Angle d'impact ne respecte pas les consignes, apporter une justification. NB: Si Dimensions caractéristiques maximales ≤ 1m prendre 35°, et pour les appareil plus grand prendre 10°.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Theta_Glide Justification
+                          </label>
+                        </Tooltip>
+                        <textarea
+                            value={assessment.Theta_Glide_Justification}
+                            onChange={(e) =>
+                              onChange({
+                                ...assessment,
+                                Theta_Glide_Justification: e.target.value,
+                              })}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            rows={4}
+                          />
                       </div>
                     )}
                     
@@ -540,6 +616,7 @@ export function RiskAssessmentForm({
                         }
                         step="0.001"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder={AdvicedGlide().toString()}
                       />
                       
                     </div> 
@@ -560,6 +637,7 @@ export function RiskAssessmentForm({
                         }
                         step="0.001"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder={AdvicedSlideReduced().toString()}
                       />
                       
                     </div>

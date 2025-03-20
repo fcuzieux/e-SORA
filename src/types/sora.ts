@@ -166,6 +166,7 @@ export interface RiskAssessmentInfo {
   DetailedJarusModel:DetailedJarusModel;
   ThetaGlide: number;
   MTOW: number;
+  Theta_Glide_Justification: string;
 }
 
 
