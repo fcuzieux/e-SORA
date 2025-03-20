@@ -66,10 +66,11 @@ export function RiskAssessmentForm({
     if (assessment.maxCharacteristicDimension<=1.0) {
       Ac = 2.0*rD*assessment.dGlide+Math.PI*Math.pow(rD, 2);
     } else if (assessment.maxCharacteristicDimension<8.0) {
-      Ac = Modulation*(2*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*Math.pow(rD, 2));
+      Ac = Modulation*(2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD);
     } else if (assessment.maxCharacteristicDimension>=8.0) {
-      Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*Math.pow(rD, 2);
+      Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
     }
+//    Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
     assessment.CriticalArea = Ac;
     return Ac;
   }
@@ -90,17 +91,17 @@ export function RiskAssessmentForm({
       // Non-lethal kinetic energy limit : (290.0 J)
       let Knonlethal =290.0;
       //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
-      let vnonlethal    = Math.sqrt(2 * Knonlethal            /assessment.MTOW);
+      let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
       // Coefficient of restitution 0.65
-      let coefficient_of_restitution=0.65;
+      let coefficient_of_restitution=0.8-0.42*(assessment.ThetaGlide-10.0)/70.0;
       // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
       let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
-      if (assessment.maxCharacteristicDimension>1.0) {
-        let Vglide = assessment.maxSpeed*0.65;
-        vhorizontale = Vglide;
-      }
+      // if (assessment.maxCharacteristicDimension>1.0) {
+      //   let Vglide = assessment.maxSpeed*0.65;
+      //   vhorizontale = Vglide;
+      // }
       // Coefficient of friction 0.75
-      let Cg = 0.75;
+      let Cg = 0.6;
       let GRAVITY = 9.81;
       let acceleration = Cg * GRAVITY;
       // t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
@@ -108,7 +109,7 @@ export function RiskAssessmentForm({
       // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
       let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
       assessment.dSlideReduced = dslide_reduced;
-      return dslide_reduced;
+      return assessment.dSlideReduced;
     } else {
       return 0.0;
     }
