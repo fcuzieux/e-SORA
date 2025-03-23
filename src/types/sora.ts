@@ -48,7 +48,9 @@ export type assessmentCriticalArea =
   | 'Calcul selon les tables SORA'
   | 'Calcul selon les Modèles JARUS'
   | 'Spécifiée par le déposant';
-
+  export type assessmentContingencyVolume =
+  | 'Spécifiée par le déposant'
+  | 'Calcul selon le Guide';
 export interface DroneDimensions {
   length: number;
   width: number;
@@ -116,10 +118,12 @@ export interface OperationInfo {
 export interface RiskAssessmentInfo {
   assessmentTypeHauteurVol: assessmentTypeHauteurVol;
   assessmentCriticalArea: assessmentCriticalArea;
+  assessmentContingencyVolume: assessmentContingencyVolume;
   followTerrainHeight: number;
   PopulationDensityModulation: PopulationDensityModulation;
   assessmentStartTime: string;
   CriticalArea: number;
+  ContingencyVolume: number;
   maxDistanceFromPilot: number;
   confinementLevel: ConfinementLevel;
   pilotCompetency: string;
@@ -167,6 +171,19 @@ export interface RiskAssessmentInfo {
   ThetaGlide: number;
   MTOW: number;
   Theta_Glide_Justification: string;
+  UserCriticalArea_Justification: string;
+  FlightGeographyWidth: number;
+  FlightGeographyHeight: number;
+  FlightGeography_Justification: string; 
+  ContingencyVolumeWidth: number;
+  ContingencyVolumeHeight: number;
+  ContingencyVolume_Justification: string; 
+  ContingencyVolumeSGPS: number;
+  ContingencyVolumeSpos: number;
+  ContingencyVolumeSK: number;
+  ContingencyVolumeSRZ: number;
+  ContingencyVolumeParachute: boolean;
+  ContingencyVolumeSCM: number;
 }
 
 

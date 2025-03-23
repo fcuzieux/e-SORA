@@ -6,6 +6,7 @@ import {
   OperationInfo,
   assessmentTypeHauteurVol,
   assessmentCriticalArea,
+  assessmentContingencyVolume,
   PopulationDensityModulation,
   SailLevel,
   OperationalScenario,
@@ -93,14 +94,14 @@ export function RiskAssessmentForm({
       //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
       let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
       // Coefficient of restitution 0.8 //0.65
-      let coefficient_of_restitution=0.8-0.42*(assessment.ThetaGlide-10.0)/70.0;
+      let coefficient_of_restitution=0.8;//-0.42*(assessment.ThetaGlide-10.0)/70.0;
       // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
       let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
       // if (assessment.maxCharacteristicDimension>1.0) {
       //   let Vglide = assessment.maxSpeed*0.65;
       //   vhorizontale = Vglide;
       // }
-      // Coefficient of friction 0.75
+      // Coefficient of friction 0.75 
       let Cg = 0.6;
       let GRAVITY = 9.81;
       let acceleration = Cg * GRAVITY;
@@ -108,7 +109,7 @@ export function RiskAssessmentForm({
       let tsafe = Math.max((coefficient_of_restitution          * vhorizontale            - vnonlethal       ) / acceleration,0.0);
       // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
       let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
-      assessment.dSlideReduced = dslide_reduced;
+      assessment.dSlideReduced = parseFloat(dslide_reduced.toFixed(2));
       return assessment.dSlideReduced;
     } else {
       return 0.0;
@@ -118,8 +119,8 @@ export function RiskAssessmentForm({
   const AdvicedGlide = () => {
     let hPerson = 1.8;
     if (assessment.DetailedJarusModel == 'OUI') {
-      assessment.dGlide=hPerson/Math.tan(assessment.ThetaGlide*Math.PI/180.0);
-      return assessment.dGlide
+      assessment.dGlide=parseFloat((hPerson / Math.tan(assessment.ThetaGlide * Math.PI / 180.0)).toFixed(2));
+      return parseFloat(assessment.dGlide.toFixed(2));
       
     } else {
       return 0.0;
@@ -340,10 +341,13 @@ export function RiskAssessmentForm({
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h2 className="text-lg font-medium">
+            Etape 1 : Determination de la surface critique de crash (Ac).
+          </h2>
             <div>
               <Tooltip text="Aussi appelée Critical Area ou Surface de Crash">
                 <label className="block text-sm font-medium text-gray-700">
-                  Surface Critique
+                  Méthode d'évaluation de la Surface Critique
                 </label>
               </Tooltip>
               <select
@@ -376,24 +380,43 @@ export function RiskAssessmentForm({
           </div>
             {assessment.assessmentCriticalArea ===
               'Spécifiée par le déposant' ? (
-              <div>
-                <Tooltip text="Valeur de la Surface Critique déclarée (m²) A justifier par l'opérateur en annexe ! ">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Valeur de la Surface Critique déclarée (m²)
-                  </label>
-                </Tooltip>
-                <input
-                  type="number"
-                  value={assessment.CriticalArea}
-                  onChange={(e) =>
-                    onChange({
-                      ...assessment,
-                      CriticalArea: parseInt(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
+                <div>
+                  <div>
+                    <Tooltip text="Valeur de la Surface Critique déclarée (m²) A justifier par l'opérateur en annexe ! ">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Valeur de la Surface Critique déclarée (m²)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={assessment.CriticalArea}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          CriticalArea: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                  <Tooltip text="Si vous choisissez de déclarer votre propre valeur de surface critique, veuillez apporter une justification. Celle-ci doit établir clairement le mode de calcul adopté. Vous devrez fournir en annexe un document détaillant chaque étape de calcul et leur base de justification.">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Justification de votre surface Critique
+                    </label>
+                  </Tooltip>
+                  <textarea
+                      value={assessment.UserCriticalArea_Justification}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          UserCriticalArea_Justification: e.target.value,
+                        })}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      rows={4}
+                    />
+                  </div>
+                </div>
               ) : assessment.assessmentCriticalArea ===
               'Calcul selon les Modèles JARUS' ? (
               <div>
@@ -401,8 +424,8 @@ export function RiskAssessmentForm({
                   <label className="block text-sm font-medium text-gray-700">
                     Valeur de la Surface Critique Calculée (m²)
                   </label>
-                  <div className="mt-1 p-2 bg-gray-50 rounded-md">
-                    {CalculJARUSCriticalArea()}
+                  <div className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    {Math.round(CalculJARUSCriticalArea())}
                   </div>
                 </div>
                 
@@ -553,24 +576,24 @@ export function RiskAssessmentForm({
                     {assessment.DetailedJarusModel === 'OUI' && (
                       
                       <div>
-                      <Tooltip text="Angle d'impact (de plané/fauché.) NB: Si Dimensions caractéristiques maximales ≤ 1m prendre 35°, et pour les appareil plus grand prendre 10°.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Theta_Glide (deg)
-                        </label>
-                      </Tooltip>
-                      <input
-                        type="number"
-                        value={assessment.ThetaGlide}
-                        onChange={(e) =>
-                          onChange({
-                            ...assessment,
-                            ThetaGlide: parseFloat(e.target.value) || 0.000
-                          })
-                        }
-                        step="0.1"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder={AdviceThetaGlide().toString()}
-                      />     
+                        <Tooltip text="Angle d'impact (de plané/fauché.) NB: Si Dimensions caractéristiques maximales ≤ 1m prendre 35°, et pour les appareil plus grand prendre 10°.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Theta_Glide (deg)
+                          </label>
+                        </Tooltip>
+                        <input
+                          type="number"
+                          value={assessment.ThetaGlide}
+                          onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              ThetaGlide: parseFloat(e.target.value) || 0.000
+                            })
+                          }
+                          step="0.1"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          placeholder={AdviceThetaGlide().toString()}
+                        />     
                       
                         <label className="block text-sm font-medium text-gray-700">
                           Mass maximale MTOW (kg)
@@ -601,7 +624,13 @@ export function RiskAssessmentForm({
                     )}
                     
                     <div>
-                      <Tooltip text="Distance de plané/fauché.">
+                      <Tooltip  text={
+                                  <div>
+                                    Distance de plané à hauteur d'homme.
+                                    <br />
+                                    d_Glide = hperson/tan θ
+                                  </div>
+                                }>
                         <label className="block text-sm font-medium text-gray-700">
                           d_Glide (m)
                         </label>
@@ -617,12 +646,19 @@ export function RiskAssessmentForm({
                         }
                         step="0.001"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder={AdvicedGlide().toString()}
+                        placeholder={(AdvicedGlide()).toString()}
+                        
                       />
                       
                     </div> 
                     <div>
-                      <Tooltip text="Distance de plané/fauché.">
+                      <Tooltip  text={
+                                  <div>
+                                    Distance de glissement/friction.
+                                    <br />
+                                    d_Slide,reduced = e·vhorizontal·tsafe − 0,5·Cg·g(tsafe)²
+                                  </div>
+                                }>
                         <label className="block text-sm font-medium text-gray-700">
                           d_Slide,reduced (m)
                         </label>
@@ -686,7 +722,7 @@ export function RiskAssessmentForm({
                   </table>
                 </div>
                 <div>
-                <Tooltip   text={
+                <Tooltip  text={
                                   <div>
                                     Valeur de la Surface Critique (m²) selon les tables SORA.
                                     <br />
@@ -706,14 +742,377 @@ export function RiskAssessmentForm({
                       CriticalArea: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   disabled
                 />
                 </div>
                 </div>
             )}
+        </div> 
+        <div> 
+          <h2 className="text-lg font-medium">Etape 2 : Determination du Volume d'évolution (Flight Geometry).</h2> 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">               
+            <div>
+              <Tooltip  text={
+                                  <div>
+                                    Largeur du Volume d'évolution. 
+                                    <br />
+                                    Attention : Des valeurs inférieures à 3 fois la dimension caractéristique maximale de l'appareil sont considérées irrecevables. 
+                                    <br />
+                                    S_FG≥ 3.maxCharacteristicDimension
+                                  </div>
+                                }>
+                <label className="block text-sm font-medium text-gray-700">
+                  S_FG : Largeur du Volume d'évolution (m)
+                </label>
+              </Tooltip>
+              <input
+                type="number"
+                value={assessment.FlightGeographyWidth}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    FlightGeographyWidth: Math.max(parseFloat(e.target.value),(3*assessment.maxCharacteristicDimension)) || 0.000
+                  })
+                }
+                step="0.1"
+                min={3 * assessment.maxCharacteristicDimension} // Définit la valeur minimale autorisée
+                className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder={(3*assessment.maxCharacteristicDimension).toString()}
+              />
+            </div> 
+            <div>
+              <Tooltip  text={
+                                  <div>
+                                    Hauteur du Volume d'évolution. 
+                                    <br />                                    
+                                    Attention : Des valeurs inférieures à 3 fois la dimension caractéristique maximale de l'appareil sont considérées irrecevables. 
+                                    <br />
+                                    H_FG≥ 3.maxCharacteristicDimension
+                                  </div>
+                                }>
+                <label className="block text-sm font-medium text-gray-700">
+                  H_FG : Hauteur du Volume d'évolution (m)
+                </label>
+              </Tooltip>
+              <input
+                type="number"
+                value={assessment.FlightGeographyHeight}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    FlightGeographyHeight: Math.max(parseFloat(e.target.value),(3*assessment.maxCharacteristicDimension)) || 0.000
+                  })
+                }
+                step="0.1"
+                min={3 * assessment.maxCharacteristicDimension} // Définit la valeur minimale autorisée
+                className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder={(3*assessment.maxCharacteristicDimension).toString()}
+              />
+            </div> 
+          </div>   
+          <div>
+                <Tooltip text="Vous pouvez si vous le souhaitez apporter des éléments de justification de la définition de votre Volume d'évolution.">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Justification de votre Volume d'évolution
+                  </label>
+                </Tooltip>
+                <textarea
+                    value={assessment.FlightGeography_Justification}
+                    onChange={(e) =>
+                      onChange({
+                        ...assessment,
+                        FlightGeography_Justification: e.target.value,
+                      })}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    rows={4}
+                  />
+          </div> 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-lg font-medium">Etape 3 : Determination du volume de Contingence (S_CV : Contingency Volume).</h2>
+            <div>
+              <Tooltip text="Le Volume de Contingence : volume dans lequel le drone est considéré comme étant dans une situation anormale et qui requiert l’exécution des procédures de contingence appropriée pour le faire revenir au-dessus de sa zone d’évolution. A minima la taille du volume de contingence est calculée comme la distance parcourue par le drone à sa vitesse sol maximale durant le temps de réaction du pilote pour s’apercevoir qu’il est sorti du volume d’évolution et de prendre les mesures adaptées.  La limite interne du volume de contingence doit correspondre à la limite externe du volume d’évolution.">
+                <label className="block text-sm font-medium text-gray-700">
+                  Méthode d'évaluation du Volume de Contingence
+                </label>
+              </Tooltip>
+              <select
+                value={assessment.assessmentContingencyVolume}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    assessmentContingencyVolume: e.target
+                      .value as assessmentContingencyVolume,
+                    ContingencyVolume:
+                      e.target.value === 'Spécifiée par le déposant'
+                        ? assessment.ContingencyVolume
+                        : 0,
+                  })
+                }
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+                <option value="Spécifiée par le déposant">
+                  Spécifiée par le déposant
+                </option>
+                <option value="Calcul selon le Guide">
+                  Calcul selon le Guide 
+                </option>
+              </select>
+            </div>
             
+          </div>
+            {assessment.assessmentContingencyVolume ===
+              'Calcul selon le Guide' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Largeur du Volume de Contingence. 
+                                      <br />
+                                      Attention : Des valeurs inférieures à la Largeur du Volume d'évolution sont considérées irrecevables. 
+                                      <br />
+                                      S_CV ≥ S_FG
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                    S_CV : Largeur du Volume de Contingence (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeWidth}
+                  onChange={(e) =>
+                    onChange({
+                      ...assessment,
+                      ContingencyVolumeWidth: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyWidth)) || 0.000
+                    })
+                  }
+                  step="0.1"
+                  min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={(assessment.FlightGeographyWidth)}
+                />
+                </div> 
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Hauteur du Volume de Contingence. 
+                                      <br />                                    
+                                      Attention : Des valeurs inférieures à la Hauteur du Volume d'évolution sont considérées irrecevables.  
+                                      <br />
+                                      H_CV ≥ H_FG
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                    H_FG : Hauteur du Volume d'évolution (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeHeight}
+                  onChange={(e) =>
+                    onChange({
+                      ...assessment,
+                      ContingencyVolumeHeight: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyHeight)) || 0.000
+                    })
+                  }
+                  step="0.1"
+                  min={assessment.FlightGeographyHeight} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={(assessment.FlightGeographyHeight)}
+                />
+                </div>
+
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      GPS - Inaccuracy 
+                                      <br />                                    
+                                      ...  
+                                      <br />
+                                      ...
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                   GPS - Inaccuracy (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeSGPS}
+                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSGPS: parseFloat(e.target.value) })}
+                  step="0.1"
+                  min={1.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={1.0}
+                />
+                </div>
+
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Position Holding
+                                      <br />                                    
+                                      ...  
+                                      <br />
+                                      ...
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                  Position Holding (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeSpos}
+                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSpos: parseFloat(e.target.value) })}
+                  step="0.1"
+                  min={1.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={3.0}
+                />
+                </div>
+
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Map error 
+                                      <br />                                    
+                                      ...  
+                                      <br />
+                                      ...
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                  Map error (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeSK}
+                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSK: parseFloat(e.target.value) })}
+                  step="0.1"
+                  min={1.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={1.0}
+                />
+                </div>
+
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Reaction distance 
+                                      <br />                                    
+                                      ...  
+                                      <br />
+                                      ...
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                  Reaction distance (m)
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeSRZ}
+                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSRZ: parseFloat(e.target.value) })}
+                  step="0.1"
+                  min={1.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={1.0}
+                />
+                </div>                                
+
+
+              </div>
+              ) : (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                  <Tooltip  text={
+                                      <div>
+                                        Largeur du Volume de Contingence. 
+                                        <br />
+                                        Attention : Des valeurs inférieures à la Largeur du Volume d'évolution sont considérées irrecevables. 
+                                        <br />
+                                        S_CV ≥ S_FG
+                                      </div>
+                                    }>
+                    <label className="block text-sm font-medium text-gray-700">
+                      S_CV : Largeur du Volume de Contingence (m)
+                    </label>
+                  </Tooltip>
+                  <input
+                    type="number"
+                    value={assessment.ContingencyVolumeWidth}
+                    onChange={(e) => onChange({ ...assessment, ContingencyVolumeSGPS: parseFloat(e.target.value) })}
+                    step="0.1"
+                    min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                    className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder={(assessment.FlightGeographyWidth)}
+                  />
+                  </div> 
+                  <div>
+                  <Tooltip  text={
+                                      <div>
+                                        Hauteur du Volume de Contingence. 
+                                        <br />                                    
+                                        Attention : Des valeurs inférieures à la Hauteur du Volume d'évolution sont considérées irrecevables.  
+                                        <br />
+                                        H_CV ≥ H_FG
+                                      </div>
+                                    }>
+                    <label className="block text-sm font-medium text-gray-700">
+                      H_FG : Hauteur du Volume d'évolution (m)
+                    </label>
+                  </Tooltip>
+                  <input
+                    type="number"
+                    value={assessment.ContingencyVolumeHeight}
+                    onChange={(e) =>
+                      onChange({
+                        ...assessment,
+                        ContingencyVolumeHeight: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyHeight)) || 0.000
+                      })
+                    }
+                    step="0.1"
+                    min={assessment.FlightGeographyHeight} // Définit la valeur minimale autorisée
+                    className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder={(assessment.FlightGeographyHeight)}
+                  />
+                  </div>
+                </div>
+                <div>
+                  <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Justification de votre Volume de Contingence
+                    </label>
+                  </Tooltip>
+                  <textarea
+                      value={assessment.ContingencyVolume_Justification}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          ContingencyVolume_Justification: e.target.value,
+                        })}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      rows={4}
+                    />
+                </div>
+              </div>
+
+              )
+            }  
+          <h2 className="text-lg font-medium">Etape 4 : Determination du Volume Tampon (Ground Risk Buffer).</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             
             
+          </div>
+          <h2 className="text-lg font-medium">Etape 5 : Determination de la Zonr Adjacente (Adjacent Volume).</h2>    
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+            
+          </div> 
         </div>
       </section>
 
