@@ -37,6 +37,11 @@ export function RiskAssessmentForm({
   showOnly,
 }: RiskAssessmentFormProps) {
 
+
+  const checkboxes = [
+    'Manoeuvre de Contingence  Alternative "Parachute"',
+  ];
+
  const ACtable = () => {
     let AcFromTable = Number(8);
     if (assessment.maxCharacteristicDimension<=1.0) {
@@ -928,7 +933,7 @@ export function RiskAssessmentForm({
                                     <div>
                                       GPS - Inaccuracy 
                                       <br />                                    
-                                      ...  
+                                      En règle général, on assumera une erreur ≥ 3 mètres.  
                                       <br />
                                       ...
                                     </div>
@@ -942,18 +947,21 @@ export function RiskAssessmentForm({
                   value={assessment.ContingencyVolumeSGPS}
                   onChange={(e) => onChange({ ...assessment, ContingencyVolumeSGPS: parseFloat(e.target.value) })}
                   step="0.1"
-                  min={1.0} // Définit la valeur minimale autorisée
-                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  min={0.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   placeholder={1.0}
                 />
                 </div>
 
                 <div>
+                </div>
+
+                <div>
                 <Tooltip  text={
                                     <div>
-                                      Position Holding
+                                      Positionnement du maintien de la position (Position Holding)
                                       <br />                                    
-                                      ...  
+                                      En règle général, on assumera une erreur ≥ 3 mètres.  
                                       <br />
                                       ...
                                     </div>
@@ -967,18 +975,22 @@ export function RiskAssessmentForm({
                   value={assessment.ContingencyVolumeSpos}
                   onChange={(e) => onChange({ ...assessment, ContingencyVolumeSpos: parseFloat(e.target.value) })}
                   step="0.1"
-                  min={1.0} // Définit la valeur minimale autorisée
-                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  min={0.5} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   placeholder={3.0}
                 />
                 </div>
+                
+                <div>
+                </div>
+
 
                 <div>
                 <Tooltip  text={
                                     <div>
                                       Map error 
                                       <br />                                    
-                                      ...  
+                                      En règle général, on assumera une erreur ≥ 1 mètre. 
                                       <br />
                                       ...
                                     </div>
@@ -992,33 +1004,139 @@ export function RiskAssessmentForm({
                   value={assessment.ContingencyVolumeSK}
                   onChange={(e) => onChange({ ...assessment, ContingencyVolumeSK: parseFloat(e.target.value) })}
                   step="0.1"
-                  min={1.0} // Définit la valeur minimale autorisée
-                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  min={0.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-grey-200  shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   placeholder={1.0}
                 />
                 </div>
+                
+                <div>
+                </div>
+
 
                 <div>
                 <Tooltip  text={
                                     <div>
-                                      Reaction distance 
+                                      Temps de Réaction de l'opérateur ou du système. 
                                       <br />                                    
-                                      ...  
+                                      Temps nécessaire pour que l'opérateur prenne conscience de la situation et réagisse.
                                       <br />
-                                      ...
+                                      Cas de l'initialisation manuelle de mesures de contingence. t_RZ ≥ 1 seconde 
+                                      <br />
+                                      En cas d'automatisation type Geofence par exemple, ce temps peut-être plus court.  Dans ce cas apporter une justification. 
                                     </div>
                                   }>
                   <label className="block text-sm font-medium text-gray-700">
-                  Reaction distance (m)
+                  Temps de Réaction de l'opérateur ou du système (s)
                   </label>
                 </Tooltip>
                 <input
                   type="number"
-                  value={assessment.ContingencyVolumeSRZ}
-                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSRZ: parseFloat(e.target.value) })}
+                  value={assessment.ContingencyTimeRZ}
+                  onChange={(e) => onChange({ ...assessment, ContingencyTimeRZ: parseFloat(e.target.value), ContingencyVolumeSRZ: parseFloat(e.target.value)*assessment.maxSpeed })}
+                  step="0.1"
+                  min={0.0} // Définit la valeur minimale autorisée
+                  className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder={1.0}
+                />
+                </div> 
+                
+                <div>
+                </div>
+
+                <div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Distance de réaction S_RZ (m)
+                    </label>
+                    <div className="mt-1 block w-full rounded-md border-grey-200 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                      {(assessment.ContingencyVolumeSRZ)}
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                </div>
+                  {checkboxes.map((cls) => (
+                    <div key={cls} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={(assessment.ContingencyParachuteManeuver || []).includes(cls)}
+                        onChange={
+                          (e) =>
+                            onChange({
+                              ...assessment,
+                              ContingencyParachuteManeuver: e.target.checked
+                                ? [...(assessment.ContingencyParachuteManeuver || []), cls]
+                                : (assessment.ContingencyParachuteManeuver || []).filter((c) => c !== cls),
+                            })}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      />
+                      <label className="ml-2 text-sm text-gray-700">{cls}</label>
+                    </div>
+                                        
+                  ))}
+
+
+                  {assessment.ContingencyParachuteManeuver ==='Manoeuvre de Contingence  Alternative "Parachute"' ? (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                    Parachute OUI
+                    </label>
+                  </div>
+                ) : (
+                  <div>
+                     <label className="block text-sm font-medium text-gray-700">
+                     {assessment.ContingencyParachuteManeuver}
+                    </label>
+                  </div>
+                )}
+                {/* <div>
+                      {cls === 'Manoeuvre de Contingence  Alternative "Parachute"' && (assessment.ContingencyParachuteManeuver || []).includes('Manoeuvre de Contingence  Alternative "Parachute"') && (
+                        <input
+                          type="number"
+                          value={assessment.ContingencyParachuteTime}
+                          onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              ContingencyParachuteTime: e.target.value,
+                            })}
+                          className="ml-4 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          placeholder="Fournisseur de service USSP"
+                        />
+                      )}
+                       </div> */}
+                <div>
+                <Tooltip  text={
+                                    <div>
+                                      Manoeuvre de contigence S_CM (m) 
+                                      <br />                                    
+                                      * Hélicoptère/Multi-rotor ≡ Arrêt d'urgence
+                                      <br />
+                                      S_CM = 1/2·Vmax²/(g·tan(θ))
+                                      <br />  
+                                      * Avion/Hybride/Plus léger que l'air ≡ Virage à 180°
+                                      <br />
+                                      S_CM = Vmax²/(g·tan(φ))
+                                      <br />
+                                      en assumant un angle de roulis φ de 30°.
+                                      <br />
+                                      ou bien 
+                                      <br />
+                                      S_CM = 180°/(2·taux de virage max)
+                                    </div>
+                                  }>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Manoeuvre de contigence S_CM (m) 
+                  </label>
+                </Tooltip>
+                <input
+                  type="number"
+                  value={assessment.ContingencyVolumeSCM}
+                  onChange={(e) => onChange({ ...assessment, ContingencyVolumeSCM: parseFloat(e.target.value) })}
                   step="0.1"
                   min={1.0} // Définit la valeur minimale autorisée
-                  className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   placeholder={1.0}
                 />
                 </div>                                
@@ -1045,7 +1163,7 @@ export function RiskAssessmentForm({
                   <input
                     type="number"
                     value={assessment.ContingencyVolumeWidth}
-                    onChange={(e) => onChange({ ...assessment, ContingencyVolumeSGPS: parseFloat(e.target.value) })}
+                    onChange={(e) => onChange({ ...assessment, ContingencyVolumeWidth: parseFloat(e.target.value) })}
                     step="0.1"
                     min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
                     className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"

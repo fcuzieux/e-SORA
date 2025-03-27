@@ -36,6 +36,8 @@ export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type OperationalScenario = 'VLOS' | 'BVLOS';
 export type PopulationDensity = 'low' | 'moderate' | 'high';
 export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
+export type ContingencyParachuteManeuver = 'Manoeuvre de Contingence  Alternative "Parachute"';
+
 export type StrategicMitigationAvailable = 'OUI' | 'NON';
 export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type TacticalMitigationAvailable = 'OUI' | 'NON';
@@ -182,8 +184,11 @@ export interface RiskAssessmentInfo {
   ContingencyVolumeSpos: number;
   ContingencyVolumeSK: number;
   ContingencyVolumeSRZ: number;
+  ContingencyTimeRZ: number;
   ContingencyVolumeParachute: boolean;
   ContingencyVolumeSCM: number;
+  ContingencyParachuteManeuver:ContingencyParachuteManeuver;
+  ContingencyParachuteTime: number;
 }
 
 
