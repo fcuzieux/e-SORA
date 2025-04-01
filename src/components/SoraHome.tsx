@@ -6,6 +6,7 @@ import { DeleteConfirmDialog } from './dialogs/DeleteConfirmDialog';
 import { useStudyContext } from '../contexts/StudyContext';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import LogoCedFrance from '../image/LOGO_CED_FRANCE.png';
 
 interface SavedStudy {
   id: string;
@@ -93,7 +94,7 @@ export function SoraHome() {
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="flex flex-col items-center mb-8">
         <img 
-          src="https://w3.onera.fr/drones/sites/default/files/styles/large/public/2025-01/LOGO_CED_FRANCE.png?itok=tbSLCYXu" 
+          src={LogoCedFrance}
           alt="Centres d'Essais Drones France" 
           className="w-64 h-auto mb-6"
         />

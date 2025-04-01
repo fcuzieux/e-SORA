@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>An express placemark</name>
+	<gx:CascadingStyle kml:id="__managed_style_2C44F882DD3577A6E50A">
+		<Style>
+			<IconStyle>
+				<scale>1.8</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=ab47bc&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>6</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_1146B2D2703577A6E50A">
+		<Style>
+			<IconStyle>
+				<scale>1.5</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=ab47bc&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_01D5500D043577A6E50A">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_1146B2D2703577A6E50A</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_2C44F882DD3577A6E50A</styleUrl>
+		</Pair>
+	</StyleMap>
+	<gx:CascadingStyle kml:id="__managed_style_1F7B1DF97635779F300A">
+		<Style>
+			<IconStyle>
+				<scale>1.5</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_029198034B35779F300A">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_1F7B1DF97635779F300A</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_2EF1147E0F35779F300A</styleUrl>
+		</Pair>
+	</StyleMap>
+	<gx:CascadingStyle kml:id="__managed_style_19BC54175035779B30CB">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.0.26.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<scale>1.5</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=42a5f5&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_2EF1147E0F35779F300A">
+		<Style>
+			<IconStyle>
+				<scale>1.8</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>6</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_20C2C02EDD35779B30CB">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.0.26.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<scale>1.8</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=42a5f5&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>6</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_0939221AE235779B30CB">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_19BC54175035779B30CB</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_20C2C02EDD35779B30CB</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark id="0EB00C223635779A96C4">
+		<name>CEDIF</name>
+		<description>CEDIF</description>
+		<LookAt>
+			<longitude>2.318505500397259</longitude>
+			<latitude>48.60180279833715</latitude>
+			<altitude>77.8902042921448</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>34.99999326801559</gx:fovy>
+			<range>537.1182901808788</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0939221AE235779B30CB</styleUrl>
+		<Point>
+			<coordinates>2.31851551216953,48.60181603987277,77.97603837230741</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="04D090A08335779EFCEC">
+		<name>CESA</name>
+		<description>CESA</description>
+		<LookAt>
+			<longitude>-0.6932815999980135</longitude>
+			<latitude>44.84854879995547</latitude>
+			<altitude>44.71084663888324</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>578.4425128281874</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_029198034B35779F300A</styleUrl>
+		<Point>
+			<coordinates>-0.6931383027375559,44.84796206969761,45.25915572592763</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="02CC7EDD523577A00669">
+		<name>C2RD SUD</name>
+		<description>C2RD SUD</description>
+		<LookAt>
+			<longitude>5.758707399838618</longitude>
+			<latitude>43.54423669996952</latitude>
+			<altitude>471.3700834669161</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>592.7677062436851</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_029198034B35779F300A</styleUrl>
+		<Point>
+			<coordinates>5.758737645925733,43.54422573816419,471.3282796476111</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0441479C8B3577A27E0B">
+		<name>C2RD Nouvelle Aquitaine</name>
+		<description>C2RD Nouvelle Aquitaine</description>
+		<LookAt>
+			<longitude>0.2517939307898365</longitude>
+			<latitude>45.49119316966141</latitude>
+			<altitude>143.6943379931618</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>227.2524678858463</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_029198034B35779F300A</styleUrl>
+		<Point>
+			<coordinates>0.2515196076349047,45.49131858587176,144.8767218958466</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00E25A85863577A3CF8F">
+		<name>CTDO</name>
+		<description>CTDO</description>
+		<LookAt>
+			<longitude>-3.477576828382186</longitude>
+			<latitude>48.75476264691846</latitude>
+			<altitude>85.74966545436132</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2931.827995097847</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_029198034B35779F300A</styleUrl>
+		<Point>
+			<coordinates>-3.471162430800367,48.75680454950191,85.88592399482522</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="09267AC2B83577A51CA0">
+		<name>CIDN</name>
+		<description>CIDN</description>
+		<LookAt>
+			<longitude>0.09989123199888983</longitude>
+			<latitude>49.52557121603111</latitude>
+			<altitude>86.38454394731794</altitude>
+			<heading>359.9999991404968</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4887.058013869682</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_029198034B35779F300A</styleUrl>
+		<Point>
+			<coordinates>0.0919132533078737,49.53026733773218,89.5837755966397</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="026530171E3577A6B469">
+		<name>ONERA Esperce</name>
+		<description>ONERA Esperce</description>
+		<LookAt>
+			<longitude>1.410773463753889</longitude>
+			<latitude>43.30760536465139</latitude>
+			<altitude>274.4753910810605</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>9548.728151366813</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_01D5500D043577A6E50A</styleUrl>
+		<Point>
+			<coordinates>1.400717676683281,43.29776872878097,328.6318551980263</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>

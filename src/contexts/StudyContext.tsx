@@ -27,6 +27,7 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
     riskAssessment: {
       ...initialSoraForm.riskAssessment,
       assessmentStartTime: '',
+      uasType: 'Avion',
       mitigationStrategique: '', // Add mitigationStrategique to the initial state
     },
     determinationARCInitial: {

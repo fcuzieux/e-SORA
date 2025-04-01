@@ -199,7 +199,7 @@ export const initialSoraForm: SoraForm = {
   drone: {
     manufacturer: '',
     model: '',
-    uasType: 'Multirotor',
+    uasType: 'Avion',
     serialNumber: '',
     typeCertificateNumber: '',
     airworthinessCertificateNumber: '',

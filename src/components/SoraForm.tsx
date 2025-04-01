@@ -93,6 +93,7 @@ export function SoraForm() {
                     uasType: drone.uasType,
                     turnRate: drone.turnRate,
                     MTOW: drone.MTOW,
+                    environmentalLimitations: drone.environmentalLimitations,
                   }
                 });
               }}

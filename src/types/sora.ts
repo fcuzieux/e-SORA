@@ -37,6 +37,7 @@ export type OperationalScenario = 'VLOS' | 'BVLOS';
 export type PopulationDensity = 'low' | 'moderate' | 'high';
 export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
 export type ContingencyParachuteManeuver = 'OUI' | 'NON';
+export type GRB_FixedWingPowerOff = 'ACTIVATED' | 'NONACTIVE';
 export type StrategicMitigationAvailable = 'OUI' | 'NON';
 export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type TacticalMitigationAvailable = 'OUI' | 'NON';
@@ -48,6 +49,12 @@ export type GRC_Final = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type assessmentCriticalArea =
   | 'Calcul selon les tables SORA'
   | 'Calcul selon les Modèles JARUS'
+  | 'Spécifiée par le déposant';
+  export type assessmentGRB =
+  | 'Approche Simplifiée, Règle 1:1'
+  | 'Approche Balistique (Hélicoptère ou Multirotor)'
+  | 'Terminaison Aile Fixe'
+  | 'Terminaison avec parachute'
   | 'Spécifiée par le déposant';
   export type assessmentContingencyVolume =
   | 'Spécifiée par le déposant'
@@ -187,7 +194,8 @@ export interface RiskAssessmentInfo {
   ContingencyVolumeParachute: boolean;
   ContingencyVolumeSCM: number;
   ContingencyParachuteManeuver:ContingencyParachuteManeuver;
-  ContingencyParachuteTime: number;
+  ParachuteTime: number;
+  VzParachute: number;
   uasType: UasType;
   ThetaStopCopter: number;
   PhiMaxPlane: number;
@@ -195,6 +203,14 @@ export interface RiskAssessmentInfo {
   ContingencyVolumeHbaro: number;
   ContingencyVolumeHRZ: number;
   ContingencyVolumeHCM: number;
+  assessmentGRB:assessmentGRB;
+  GRB: number;
+  AdjacentVolumeWidth: number;
+  AdjacentVolumeHeight: number;
+  GRBWidth: number;
+  GRB_Justification: string;
+  GRB_FixedWingPowerOff:GRB_FixedWingPowerOff;
+  environmentalLimitations: EnvironmentalLimitations;
 }
 
 
