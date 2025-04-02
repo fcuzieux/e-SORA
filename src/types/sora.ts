@@ -196,6 +196,8 @@ export interface RiskAssessmentInfo {
   ContingencyParachuteManeuver:ContingencyParachuteManeuver;
   ParachuteTime: number;
   VzParachute: number;
+  VwindParachute: number;
+  VzandVwindParachute_Justification: string;
   uasType: UasType;
   ThetaStopCopter: number;
   PhiMaxPlane: number;

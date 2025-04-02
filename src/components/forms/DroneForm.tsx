@@ -384,6 +384,8 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
                     maxWindSpeedTakeoff: parseFloat(e.target.value)
                   }
                 })}
+                min={0}
+                max={drone.maxSpeed}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
@@ -402,6 +404,8 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
                     maxGustSpeed: parseFloat(e.target.value)
                   }
                 })}
+                min={drone.environmentalLimitations.maxWindSpeedTakeoff}
+                max={drone.maxSpeed}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>

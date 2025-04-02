@@ -40,6 +40,29 @@ export function RiskAssessmentForm({
   onChange,
   showOnly,
 }: RiskAssessmentFormProps) {
+
+  const handleOnChangeGlidingCapability = (e) => {
+    onChange({
+      ...assessment,
+      GlidingCapability: e.target
+        .value as GlidingCapability,
+        assessmentGRB: e.target.value === 'NON' ? "Approche Simplifiée, Règle 1:1" : assessment.assessmentGRB,
+    });
+  }
+
+  const handleOnChangeFixedWingPowerOff = (e) => {
+    const isChecked = e.target.checked;
+    onChange({
+      ...assessment,
+      GRB_FixedWingPowerOff: isChecked ? 'ACTIVATED' : 'NONACTIVE',
+      assessmentGRB:"Approche Simplifiée, Règle 1:1",
+    });
+  };
+
+  const GRB_FixedWingPowerOffActivationbydefault=() => {
+    assessment.GRB_FixedWingPowerOff = 'ACTIVATED'
+    return true;
+  }
   const CalulGRB =() =>{
     let GRB = Number(1);
     let GRAVITY = 9.81;
@@ -52,7 +75,7 @@ export function RiskAssessmentForm({
     } else if (assessment.assessmentGRB === 'Approche Balistique (Hélicoptère ou Multirotor)') {
       GRB =assessment.maxSpeed*Math.sqrt(2*assessment.ContingencyVolumeHeight/GRAVITY) +0.5*assessment.maxCharacteristicDimension;
     } else if (assessment.assessmentGRB === 'Terminaison Aile Fixe') {
-      GRB =3.0;
+      GRB =assessment.ContingencyVolumeHeight/Math.tan(assessment.ThetaGlide*Math.PI/180.0);
 
     } else if (assessment.assessmentGRB === 'Terminaison avec parachute') {
       GRB =assessment.maxSpeed*assessment.ParachuteTime+Vwind*assessment.ContingencyVolumeHeight/assessment.VzParachute;   //+0.5*assessment.maxCharacteristicDimension;
@@ -859,7 +882,7 @@ export function RiskAssessmentForm({
                                     <br />
                                     Attention : Des valeurs inférieures à 3 fois la dimension caractéristique maximale de l'appareil sont considérées irrecevables. 
                                     <br />
-                                    S_FG≥ 3.maxCharacteristicDimension
+                                    S_FG≥ 3.maxCharacteristicDimension à l'arrondis supérieur.
                                   </div>
                                 }>
                 <label className="block text-sm font-medium text-gray-700">
@@ -872,13 +895,13 @@ export function RiskAssessmentForm({
                 onChange={(e) =>
                   onChange({
                     ...assessment,
-                    FlightGeographyWidth: Math.max(parseFloat(e.target.value),(3*assessment.maxCharacteristicDimension)) || 0.000
+                    FlightGeographyWidth: Math.max(parseFloat(e.target.value),Math.round(3*assessment.maxCharacteristicDimension+0.49)) || 0.000
                   })
                 }
                 step="1.0"
-                min={3 * assessment.maxCharacteristicDimension} // Définit la valeur minimale autorisée
-                className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder={(3*assessment.maxCharacteristicDimension).toString()}
+                //min={3 * assessment.maxCharacteristicDimension} // Définit la valeur minimale autorisée
+                className="mt-1 block w-full rounded-md border-green-900 border-2 font-bold bg-green-50 text-green-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder={(Math.round(3*assessment.maxCharacteristicDimension+0.49)).toString()}
               />
             </div> 
             <div>
@@ -888,7 +911,7 @@ export function RiskAssessmentForm({
                                     <br />                                    
                                     Attention : Des valeurs inférieures à 3 fois la dimension caractéristique maximale de l'appareil sont considérées irrecevables. 
                                     <br />
-                                    H_FG≥ 3.maxCharacteristicDimension
+                                    H_FG≥ 3.maxCharacteristicDimension à l'arrondis supérieur
                                   </div>
                                 }>
                 <label className="block text-sm font-medium text-gray-700">
@@ -901,13 +924,13 @@ export function RiskAssessmentForm({
                 onChange={(e) =>
                   onChange({
                     ...assessment,
-                    FlightGeographyHeight: Math.max(parseFloat(e.target.value),(3*assessment.maxCharacteristicDimension)) || 0.000
+                    FlightGeographyHeight: Math.max(parseFloat(e.target.value),Math.round(3*assessment.maxCharacteristicDimension+0.49)) || 0.000
                   })
                 }
                 step="1.0"
                 min={3 * assessment.maxCharacteristicDimension} // Définit la valeur minimale autorisée
-                className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder={(3*assessment.maxCharacteristicDimension).toString()}
+                className="mt-1 block w-full rounded-md border-green-900 border-2 font-bold bg-green-50 text-green-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                placeholder={(Math.round(3*assessment.maxCharacteristicDimension+0.49)).toString()}
               />
             </div> 
           </div>   
@@ -967,67 +990,144 @@ export function RiskAssessmentForm({
             {assessment.assessmentContingencyVolume ===
               'Calcul selon le Guide' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Tooltip  text={
-                                        <div>
-                                          Largeur du Volume de Contingence. 
-                                          <br />
-                                          Attention : Des valeurs inférieures à la Largeur du Volume d'évolution sont considérées irrecevables. 
-                                          <br />
-                                          S_CV ≥ S_FG
-                                        </div>
-                                      }>
-                      <label className="block text-sm font-medium text-gray-700">
-                        S_CV : Largeur du Volume de Contingence (m)
-                      </label>
-                    </Tooltip>
-                    <input
-                      type="number"
-                      value={assessment.ContingencyVolumeWidth}
-                      // onChange={(e) =>
-                      //   onChange({
-                      //     ...assessment,
-                      //     ContingencyVolumeWidth: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyWidth)) || 0.000
-                      //   })
-                      // }
-                      //step="0.1"
-                      //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      placeholder={CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM)}//(assessment.FlightGeographyWidth)}
-                      disabled
-                    />  
-                  </div> 
-                  <div>
-                    <Tooltip  text={
-                                        <div>
-                                          Hauteur du Volume de Contingence. 
-                                          <br />                                    
-                                          Attention : Des valeurs inférieures à la Hauteur du Volume d'évolution sont considérées irrecevables.  
-                                          <br />
-                                          H_CV ≥ H_FG
-                                        </div>
-                                      }>
-                      <label className="block text-sm font-medium text-gray-700">
-                        H_CV : Hauteur du Volume de Contingence (m)
-                      </label>
-                    </Tooltip>
-                    <input
-                      type="number"
-                      value={assessment.ContingencyVolumeHeight}
-                      // onChange={(e) =>
-                      //   onChange({
-                      //     ...assessment,
-                      //     ContingencyVolumeHeight: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyHeight)) || 0.000
-                      //   })
-                      // }
-                      // step="0.1"
-                      // min={assessment.FlightGeographyHeight} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                      placeholder={(assessment.FlightGeographyHeight)}
-                      disabled
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Tooltip  text={
+                                          <div>
+                                            Largeur du Volume de Contingence. 
+                                            <br />
+                                            Attention : Des valeurs inférieures à la Largeur du Volume d'évolution sont considérées irrecevables. 
+                                            <br />
+                                            S_CV ≥ S_FG
+                                          </div>
+                                        }>
+                        <label className="block text-sm font-medium text-gray-700">
+                          S_CV : Largeur du Volume de Contingence (m)
+                        </label>
+                      </Tooltip>
+                      <input
+                        type="number"
+                        value={assessment.ContingencyVolumeWidth}
+                        // onChange={(e) =>
+                        //   onChange({
+                        //     ...assessment,
+                        //     ContingencyVolumeWidth: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyWidth)) || 0.000
+                        //   })
+                        // }
+                        //step="0.1"
+                        //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                        className="mt-1 block w-full rounded-md border-orange-900 border-2 font-bold bg-orange-50 text-orange-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder={CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM)}//(assessment.FlightGeographyWidth)}
+                        disabled
+                      />  
+                    </div> 
+                    <div>
+                      { (assessment.ContingencyVolumeSGPS === undefined || assessment.ContingencyVolumeSGPS === null) || (assessment.ContingencyVolumeSpos === undefined || assessment.ContingencyVolumeSpos === null) || (assessment.ContingencyVolumeSK === undefined || assessment.ContingencyVolumeSK === null) || (assessment.ContingencyVolumeSRZ === undefined || assessment.ContingencyVolumeSRZ === null) || (assessment.ContingencyVolumeSCM === undefined || assessment.ContingencyVolumeSCM === null)  ? (
+                        <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
+                          Attention : une donnée est indéfinie ou nulle.
+                        </div>
+                      ) : (
+                        <Tooltip   text={
+                          <div>
+                            Les valeurs suivantes sont utilisées pour le calcul de la largeur du volume de contingence. Vérifier la cohérence avec l'affichage. 
+                            <br />                                    
+                            GPS - Inaccuracy = {assessment.ContingencyVolumeSGPS} m
+                            <br />
+                            Position Holding = {assessment.ContingencyVolumeSpos} m
+                            <br />
+                            Map error = {assessment.ContingencyVolumeSK} m
+                            <br />
+                            Temps de Réaction = {assessment.ContingencyTimeRZ} s
+                            <br />
+                            Distance de réaction S_RZ = {assessment.ContingencyVolumeSRZ} m
+                            <br />
+                            Manoeuvre de contigence S_CM = {assessment.ContingencyVolumeSCM} m
+                          </div>
+                        }>
 
+                        <div>
+                          <button
+                            onClick={() => CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM)}
+                            className="rounded-md border-green-200 border-2 font-bold text-green-500 hover:text-blue-200"
+                          >
+                            Calculer
+                          </button>
+                        </div>
+                        
+                        </Tooltip>
+                      )}
+
+                      
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Tooltip  text={
+                                          <div>
+                                            Hauteur du Volume de Contingence. 
+                                            <br />                                    
+                                            Attention : Des valeurs inférieures à la Hauteur du Volume d'évolution sont considérées irrecevables.  
+                                            <br />
+                                            H_CV ≥ H_FG
+                                          </div>
+                                        }>
+                        <label className="block text-sm font-medium text-gray-700">
+                          H_CV : Hauteur du Volume de Contingence (m)
+                        </label>
+                      </Tooltip>
+                      <input
+                        type="number"
+                        value={assessment.ContingencyVolumeHeight}
+                        // onChange={(e) =>
+                        //   onChange({
+                        //     ...assessment,
+                        //     ContingencyVolumeHeight: Math.max(parseFloat(e.target.value),(assessment.FlightGeographyHeight)) || 0.000
+                        //   })
+                        // }
+                        // step="0.1"
+                        // min={assessment.FlightGeographyHeight} // Définit la valeur minimale autorisée
+                        className="mt-1 block w-full rounded-md border-orange-900 border-2 font-bold bg-orange-50 text-orange-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        placeholder={(assessment.FlightGeographyHeight)}
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      { (assessment.ContingencyVolumeHbaro === undefined || assessment.ContingencyVolumeHbaro === null) || (assessment.ContingencyVolumeHRZ === undefined || assessment.ContingencyVolumeHRZ === null) || (assessment.ContingencyVolumeHCM === undefined || assessment.ContingencyVolumeHCM === null)  ? (
+                        <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
+                          Attention : une donnée est indéfinie ou nulle.
+                        </div>
+                      ) : (
+                        <Tooltip   text={
+                          <div>
+                            Les valeurs suivantes sont utilisées pour le calcul de la largeur du volume de contingence. Vérifier la cohérence avec l'affichage. 
+                            <br />                                    
+                            Erreur de mesure d'altitude = {assessment.ContingencyVolumeHbaro} m
+                            <br />
+                            Position Holding = {assessment.ContingencyVolumeSpos} m
+                            <br />
+                            Temps de Réaction = {assessment.ContingencyTimeRZ} s
+                            <br />
+                            Altitude de réaction H_RZ = {assessment.ContingencyVolumeHRZ} m
+                            <br />
+                            Altitude de contigence H_CM = {assessment.ContingencyVolumeHCM} m
+                          </div>
+                        }>
+
+                        <div>
+                          <button
+                            onClick={() => CalculContingencyVolumeHeight(assessment.ContingencyVolumeHbaro,assessment.ContingencyVolumeHRZ,assessment.ContingencyVolumeHCM)}
+                            className="rounded-md border-green-200 border-2 font-bold text-green-500 hover:text-blue-200"
+                          >
+                            Calculer
+                          </button>
+                        </div>
+                        
+                        </Tooltip>
+                      )}
+
+                      
+                    </div>
+                  </div>
                   <div>
                     <Tooltip  text={
                                         <div>
@@ -1436,7 +1536,7 @@ export function RiskAssessmentForm({
                       onChange={(e) => onChange({ ...assessment, ContingencyVolumeWidth: parseFloat(e.target.value) })}
                       step="0.1"
                       min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-orange-900 border-2 font-bold bg-orange-50 text-orange-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder={(assessment.FlightGeographyWidth)}
                     />
                     </div> 
@@ -1465,7 +1565,7 @@ export function RiskAssessmentForm({
                       }
                       step="0.1"
                       min={assessment.FlightGeographyHeight} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-md border-orange-900 border-2 font-bold bg-orange-50 text-orange-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       placeholder={(assessment.FlightGeographyHeight)}
                     />
                     </div>
@@ -1493,681 +1593,745 @@ export function RiskAssessmentForm({
                 <div></div>
               )
             }  
-          <h2 className="text-lg font-medium">Etape 2.3 : Determination du Zone Tampon (Ground Risk Buffer).</h2>
- 
-              <div>
-              
-                {/* Limitation des choix possible en fonction du type d'UAS */}
-                {assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL' && assessment.GlidingCapability === 'OUI' ? (
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b> avec une capacité de vol plané déclarée à {assessment.GlidingCapability} dans le modèle JARUS pour l'évaluation de la zone de crash.
-                      <br />
-                      <br />
-                      Veuillez définir Theta_Glide en cohérence avec celui utilisé dans le modèle JARUS si applicable = {assessment.ThetaGlide}°.
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>                  
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Terminaison Aile Fixe">
-                      Terminaison Aile Fixe
-                      </option>
-                      <option value="Terminaison avec parachute">
-                      Terminaison avec parachute
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                ): assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL' && assessment.GlidingCapability === 'NON' ? (
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b> avec une capacité de vol plané déclarée à {assessment.GlidingCapability} dans le modèle JARUS pour l'évaluation de la zone de crash.
-                      <br />
-                      Si tel est le cas, la règle 1:1 sera appliquée.
-                      <br />
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >  
-                      <option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Terminaison avec parachute">
-                      Terminaison avec parachute
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                
-                ): assessment.uasType === 'Hélicoptère' ? (
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b>.
-                      <br />
-                      Seules les règles compatibles peuvent être appliquées.
-                      <br />
-                      Sinon, définissez votre propre GRB.
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Approche Balistique (Hélicoptère ou Multirotor)">
-                      Approche Balistique (Hélicoptère ou Multirotor)
-                      </option>
-                      <option value="Terminaison avec parachute">
-                      Terminaison avec parachute
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                ): assessment.uasType === 'Multirotor' ? (
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b>.
-                      <br />
-                      Seules les règles compatibles peuvent être appliquées.
-                      <br />
-                      Sinon, définissez votre propre GRB.
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Approche Balistique (Hélicoptère ou Multirotor)">
-                      Approche Balistique (Hélicoptère ou Multirotor)
-                      </option>
-                      <option value="Terminaison avec parachute">
-                      Terminaison avec parachute
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                ): assessment.uasType === 'Plus léger que l\'air' ? (
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b>.
-                      <br />
-                      Seule la règle 1:1 peut être appliquée.
-                      <br />
-                      Sinon, définissez votre propre GRB.
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                ):( //Autre
-                  <div>
-                      N'oubliez pas, vous avez déclaré un type d'UAS comme <b>{assessment.uasType}</b>.
-                      <br />
-                      Seule la règle 1:1 peut être appliquée.
-                      <br />
-                      Sinon, définissez votre propre GRB.
-                      <br />
-                      <br />
-                      <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Méthode d'évaluation de la Zone Tampon
-                        </label>
-                      </Tooltip>
-                    <select
-                    value={assessment.assessmentGRB}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        assessmentGRB: e.target
-                          .value as assessmentGRB,
-                        GRB:
-                          e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
-                            ? assessment.GRB
-                            : 0
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="Sélectionner une méthode d'évaluation de la zone tampon">
-                      Sélectionner une méthode d'évaluation de la zone tampon
-                      </option>
-                      <option value="Approche Simplifiée, Règle 1:1">
-                      Approche Simplifiée, Règle 1:1
-                      </option>
-                      <option value="Spécifiée par le déposant">
-                      Spécifiée par le déposant
-                      </option> 
-                    </select>
-                  </div>
-                )}
-
-                {/* Gestion des affichage selon le type de calcul spécifié pour la GRB */}
-                {assessment.assessmentGRB ===
-                  'Approche Simplifiée, Règle 1:1' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">   
+            <h2 className="text-lg font-medium">Etape 2.3 : Determination du Zone Tampon (Ground Risk Buffer).</h2>
+                  {/* Limitation des choix possible en fonction du type d'UAS :   (assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') && (assessment.GlidingCapability === undefined || assessment.GlidingCapability === null) ? (*/}
+                  {(assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') && assessment.GlidingCapability === 'OUI' ? (
                     <div>
-                      <label>'Approche Simplifiée, Règle 1:1'</label>
-                      <div>
-                        <Tooltip  text={
-                                            <div>
-                                              Largeur de votre Zone Tampon (Ground Risk Buffer)
-                                              <br />
-                                              
-                                              <br />
-                                              
-                                            </div>
-                                          }>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
                           <label className="block text-sm font-medium text-gray-700">
-                            GRB : de votre Zone Tampon (m)
+                            Méthode d'évaluation de la Zone Tampon
                           </label>
-                        </Tooltip>
-                        <input
-                          type="number"
-                          value={CalulGRB()}
-                          //defaultValue={assessment.ContingencyVolumeHeight}
-                          onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
-                          //step="0.1"
-                          //min={assessment.ContingencyVolumeHeight} // Définit la valeur minimale autorisée
-                          className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={('Not yet computed')} 
-                          disabled
-                        />
-                      </div> 
-                                          
-                      <div>
-                        <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Justification de votre Zone Tampon (Ground Risk Buffer)
-                          </label>
-                        </Tooltip>
-                        <textarea
-                            value={assessment.GRB_Justification}
-                            onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                GRB_Justification: e.target.value,
-                              })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            rows={4}
-                          />
-                      </div>
-                    </div>               
-                  ) : assessment.assessmentGRB ===
-                  'Approche Balistique (Hélicoptère ou Multirotor)' ? (
-                    // {assessment.uasType === ''}
-                    <div>
-                      <label>'Approche Balistique (Hélicoptère ou Multirotor)'</label>
-                      <div>
-                        <Tooltip  text={
-                                            <div>
-                                              Largeur de votre Zone Tampon (Ground Risk Buffer)
-                                              <br />
-                                              
-                                              <br />
-                                              
-                                            </div>
-                                          }>
-                          <label className="block text-sm font-medium text-gray-700">
-                            GRB : de votre Zone Tampon (m)
-                          </label>
-                        </Tooltip>
-                        <input
-                          type="number"
-                          value={CalulGRB()}
-                          onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
-                          //step="0.1"
-                          //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                          className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={('Not yet computed')}
-                          disabled
-                        />
-                      </div> 
-                                          
-                      <div>
-                        <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Justification de votre Zone Tampon (Ground Risk Buffer)
-                          </label>
-                        </Tooltip>
-                        <textarea
-                            value={assessment.GRB_Justification}
-                            onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                GRB_Justification: e.target.value,
-                              })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            rows={4}
-                          />
-                      </div>
+                        </Tooltip>                  
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Terminaison Aile Fixe">
+                        Terminaison Aile Fixe
+                        </option>
+                        <option value="Terminaison avec parachute">
+                        Terminaison avec parachute
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
                     </div>
-                  ) : assessment.assessmentGRB ===
-                  'Terminaison Aile Fixe' ? (
-                    // {assessment.uasType === ''}
+                  ): (assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') && assessment.GlidingCapability === 'NON' ? (
                     <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >  
+                        <option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Terminaison avec parachute">
+                        Terminaison avec parachute
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  
+                  ) : (assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') && (assessment.GlidingCapability === undefined || assessment.GlidingCapability === null) ? (
+                    <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>                  
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Terminaison Aile Fixe">
+                        Terminaison Aile Fixe
+                        </option>
+                        <option value="Terminaison avec parachute">
+                        Terminaison avec parachute
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  ):assessment.uasType === 'Hélicoptère' ? (
+                    <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Approche Balistique (Hélicoptère ou Multirotor)">
+                        Approche Balistique (Hélicoptère ou Multirotor)
+                        </option>
+                        <option value="Terminaison avec parachute">
+                        Terminaison avec parachute
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  ): assessment.uasType === 'Multirotor' ? (
+                    <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Approche Balistique (Hélicoptère ou Multirotor)">
+                        Approche Balistique (Hélicoptère ou Multirotor)
+                        </option>
+                        <option value="Terminaison avec parachute">
+                        Terminaison avec parachute
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  ): assessment.uasType === 'Plus léger que l\'air' ? (
+                    <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      ><option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  ):( //Autre
+                    <div>
+                        <Tooltip text="Aussi appelée Ground Risk Buffer, cette zone est définie au niveau du sol directement adjacente au volume de contingence. Si l'UAS quitte la zone de contingence, il est assumé que l'UAS n'est plus sous contrôle de l'opérateur et qu'il doit être mis fin au vol. Dans ce cas le l'UAS doit retomber dans la zone Tampon.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Méthode d'évaluation de la Zone Tampon
+                          </label>
+                        </Tooltip>
+                      <select
+                      value={assessment.assessmentGRB}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          assessmentGRB: e.target
+                            .value as assessmentGRB,
+                          GRB:
+                            e.target.value === "Sélectionner une méthode d'évaluation de la zone tampon"
+                              ? assessment.GRB
+                              : 0
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="Sélectionner une méthode d'évaluation de la zone tampon">
+                        Sélectionner une méthode d'évaluation de la zone tampon
+                        </option>
+                        <option value="Approche Simplifiée, Règle 1:1">
+                        Approche Simplifiée, Règle 1:1
+                        </option>
+                        <option value="Spécifiée par le déposant">
+                        Spécifiée par le déposant
+                        </option> 
+                      </select>
+                    </div>
+                  )}          
+          
+          
+          </div>
+          <div>
+          
+            {/* Limitation des choix possible en fonction du type d'UAS */}
+            {(assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') ? (
+              <div className="text-red-900 border-gray-300 rounded">
+                  <b>Rappels</b> : Type d'UAS comme <b>{assessment.uasType}</b> 
+                  <br />
+                  Vous devez définir si votre appareil peut effectuer un vol plané. 
+                  <br />
+                  Attention de bien rester cohérent si vous changez votre déclaration vis à vis de celle utilisez dans le modèle JARUS pour l'évaluation de la zone de crash. 
+                  <br />
+                  Si aucune capacité de vol plané n'est possible, seule la règle 1:1 ou la terminaison avec parachute peuvent être appliquées.
+                  <br />
+                  Sinon, définissez votre propre GRB.
+                  <br />
+                  <br />
+              </div>
+            
+            ): assessment.uasType === 'Hélicoptère' ? (
+              <div className="text-red-900 border-gray-300 rounded">
+                  <b>Rappels</b> : Type d'UAS comme <b>{assessment.uasType}</b> 
+                  <br />
+                  Seules les règles compatibles peuvent être appliquées.
+                  <br />
+                  Sinon, définissez votre propre GRB.
+                  <br />
+                  <br />
+              </div>
+            ): assessment.uasType === 'Multirotor' ? (
+              <div className="text-red-900 border-gray-300 rounded">
+                  <b>Rappels</b> : Type d'UAS comme <b>{assessment.uasType}</b> 
+                  <br />
+                  Seules les règles compatibles peuvent être appliquées.
+                  <br />
+                  Sinon, définissez votre propre GRB.
+                  <br />
+                  <br />
+              </div>
+            ): assessment.uasType === 'Plus léger que l\'air' ? (
+              <div className="text-red-900 border-gray-300 rounded">
+                  <b>Rappels</b> : Type d'UAS comme <b>{assessment.uasType}</b> 
+                  <br />
+                  Seule la règle 1:1 peut être appliquée.
+                  <br />
+                  Sinon, définissez votre propre GRB.
+                  <br />
+                  <br />
+              </div>
+            ):( //Autre
+              <div className="text-red-900 border-gray-300 rounded">
+                  <b>-Rappels</b> : Type d'UAS comme <b>{assessment.uasType}</b> 
+                  <br />
+                  Seule la règle 1:1 peut être appliquée.
+                  <br />
+                  Sinon, définissez votre propre GRB.
+                  <br />
+                  <br />
+              </div>
+            )}
 
+            {/* Gestion des affichage selon le type de calcul spécifié pour la GRB */}
+            {assessment.assessmentGRB ===
+              'Approche Simplifiée, Règle 1:1' ? (
+                <div>
+                  {/* <label>'Approche Simplifiée, Règle 1:1'</label> */}
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Largeur de votre Zone Tampon (Ground Risk Buffer)
+                                          <br />
+                                          
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GRB : Largeur de votre Zone Tampon (m)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={CalulGRB()}
+                      //defaultValue={assessment.ContingencyVolumeHeight}
+                      onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
+                      //step="0.1"
+                      //min={assessment.ContingencyVolumeHeight} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-red-900 border-2 font-bold bg-red-50 text-red-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={('Not yet computed')} 
+                      disabled
+                    />
+                  </div> 
+                                      
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Zone Tampon (Ground Risk Buffer)
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.GRB_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GRB_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>
+                </div>               
+              ) : assessment.assessmentGRB ===
+              'Approche Balistique (Hélicoptère ou Multirotor)' ? (
+                // {assessment.uasType === ''}
+                <div>
+                  <label>'Approche Balistique (Hélicoptère ou Multirotor)'</label>
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Largeur de votre Zone Tampon (Ground Risk Buffer)
+                                          <br />
+                                          
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GRB : Largeur de votre Zone Tampon (m)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={CalulGRB()}
+                      onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
+                      //step="0.1"
+                      //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-red-900 border-2 font-bold bg-red-50 text-red-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={('Not yet computed')}
+                      disabled
+                    />
+                  </div> 
+                                      
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Zone Tampon (Ground Risk Buffer)
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.GRB_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GRB_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>
+                </div>
+              ) : assessment.assessmentGRB ===
+              'Terminaison Aile Fixe' ? (
+                // {assessment.uasType === ''}
+                <div>
 
-
-
-
-
-
-
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Coupure de l'alimentation.
                       </label>
                       <input
                         type="checkbox"
-                        checked={(assessment.GRB_FixedWingPowerOff || []).includes('ACTIVATED')}
+                        //checked={(assessment.GRB_FixedWingPowerOff || []).includes('ACTIVATED')}
+                        onChange={handleOnChangeFixedWingPowerOff}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                        defaultChecked={GRB_FixedWingPowerOffActivationbydefault()}
+                      />
+                    </div>
+                    {((assessment.GRB_FixedWingPowerOff).includes('ACTIVATED')) ?(
+                      <div>
+                        <div>
+                          <b>Rappel :</b>Vous avez déclaré "{assessment.GlidingCapability}" pour la capacité de vol plané dans le Modèle JARUS pour l'évaluation de la Zone de Crash.
+                          <br />
+                          <br />
+                          Sinon, définissez Theta_Glide en cohérence avec celui utilisé dans le Modèle JARUS, soit "{assessment.ThetaGlide}°".
+                          
+                        </div>
+
+                      </div>
+                    ):(
+                      
+                      <div>
+                        Si vous n'activé pas de Coupure de l'alimentation la règle du 1:1 sera appliquée car GRB_FixedWingPowerOff = {assessment.GRB_FixedWingPowerOff}
+                      </div>
+
+
+                    )}
+
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+                    <div>
+                      <Tooltip text=" ">
+                        <label className="block text-sm font-medium text-gray-700">
+                          L'appareil est-il capable de planer ?
+                        </label>
+                      </Tooltip>
+                      <select
+                        value={assessment.GlidingCapability}
+                        onChange={handleOnChangeGlidingCapability}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="NON">NON</option>
+                        <option value="OUI">OUI</option>
+                      </select>
+                    </div> 
+                    <div>
+                          <Tooltip text="Angle d'impact (de plané/fauché.) NB: Si Dimensions caractéristiques maximales ≤ 1m prendre 35°, et pour les appareil plus grand prendre 10°.">
+                            <label className="block text-sm font-medium text-gray-700">
+                              Theta_Glide (deg)
+                            </label>
+                          </Tooltip>
+                          <input
+                            type="number"
+                            value={assessment.ThetaGlide}
+                            onChange={(e) =>
+                              onChange({
+                                ...assessment,
+                                ThetaGlide: parseFloat(e.target.value) || 0.000
+                              })
+                            }
+                            step="0.1"
+                            min={0}
+                            max={90}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            //placeholder={AdviceThetaGlide().toString()}
+                            
+                          /> 
+                    </div>
+                  </div>
+
+
+
+
+
+
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Largeur de votre Zone Tampon (Ground Risk Buffer)
+                                          <br />
+                                          
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GRB : Largeur de votre Zone Tampon (m)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={CalulGRB()}
+                      onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
+                      //step="0.1"
+                      //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-red-900 border-2 font-bold bg-red-50 text-red-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={('Not yet computed')}
+                      disabled
+                    />
+                  </div> 
+                                      
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Zone Tampon (Ground Risk Buffer)
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.GRB_Justification}
                         onChange={(e) =>
                           onChange({
                             ...assessment,
-                            GRB_FixedWingPowerOff: e.target.checked
-                              ? 'ACTIVATED'
-                              : 'NONACTIVE',
-                            //   ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM),
-                            //   ContingencyVolumeHeight: CalculContingencyVolumeHeight(assessment.ContingencyVolumeHbaro,assessment.ContingencyVolumeHRZ,assessment.ContingencyVolumeHCM) ,
-                              
-                            // ContingencyVolumeSCM: (CalculVolumeSCM()?.at(0)),
-                            // ContingencyVolumeHCM: (CalculVolumeSCM()?.at(1)),
+                            GRB_Justification: e.target.value,
                           })}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                        
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
                       />
-                      </div>
-                      {(assessment.GRB_FixedWingPowerOff || []).includes('ACTIVATED') ? (
-                        <div>
-                          <div>
-                            Remember, you have declared {assessment.GlidingCapability} for gliding capability in the JARUS Model for Crash Area assessment.
-                            If so Rule 1:1 will be applyed.
-                            Otherwise define Theta_Glide in coherence with the one used in JARUS MODEL if so = {assessment.ThetaGlide}°.
-                            <Tooltip  text={
-                                            <div>
-                                              Temps d'activation du parachute (s)  
-                                              <br />                                    
-                                              Doit prendre en compte le temps d'ouverture et de mise en descente.
-                                              <br />
-                                              Ne peut être inférieur à 1 seconde.
-                                            </div>
-                                          }>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Temps d'activation du parachute (s) 
-                            </label>
-                            </Tooltip>
-                            <input
-                              type="number"
-                              value={assessment.ParachuteTime}
-                              defaultValue={1.0}
-                              onChange={(e) => onChange({ ...assessment, ParachuteTime: parseFloat(e.target.value), ContingencyVolumeSCM: parseFloat(e.target.value)*assessment.maxSpeed, ContingencyVolumeHCM: parseFloat((parseFloat(e.target.value)*0.7*assessment.maxSpeed).toFixed(2)) , ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,parseFloat(e.target.value)*assessment.maxSpeed), ContingencyVolumeHeight: CalculContingencyVolumeHeight(assessment.ContingencyVolumeHbaro,assessment.ContingencyVolumeHRZ,parseFloat((parseFloat(e.target.value)*0.7*assessment.maxSpeed).toFixed(2))) })}
-                              step="0.1"
-                              min={1.0} // Définit la valeur minimale autorisée
-                              className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                              placeholder={'TO BE DEFINED'}
-                            />
-                          </div>
-                          <div>
-                            <Tooltip  text={
-                                            <div>
-                                              Manoeuvre de contigence S_CM (m) 
-                                              <br />                                    
-                                              Alternative : Activation du Parachute.
-                                              <br />
-                                              S_CM = Vmax·t_parachute
-                                              <br /> 
-                                            </div>
-                                          }>                    
-                            <label className="block text-sm font-medium text-gray-700">
-                              Manoeuvre de contigence S_CM (m) 
-                            </label> 
-                            </Tooltip>                   
-                            <input
-                              type="number" 
-                              value={assessment.ContingencyVolumeSCM}
-                              className="mt-1 block w-full rounded-md border-grey-200 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                              placeholder={(1.0*assessment.maxSpeed).toString()}
-                              disabled
-                            />                         
-                          </div>
-                        </div>
-                      ) : (
-                        <div>
-                          Rule 1:1 will be applyed. 
-                        </div>
-
-
-
-                      )}
-                    </div>
-
-
-
-
-
-
-
-
+                  </div>
+                </div>
+              ) : assessment.assessmentGRB ===
+              'Terminaison avec parachute' ? (
+                // {assessment.uasType === ''}
+                <div>
+                  
+                  {/* Si ParachuteTime déjà définie on la rappelle ici en précisant origine de la def  */}
+                  {assessment.ParachuteTime && (assessment.ContingencyParachuteManeuver || []).includes('OUI') ? (
+                    
+                      <label>Temps d'activation du parachute déjà définie pour la manoeuvre de contingence : {assessment.ParachuteTime}(s)</label>
+                  ):( 
+                    // Sinon on ajoute une entrée pour la spécifier
                       <div>
                         <Tooltip  text={
-                                            <div>
-                                              Largeur de votre Zone Tampon (Ground Risk Buffer)
-                                              <br />
-                                              
-                                              <br />
-                                              
-                                            </div>
-                                          }>
-                          <label className="block text-sm font-medium text-gray-700">
-                            GRB : de votre Zone Tampon (m)
-                          </label>
+                                        <div>
+                                          Temps d'activation du parachute (s)  
+                                          <br />                                    
+                                          Doit prendre en compte le temps d'ouverture et de mise en descente.
+                                          <br />
+                                          Ne peut être inférieur à 1 seconde.
+                                        </div>
+                                      }>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Temps d'activation du parachute (s) 
+                        </label>
                         </Tooltip>
                         <input
                           type="number"
-                          value={CalulGRB()}
-                          onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
-                          //step="0.1"
-                          //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                          className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={('Not yet computed')}
-                          disabled
-                        />
-                      </div> 
-                                          
-                      <div>
-                        <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Justification de votre Zone Tampon (Ground Risk Buffer)
-                          </label>
-                        </Tooltip>
-                        <textarea
-                            value={assessment.GRB_Justification}
-                            onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                GRB_Justification: e.target.value,
-                              })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            rows={4}
-                          />
-                      </div>
-                    </div>
-                  ) : assessment.assessmentGRB ===
-                  'Terminaison avec parachute' ? (
-                    // {assessment.uasType === ''}
-                    <div>
-                      {/* Si ParachuteTime déjà définie on la rappelle ici en précisant origine de la def  */}
-                      {assessment.ParachuteTime && (assessment.ContingencyParachuteManeuver || []).includes('OUI') ? (
-                          <label>Temps d'activation du parachute déjà définie pour la manoeuvre de contingence : {assessment.ParachuteTime}(s)</label>
-                      ):( 
-                        // Sinon on ajoute une entrée pour la spécifier
-                           <div>
-                            <Tooltip  text={
-                                            <div>
-                                              Temps d'activation du parachute (s)  
-                                              <br />                                    
-                                              Doit prendre en compte le temps d'ouverture et de mise en descente.
-                                              <br />
-                                              Ne peut être inférieur à 1 seconde.
-                                            </div>
-                                          }>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Temps d'activation du parachute (s) 
-                            </label>
-                            </Tooltip>
-                            <input
-                              type="number"
-                              value={assessment.ParachuteTime}
-                              defaultValue={1.0}
-                              onChange={(e) => onChange({ ...assessment, ParachuteTime: parseFloat(e.target.value), GRBWidth: CalulGRB()})}
-                              step="0.1"
-                              min={1.0} // Définit la valeur minimale autorisée
-                              className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                              placeholder={"1.0"}
-                            />
-                          </div>                          
-
-                      )}
-                      <div>
-                        <Tooltip  text={
-                                            <div>
-                                              Vitesse de déscente sous parachute (m/s)
-                                              <br />
-                                              Généralement de l'ordred de 6.0 m/s
-                                              <br />
-                                              
-                                            </div>
-                                          }>
-                          <label className="block text-sm font-medium text-gray-700">
-                            Vitesse de déscente sous parachute (m/s)
-                          </label>
-                        </Tooltip>
-                        <input
-                          type="number"
-                          value={assessment.VzParachute}
-                          onChange={(e) => onChange({ ...assessment, VzParachute: parseFloat(e.target.value) })}
+                          value={assessment.ParachuteTime}
+                          defaultValue={1.0}
+                          onChange={(e) => onChange({ ...assessment, ParachuteTime: parseFloat(e.target.value), GRBWidth: CalulGRB()})}
                           step="0.1"
-                          min={3.0} // Définit la valeur minimale autorisée
+                          min={1.0} // Définit la valeur minimale autorisée
                           className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={"6.0"}
+                          placeholder={"1.0"}
                         />
-                      </div>
-                      <div>
-                        <Tooltip  text={
-                                            <div>
-                                              Largeur de votre Zone Tampon (Ground Risk Buffer)
-                                              <br />
-                                              
-                                              <br />
-                                              
-                                            </div>
-                                          }>
-                          <label className="block text-sm font-medium text-gray-700">
-                            GRB : de votre Zone Tampon (m)
-                          </label>
-                        </Tooltip>
-                        <input
-                          type="number"
-                          value={CalulGRB()}
-                          onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
-                          //step="0.1"
-                          //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                          className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={('Not yet computed')}
-                          disabled
-                        />
-                      </div> 
-                                          
-                      <div>
-                        <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Justification de votre Zone Tampon (Ground Risk Buffer)
-                          </label>
-                        </Tooltip>
-                        <textarea
-                            value={assessment.GRB_Justification}
-                            onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                GRB_Justification: e.target.value,
-                              })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            rows={4}
-                          />
-                      </div>
-                    </div>
-                  ) : assessment.assessmentGRB ===
-                  'Spécifiée par le déposant' ? (
-                    // {assessment.uasType === ''}
-                    <div>
-                      <label>'Autre Terminaison à préciser'</label>
-                      <div>
-                        <Tooltip  text={
-                                            <div>
-                                              Largeur de votre Zone Tampon (Ground Risk Buffer)
-                                              <br />
-                                              
-                                              <br />
-                                              
-                                            </div>
-                                          }>
-                          <label className="block text-sm font-medium text-gray-700">
-                            GRB : de votre Zone Tampon (m)
-                          </label>
-                        </Tooltip>
-                        <input
-                          type="number"
-                          value={assessment.GRBWidth}
-                          onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
-                          step="0.1"
-                          min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                          className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                          placeholder={(assessment.FlightGeographyWidth)}
-                        />
-                      </div> 
-                                          
-                      <div>
-                        <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Justification de votre Zone Tampon (Ground Risk Buffer)
-                          </label>
-                        </Tooltip>
-                        <textarea
-                            value={assessment.GRB_Justification}
-                            onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                GRB_Justification: e.target.value,
-                              })}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            rows={4}
-                          />
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      
-                    </div>
-                  )
-                } 
+                      </div>                          
 
-              </div> 
+                  )}
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Vitesse de déscente sous parachute (m/s)
+                                          <br />
+                                          Généralement de l'ordred de 6.0 m/s
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Vitesse de déscente sous parachute (m/s)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={assessment.VzParachute}
+                      onChange={(e) => onChange({ ...assessment, VzParachute: parseFloat(e.target.value) })}
+                      step="0.1"
+                      min={3.0} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={"6.0"}
+                    />
+                  </div>
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Vitesse du vent considéré pour la déscente sous parachute (m/s)
+                                          <br />
+                                          Elle doit être comprise entre la Vitesse maximale du vent au décollage et la Vitesse maximale de tenue à la rafale en évolution .
+                                          <br />
+                                          Ces valeur ont été déclarées dans la section "Limitations environnementales" à l'Étape 1 : Concept d'opérations / ConOps
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Vitesse du vent considéré pour la déscente sous parachute (m/s)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={assessment.VwindParachute}
+                      onChange={(e) => onChange({ ...assessment, VwindParachute: parseFloat(e.target.value) })}
+                      step="0.1"
+                      min={assessment.environmentalLimitations.maxWindSpeedTakeoff} // Définit la valeur minimale autorisée
+                      max={assessment.environmentalLimitations.maxGustSpeed} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={(assessment.environmentalLimitations.maxWindSpeedTakeoff).toString()}
+                    />
+                  </div>
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Largeur de votre Zone Tampon (Ground Risk Buffer)
+                                          <br />
+                                          
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GRB : Largeur de votre Zone Tampon (m)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={CalulGRB()}
+                      onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
+                      //step="0.1"
+                      //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-red-900 border-2 font-bold bg-red-50 text-red-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={('Not yet computed')}
+                      disabled
+                    />
+                  </div> 
+                                      
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Zone Tampon (Ground Risk Buffer)
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.GRB_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GRB_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>
+                </div>
+              ) : assessment.assessmentGRB ===
+              'Spécifiée par le déposant' ? (
+                // {assessment.uasType === ''}
+                <div>
+                  <label>'Autre Terminaison à préciser'</label>
+                  <div>
+                    <Tooltip  text={
+                                        <div>
+                                          Largeur de votre Zone Tampon (Ground Risk Buffer)
+                                          <br />
+                                          
+                                          <br />
+                                          
+                                        </div>
+                                      }>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GRB : Largeur de votre Zone Tampon (m)
+                      </label>
+                    </Tooltip>
+                    <input
+                      type="number"
+                      value={assessment.GRBWidth}
+                      onChange={(e) => onChange({ ...assessment, GRBWidth: parseFloat(e.target.value) })}
+                      step="0.1"
+                      min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
+                      className="mt-1 block w-full rounded-md border-red-900 border-2 font-bold bg-red-50 text-red-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      placeholder={(assessment.FlightGeographyWidth)}
+                    />
+                  </div> 
+                                      
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Volume de Contingence.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Zone Tampon (Ground Risk Buffer)
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.GRB_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GRB_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  
+                </div>
+              )
+            } 
+
+          </div> 
 
 
 
