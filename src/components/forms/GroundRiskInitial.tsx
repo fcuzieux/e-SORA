@@ -2364,7 +2364,7 @@ export function RiskAssessmentForm({
                     onChange={(e) => onChange({ ...assessment, AdjacentVolumeWidth: parseFloat(e.target.value) })}
                     //step="0.1"
                     //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                    className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-black border-2 font-bold bg-gray-400 text-black  border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder={(0.0)}
                     disabled
                   />  
@@ -2389,7 +2389,7 @@ export function RiskAssessmentForm({
                     onChange={(e) => onChange({ ...assessment, AdjacentVolumeHeight: parseFloat(e.target.value) })}
                     //step="0.1"
                     //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
-                    className="mt-1 block w-full rounded-md border-black border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-md border-black border-2 font-bold bg-gray-400 text-black  border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder={(0.0)}
                     disabled
                   />  
