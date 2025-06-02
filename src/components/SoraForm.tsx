@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FileText, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Step } from '../types/navigation';
 import { STEPS } from '../data/steps';
-import { exportToExcel } from '../utils/excelExport';
+// import { exportToExcel } from '../utils/excelExport';
+import { exportToWord } from '../utils/excelExport';
 import { OperatorForm } from './forms/OperatorForm';
 import { DroneForm } from './forms/DroneForm';
 import { OperationForm } from './forms/OperationForm';
@@ -21,6 +22,7 @@ import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
 import { useStudyContext } from '../contexts/StudyContext';
+import { generate } from '../utils/excelExport';
 
 export function SoraForm() {
   const { formData, setFormData } = useStudyContext();
@@ -223,7 +225,8 @@ export function SoraForm() {
             </button>
           ) : currentStep === 'summary' ? (
             <button
-              onClick={() => exportToExcel(formData)}
+              // onClick={() => exportToExcel(formData)}
+              onClick={() => generate(formData)}
               className="ml-auto flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
               <FileText className="w-5 h-5" />

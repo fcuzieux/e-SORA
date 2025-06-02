@@ -10,5 +10,10 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env': env,
     },
+    server: {
+      allowedHosts: [
+        "23dc-194-59-6-98.ngrok-free.app"
+      ]
+    }
   };
 });
