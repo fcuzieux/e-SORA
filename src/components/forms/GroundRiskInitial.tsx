@@ -41,6 +41,16 @@ export function RiskAssessmentForm({
   showOnly,
 }: RiskAssessmentFormProps) {
 
+  const tableiGRCData = [
+    { PopDensity: 'Zone Contrôlée', MaxdimCS1: '1',MaxdimCS2: '2',MaxdimCS3: '3',MaxdimCS4: '4',MaxdimCS5: '5' },
+    { PopDensity: '<25',            MaxdimCS1: '3',MaxdimCS2: '4',MaxdimCS3: '5',MaxdimCS4: '6',MaxdimCS5: '7' },
+    { PopDensity: '<250',           MaxdimCS1: '4',MaxdimCS2: '5',MaxdimCS3: '6',MaxdimCS4: '7',MaxdimCS5: '8' },
+    { PopDensity: '<2,500',         MaxdimCS1: '5',MaxdimCS2: '6',MaxdimCS3: '7',MaxdimCS4: '8',MaxdimCS5: '9' },
+    { PopDensity: '<25,000',        MaxdimCS1: '6',MaxdimCS2: '7',MaxdimCS3: '8',MaxdimCS4: '9',MaxdimCS5: '10' },
+    { PopDensity: '<250,000',       MaxdimCS1: '7',MaxdimCS2: '8',MaxdimCS3: '9',MaxdimCS4: '10',MaxdimCS5: '11' },
+    { PopDensity: '>250,000',       MaxdimCS1: '7',MaxdimCS2: '9',MaxdimCS3: 'Not part of Sora',MaxdimCS4: 'Not part of Sora',MaxdimCS5: 'Not part of Sora' },
+  ];
+
   const handleOnChangeGlidingCapability = (e) => {
     onChange({
       ...assessment,
@@ -2439,6 +2449,66 @@ export function RiskAssessmentForm({
               <option value="high">Élevée</option>
             </select>
           </div>
+
+
+          <div className="space-y-8">
+            <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
+            <table className="min-w-full bg-white">
+           <thead>
+
+              <tr className="bg-gray-100 text-black">
+                <th colspan="7" className='  py-2 px-4 border-b'>Classe d'iGRC</th>
+              </tr>
+             <tr className="bg-blue-500 text-white">
+               <th colspan="2" className="bg-blue-400 py-2 px-4 border-b">Dimension caractéristique Maimale</th>
+               <th className="py-2 px-4 border-b">1m / appro. 3ft</th>
+               <th className="py-2 px-4 border-b">3m / appro. 10ft</th>
+               <th className="py-2 px-4 border-b">8m / appro. 25ft</th>
+               <th className="py-2 px-4 border-b">20m / appro. 65ft</th>
+               <th className="py-2 px-4 border-b">40m / appro. 130ft</th>
+             </tr>
+             <tr className="bg-green-500 text-white">
+               <th colspan="2" className="bg-green-400 py-2 px-4 border-b">Vitesse de Croisière Maimale</th>
+               <th className="py-2 px-4 border-b">25 m/s</th>
+               <th className="py-2 px-4 border-b">35 m/s</th>
+               <th className="py-2 px-4 border-b">75 m/s</th>
+               <th className="py-2 px-4 border-b">150 m/s</th>
+               <th className="py-2 px-4 border-b">200 m/s</th>
+             </tr>
+           </thead>
+              <tbody>
+                <th rowspan="8" className="bg-red-200 text-black">Densité de population iGRC Maximale (ppl/km²)</th>
+                {tableiGRCData.map((row, index) => (
+                  <tr
+                    key={index}
+                    className={
+                        row.PopDensity === assessment.OperationalVolumeLevelMitigated//'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                        ? 'bg-blue-900 text-white'
+                        : 'bg-gray-200 text-gray-400'
+                    }
+                  >
+                    
+                
+                    <th className="py-2 px-4 border-b bg-red-200 text-black">{row.PopDensity}</th>
+                    <th className="py-2 px-4 border-b">{row.MaxdimCS1}</th>
+                    <th className="py-2 px-4 border-b">{row.MaxdimCS2}</th>
+                    <th className="py-2 px-4 border-b">{row.MaxdimCS3}</th>
+                    <th className="py-2 px-4 border-b">{row.MaxdimCS4}</th>
+                    <th className="py-2 px-4 border-b">{row.MaxdimCS5}</th>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+
+
+
+
+
+
+
+
         </div>
         <h2 className="text-2xl font-semibold">iGRC</h2>
           <div className="bg-gray-50 p-4 rounded-lg space-y-4">
