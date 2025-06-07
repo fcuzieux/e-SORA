@@ -22,6 +22,7 @@ export type OperationType =
   | 'BVLOS – Vol hors vue';
 export type DangerousGoods = 'OUI' | 'NON';
 export type PopulationDensityModulation = 'OUI' | 'NON';
+export type PopulationDensityDataBase = 'INSEE_Filosofi2019_200m' | 'GHS_POP_E2025_GLOBE_R2023A_54009_100_V1_0_dens';
 export type ObstaclesModulation = 'OUI' | 'NON';
 export type GlidingCapability = 'OUI' | 'NON';
 export type HighImpactAngle = 'OUI' | 'NON';
@@ -128,6 +129,7 @@ export interface OperationInfo {
 }
 
 export interface RiskAssessmentInfo {
+  droseraOutputResult: string;
   assessmentTypeHauteurVol: assessmentTypeHauteurVol;
   assessmentCriticalArea: assessmentCriticalArea;
   assessmentContingencyVolume: assessmentContingencyVolume;
@@ -135,6 +137,8 @@ export interface RiskAssessmentInfo {
   iGRCNumber: number;
   followTerrainHeight: number;
   PopulationDensityModulation: PopulationDensityModulation;
+  PopulationDensityDataBase: PopulationDensityDataBase;
+  PopulationDensityDataBaseNumber: number;
   assessmentStartTime: string;
   CriticalArea: number;
   ContingencyVolume: number;
@@ -177,6 +181,7 @@ export interface RiskAssessmentInfo {
   SAIL: SailLevel;
   maxCharacteristicDimension: number;
   maxSpeed: number;
+  minSpeed: number;
   ObstaclesModulation: ObstaclesModulation;
   GlidingCapability: GlidingCapability;
   HighImpactAngle:HighImpactAngle;
@@ -221,6 +226,7 @@ export interface RiskAssessmentInfo {
   GRB_Justification: string;
   GRB_FixedWingPowerOff:GRB_FixedWingPowerOff;
   environmentalLimitations: EnvironmentalLimitations;
+  CruiseSpeed: number;
 }
 
 

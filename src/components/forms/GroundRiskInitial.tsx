@@ -10,6 +10,7 @@ import {
   assessmentContingencyVolume,
   assessmentiGRC,
   PopulationDensityModulation,
+  PopulationDensityDataBase,
   SailLevel,
   OperationalScenario,
   PopulationDensity,
@@ -130,6 +131,20 @@ let iGRC_colIndex =0
     assessment.GRB_FixedWingPowerOff = 'ACTIVATED'
     return true;
   }
+
+  const CalculAdjacentVolumeWidth = () => {
+    let AdjacentVolumeWidth = Number(1);
+    AdjacentVolumeWidth=120.0*assessment.maxSpeed;
+    assessment.AdjacentVolumeWidth = parseFloat((AdjacentVolumeWidth).toFixed(1));
+    return parseFloat((AdjacentVolumeWidth).toFixed(1));
+  }
+  const CalculAdjacentVolumeHeight = () => {
+    let AdjacentVolumeHeight = Number(1);
+    AdjacentVolumeHeight = assessment.ContingencyVolumeHeight+150.0; 
+    assessment.AdjacentVolumeHeight = parseFloat((AdjacentVolumeHeight).toFixed(1));
+    return parseFloat((AdjacentVolumeHeight).toFixed(1));
+  }
+
   const CalulGRB =() =>{
     let GRB = Number(1);
     let GRAVITY = 9.81;
@@ -150,23 +165,23 @@ let iGRC_colIndex =0
       GRB =0.0;
 
     }
-    
+    assessment.GRBWidth = parseFloat(GRB.toFixed(2));
     return parseFloat(GRB.toFixed(2));
   }
   const CalculContingencyVolumeWidth = (SGPS,Spos,SK,SRZ,SCM) => {
     let SCV = Number(1);
     //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
     SCV=SGPS+Spos+SK+SRZ+SCM;
-    assessment.ContingencyVolumeWidth = parseFloat((SCV).toFixed(2));
-    return parseFloat((SCV).toFixed(2));
+    assessment.ContingencyVolumeWidth = parseFloat((SCV).toFixed(1));
+    return parseFloat((SCV).toFixed(1));
   }
   
   const CalculContingencyVolumeHeight = (Hbaro,HRZ,HCM) => {
     let HCV = Number(1);
     //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
     HCV=Hbaro+HRZ+HCM+assessment.FlightGeographyHeight;
-    assessment.ContingencyVolumeHeight = parseFloat((HCV).toFixed(2));
-    return parseFloat((HCV).toFixed(2));
+    assessment.ContingencyVolumeHeight = parseFloat((HCV).toFixed(1));
+    return parseFloat((HCV).toFixed(1));
   }
 //Contigency Maneuvre Volume
   const CalculVolumeSCM = () => {
@@ -307,15 +322,182 @@ let iGRC_colIndex =0
     const newFile = files[0]; // Prendre le premier fichier seulement
     onChange({ ...assessment, droseraOutputFile: [newFile] });
     }
+    
     };
+    // const handleDroseraOutputFileChange = async (
+    // event: React.ChangeEvent<HTMLInputElement>
+    // ) => {
+    // const files = event.target.files;
+    // if (files) {
+    // const newFile = files[0]; // Prendre le premier fichier seulement
 
+    // const reader = new FileReader();
+    // reader.onload = (e) => {
+    //     const content = e.target?.result as string;
+    //     const parser = new DOMParser();
+    //     const doc = parser.parseFromString(content, 'text/html');
+
+    //     // Find the <h2>Population</h2> element
+    //     const populationHeader = doc.querySelector('h2');
+    //     if (populationHeader && populationHeader.textContent === 'Population') {
+    //         // Find the next sibling element which is a table
+    //         const nextSibling = populationHeader.nextElementSibling;
+    //         if (nextSibling && nextSibling.tagName === 'table') {
+    //             // Convert the table to a string
+    //             const tableString = nextSibling.outerHTML;
+    //             console.log(tableString);
+    //             assessment.droseraOutputResult = tableString;
+    //             console.error({tableString});
+
+    //             // Store the table string in the state or use it as needed
+    //             onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString });
+    //         } else {
+    //             console.error('No table found right after the <h2>Population</h2> title.');
+    //         }
+    //     } else {
+    //         console.error('<h2>Population</h2> title not found.'+{populationHeader});
+    //     }
+    // };
+    // reader.readAsText(newFile);
+    // }
+    
+    // };
 
   const handleRemoveDroseraOutputFile = (index: number) => {
     const newFiles = [...(assessment.droseraOutputFile || [])];
     newFiles.splice(index, 1);
     onChange({ ...assessment, droseraOutputFile: newFiles });
   };
-    
+   
+  
+  const generateDroseraInputFile = () => {
+    const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="DroseraDataModel.xsl"?><DroseraDataModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="drosera.xsd">
+<DroseraLite id="1">
+  <mission id="2">
+    ${assessment.trajgeoFiles[0].name.includes('Trajectoire_') && assessment.trajgeoFiles.length > 0
+      ? `<is_traj>true</is_traj>
+         <is_zone>false</is_zone>
+         <trajectory>%DRODIR%/share/drosera/Data/Trajectories/${assessment.trajgeoFiles[0].name}</trajectory>`
+      : assessment.trajgeoFiles[0].name.includes('Zone_') && assessment.trajgeoFiles.length > 0
+      ? `<is_traj>false</is_traj>
+         <is_zone>true</is_zone>
+         <trajectory>drosera_dir/Data/Trajectories/${assessment.trajgeoFiles[0].name}</trajectory>`
+      : ``}
+    ${assessment.assessmentTypeHauteurVol.includes('Hauteur de vol suivant trajectoire(s)')
+      ? `<compute_terrain_following>false</compute_terrain_following>
+    <terrain_following unit="m">0</terrain_following>`
+      : `<compute_terrain_following>true</compute_terrain_following>
+    <terrain_following unit="m">${assessment.followTerrainHeight}</terrain_following>`}
+    <cruise_speed unit="m/s">${assessment.CruiseSpeed}</cruise_speed>
+    ${assessment.PopulationDensityModulation.includes('OUI')
+      ? `<compute_flight_start>true</compute_flight_start>`
+      : `<compute_flight_start>false</compute_flight_start>`}
+    <flight_start>${assessment.assessmentStartTime}:00</flight_start>
+  </mission>
+  <iGRC id="3">
+    ${assessment.assessmentCriticalArea.includes('JARUS') 
+      ? `<compute_critical_area>true</compute_critical_area>` 
+      : assessment.assessmentCriticalArea.includes('SORA') 
+      ? `<compute_critical_area>false</compute_critical_area>`
+      : `<compute_critical_area>true</compute_critical_area>`
+    }
+    <critical_area unit="m²">${assessment.CriticalArea}</critical_area>
+    ${assessment.assessmentCriticalArea.includes('JARUS') 
+      ? `<use_igrc_table>false</use_igrc_table>` 
+      : assessment.assessmentCriticalArea.includes('SORA') 
+      ? `<use_igrc_table>true</use_igrc_table>`
+      : `<use_igrc_table>false</use_igrc_table>`
+    }    
+    <max_dim unit="m">${assessment.maxCharacteristicDimension}</max_dim>
+    <max_speed unit="m/s">${assessment.maxSpeed}</max_speed>
+  </iGRC>
+  <ground_risk_assessment id="4">
+    <areas_to_check id="12">
+      <flight_geography_width unit="m">${assessment.FlightGeographyWidth}</flight_geography_width>
+      <contingency_volume_width unit="m">${assessment.ContingencyVolumeWidth}</contingency_volume_width>
+      <grb_range unit="m">${assessment.GRBWidth}</grb_range>
+      <adjacent_range unit="m">${assessment.AdjacentVolumeWidth}</adjacent_range>
+    </areas_to_check>
+    <third_parties id="10">
+      <assess_population>true</assess_population>
+      ${assessment.PopulationDensityDataBase.includes('INSEE')
+      ? `<population_database ref="19"/>`
+      : `<population_database ref="18"/>`}
+      <assess_road>true</assess_road>
+      <assess_railway>true</assess_railway>
+      <assess_powerline>true</assess_powerline>
+    </third_parties>
+    <other_maps id="11">
+      <assess_relief>false</assess_relief>
+      <d_relief unit="m">50</d_relief>
+      <assess_safecrash>false</assess_safecrash>
+    </other_maps>
+    <result_directory>%DRODIR%/share/drosera/Data/Results/</result_directory>
+    <verbose>false</verbose>
+    <zip_result>false</zip_result>
+  </ground_risk_assessment>
+  <helpers id="5">
+    <mission id="9" xsi:type="MissionHelp"/>
+    <critical_area id="6" xsi:type="CriticalAreaHelp">
+      <critical_area_jarus_calc id="14">
+        <uav_wingspan unit="m">${assessment.maxCharacteristicDimension}</uav_wingspan>
+        <d_glide unit="m">${assessment.dGlide}</d_glide>
+        <compute_d_glide>true</compute_d_glide>
+        <dglide_calc id="17">
+          <theta unit="deg">${assessment.ThetaGlide}</theta>
+        </dglide_calc>
+        <d_slide unit="m">${assessment.dSlideReduced}</d_slide>
+        <compute_d_slide>true</compute_d_slide>
+        ${assessment.ObstaclesModulation.includes('OUI')
+      ? `<reduce_for_obstacles>true</reduce_for_obstacles>`
+      : `<reduce_for_obstacles>false</reduce_for_obstacles>`}
+        <dslide_calc id="16">
+          <theta unit="deg">${assessment.ThetaGlide}</theta>
+          <max_speed unit="m/s">${assessment.maxSpeed}</max_speed>
+          <uav_mass unit="kg">${assessment.MTOW}</uav_mass>
+        </dslide_calc>
+      </critical_area_jarus_calc>
+      <critical_area_hiam_calc id="13">
+        <uav_wingspan unit="m">${assessment.maxCharacteristicDimension}</uav_wingspan>
+        <max_speed unit="m/s">${assessment.maxSpeed}</max_speed>
+        <uav_mass unit="kg">${assessment.MTOW}</uav_mass>
+      </critical_area_hiam_calc>
+    </critical_area>
+    <ground_risk_assessment id="7" xsi:type="GroundRiskAssessmentHelp"/>
+    <ground_risk_buffer id="8" xsi:type="GroundRiskBufferHelp">
+      <grb_calc id="15">
+        <x unit="m">0</x>
+        <y unit="m">0</y>
+        <z unit="m">0</z>
+        <vx unit="m/s">0</vx>
+        <vy unit="m/s">0</vy>
+        <vz unit="m/s">0</vz>
+        <vwind unit="m/s">0</vwind>
+        <etapes/>
+        <grb unit="m">${assessment.GRBWidth}</grb>
+      </grb_calc>
+    </ground_risk_buffer>
+  </helpers>
+</DroseraLite>
+ ${assessment.PopulationDensityDataBase.includes('INSEE')
+      ? `<BDDPopu id="19">`
+      : `<BDDPopu id="18">`}
+  <nom>${assessment.PopulationDensityDataBase}</nom>
+</BDDPopu>
+</DroseraDataModel>`;
+
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'DroseraInputFile'.concat('.dro');
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
   
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -325,13 +507,13 @@ let iGRC_colIndex =0
       const newFiles = Array.from(files);
       const invalidFiles = newFiles.filter(
         (file) =>
-          !file.name.startsWith('Trajectoire_') &&
+          ( !file.name.startsWith('Trajectoire_') && !file.name.startsWith('Zone_') )&&
           (file.name.endsWith('.kml') || file.name.endsWith('.geojson'))
       );
 
       if (invalidFiles.length > 0) {
         setErrorMessage(
-          "ERREUR : votre fichier doit avoir un nom de la forme 'Trajectoire_Nom-de-la-trajectoire' et être un fichier .kml ou .geojson"
+          "ERREUR : votre fichier doit avoir un nom de la forme 'Trajectoire_Nom-de-la-trajectoire' ou 'Zone_Nom-de-la-zone'et être un fichier .kml ou .geojson"
         );
         return;
       }
@@ -352,6 +534,9 @@ let iGRC_colIndex =0
     }
   };
 
+
+
+  
   const handleRemoveFile = (index: number) => {
     const newFiles = [...(assessment.trajgeoFiles || [])];
     newFiles.splice(index, 1);
@@ -388,6 +573,9 @@ let iGRC_colIndex =0
                 }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               >
+                <option value="Sélectionner une méthode d'évaluation">
+                  Sélectionner une méthode d'évaluation
+                </option>
                 <option value="Hauteur de vol suivant trajectoire(s)">
                   Hauteur de vol suivant trajectoire(s)
                 </option>
@@ -421,6 +609,19 @@ let iGRC_colIndex =0
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <label className="block text-sm font-medium text-gray-700">Vitesse de Croisière (m/s)</label>
+              <input
+                type="number"
+                value={assessment.CruiseSpeed}
+                max={assessment.maxSpeed}
+                min={assessment.minSpeed}
+                onChange={(e) => onChange({ ...assessment, CruiseSpeed: parseFloat(e.target.value) })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            
+            
+            <div>
               <Tooltip text=" XXX ">
                 <label className="block text-sm font-medium text-gray-700">
                   Moduler la densité de population en fonction du temps de vol
@@ -438,6 +639,9 @@ let iGRC_colIndex =0
                 }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               >
+                <option value="Sélectionner une méthode d'évaluation">
+                  Sélectionner une méthode d'évaluation
+                </option>
                 <option value="NON">NON</option>
                 <option value="OUI">OUI</option>
               </select>
@@ -470,9 +674,14 @@ let iGRC_colIndex =0
           </div>
 
           <div>
-            <Tooltip text="Insérez vos trajectoires : un fichier par tajectoire sous le nom Trajectoire_Nom-de-la-trajectoire">
+            <Tooltip text={
+                                  <div>
+                                    <li>Un fichier par tajectoire nommé Trajectoire_Nom-de-la-trajectoire</li>                                   
+                                    <li>Un fichier par Zone d'évolution nommé Zone_Nom-de-la-zone</li>
+                                  </div>
+                }>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Trajectoire
+                Trajectoire ou Zone d'évolution de l'UAS
               </label>
             </Tooltip>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors">
@@ -517,7 +726,9 @@ let iGRC_colIndex =0
                 ))}
               </div>
             )}
-
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Carte de visualisation des Trajectoires ou Zones d'évolution de l'UAS
+              </label>
             <RiskAssessmentMap geoFiles={assessment.trajgeoFiles || []} />
           </div>
         </div>
@@ -642,6 +853,9 @@ let iGRC_colIndex =0
                     }
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   >
+                    <option value="Sélectionner une méthode d'évaluation">
+                      Sélectionner une méthode d'évaluation
+                    </option>
                     <option value="NON">NON</option>
                     <option value="OUI">OUI</option>
                   </select>
@@ -666,6 +880,9 @@ let iGRC_colIndex =0
                       }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
+                      <option value="Sélectionner une méthode d'évaluation">
+                        Sélectionner une méthode d'évaluation
+                      </option>
                       <option value="NON">NON</option>
                       <option value="OUI">OUI</option>
                     </select>
@@ -699,6 +916,9 @@ let iGRC_colIndex =0
                           }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
+                          <option value="Sélectionner une méthode d'évaluation">
+                            Sélectionner une méthode d'évaluation
+                          </option>
                           <option value="NON">NON</option>
                           <option value="OUI">OUI</option>
                         </select>
@@ -761,6 +981,9 @@ let iGRC_colIndex =0
                           }
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
+                          <option value="Sélectionner une méthode d'évaluation">
+                            Sélectionner une méthode d'évaluation
+                          </option>
                           <option value="NON">NON</option>
                           <option value="OUI">OUI</option>
                         </select>
@@ -1112,6 +1335,19 @@ let iGRC_colIndex =0
                       { (assessment.ContingencyVolumeSGPS === undefined || assessment.ContingencyVolumeSGPS === null) || (assessment.ContingencyVolumeSpos === undefined || assessment.ContingencyVolumeSpos === null) || (assessment.ContingencyVolumeSK === undefined || assessment.ContingencyVolumeSK === null) || (assessment.ContingencyVolumeSRZ === undefined || assessment.ContingencyVolumeSRZ === null) || (assessment.ContingencyVolumeSCM === undefined || assessment.ContingencyVolumeSCM === null)  ? (
                         <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
                           Attention : une donnée est indéfinie ou nulle.
+                            Les valeurs suivantes sont utilisées pour le calcul de la largeur du volume de contingence. Vérifier la cohérence avec l'affichage. 
+                            <br />                                    
+                            GPS - Inaccuracy = {assessment.ContingencyVolumeSGPS} m
+                            <br />
+                            Position Holding = {assessment.ContingencyVolumeSpos} m
+                            <br />
+                            Map error = {assessment.ContingencyVolumeSK} m
+                            <br />
+                            Temps de Réaction = {assessment.ContingencyTimeRZ} s
+                            <br />
+                            Distance de réaction S_RZ = {assessment.ContingencyVolumeSRZ} m
+                            <br />
+                            Manoeuvre de contigence S_CM = {assessment.ContingencyVolumeSCM} m
                         </div>
                       ) : (
                         <Tooltip   text={
@@ -1179,11 +1415,7 @@ let iGRC_colIndex =0
                       />
                     </div>
                     <div>
-                      { (assessment.ContingencyVolumeHbaro === undefined || assessment.ContingencyVolumeHbaro === null) || (assessment.ContingencyVolumeHRZ === undefined || assessment.ContingencyVolumeHRZ === null) || (assessment.ContingencyVolumeHCM === undefined || assessment.ContingencyVolumeHCM === null)  ? (
-                        <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
-                          Attention : une donnée est indéfinie ou nulle.
-                        </div>
-                      ) : (
+                      
                         <Tooltip   text={
                           <div>
                             Les valeurs suivantes sont utilisées pour le calcul de la largeur du volume de contingence. Vérifier la cohérence avec l'affichage. 
@@ -1210,7 +1442,7 @@ let iGRC_colIndex =0
                         </div>
                         
                         </Tooltip>
-                      )}
+                      
 
                       
                     </div>
@@ -2154,6 +2386,9 @@ let iGRC_colIndex =0
                         onChange={handleOnChangeGlidingCapability}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       >
+                        <option value="Sélectionner une méthode d'évaluation">
+                          Sélectionner une méthode d'évaluation
+                        </option>
                         <option value="NON">NON</option>
                         <option value="OUI">OUI</option>
                       </select>
@@ -2447,7 +2682,7 @@ let iGRC_colIndex =0
                   </Tooltip>
                   <input
                     type="number"
-                    value={120.0*assessment.maxSpeed}
+                    value={CalculAdjacentVolumeWidth()}
                     onChange={(e) => onChange({ ...assessment, AdjacentVolumeWidth: parseFloat(e.target.value) })}
                     //step="0.1"
                     //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
@@ -2472,7 +2707,7 @@ let iGRC_colIndex =0
                   </Tooltip>
                   <input
                     type="number"
-                    value={assessment.ContingencyVolumeHeight+150.0}
+                    value={CalculAdjacentVolumeHeight()}
                     onChange={(e) => onChange({ ...assessment, AdjacentVolumeHeight: parseFloat(e.target.value) })}
                     //step="0.1"
                     //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
@@ -2517,8 +2752,7 @@ let iGRC_colIndex =0
                           : 0,
                     })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                >
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">                
                   <option value="Sélectionner une méthode d'évaluation iGRC">
                     Sélectionner une méthode d'évaluation iGRC
                   </option>
@@ -2532,7 +2766,7 @@ let iGRC_colIndex =0
                     Spécifiée par le déposant
                   </option>
                 </select>
-              </div>
+            </div>
               
                 
                   
@@ -2552,7 +2786,47 @@ let iGRC_colIndex =0
                       {assessment.maxSpeed}
                     </div>
                   </div>  
-                
+
+           <div>
+                <Tooltip text={
+                                  <div>
+                                    <li>BDD Population</li>
+                                    <br />                                    
+                                    <li>. </li>
+                                    <br />
+                                    <li>.</li>
+                                  </div>
+                }>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Base de donnée de population
+                  </label>
+                </Tooltip>
+                <select
+                  value={assessment.PopulationDensityDataBase}
+                  onChange={(e) =>
+                    onChange({
+                      ...assessment,
+                      PopulationDensityDataBase: e.target
+                        .value as PopulationDensityDataBase,
+                      PopulationDensityDataBaseNumber:
+                        e.target.value === 'Spécifiée par le déposant'
+                          ? assessment.PopulationDensityDataBaseNumber
+                          : 0,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">                
+                  <option value="Sélectionner une Base de donnée de population">
+                    Sélectionner une Base de donnée de population
+                  </option>
+                  <option value="INSEE_Filosofi2019_200m">
+                    INSEE_Filosofi2019_200m
+                  </option>
+                  <option value="GHS_POP_E2025_GLOBE_R2023A_54009_100_V1_0_dens">
+                    GHS_POP_E2025_GLOBE_R2023A_54009_100_V1_0_dens
+                  </option>
+                </select>
+            </div>
+
           </div>   
 
           {assessment.assessmentiGRC ===
@@ -2604,29 +2878,13 @@ let iGRC_colIndex =0
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     // onClick={() => exportToExcel(formData)}
-                    //onClick={() => generate(formData)}
+                    onClick={() => generateDroseraInputFile()}
                     className=" flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                   >
                     <FileText className="w-5 h-5" />
                     Générer le fichier d'input pour DROSERA
                   </button>
                   <div></div>
-                  
-                  {/* <button
-                    // onClick={() => exportToExcel(formData)}
-                    //onClick={() => generate(formData)}
-                    className=" flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    <FileText className="w-5 h-5" />
-                    Charger l'output de DROSERA (HTML)
-                  </button> */}
-                  {/* <input id="fileInput" name="file"
-                    type="file"
-                    accept=".html"
-                    onChange={handleDroseraOutputFileChange}
-                    //value={assessment.droseraOutputFile}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  /> */}
 
           <div>
             <Tooltip text="Insérez fichier html output drosder">
@@ -2658,19 +2916,7 @@ let iGRC_colIndex =0
                 {errorMessage}
               </div>
             )}
-            {/* {assessment.droseraOutputFile && (
-              <div className="mt-2 space-y-2">
-                
-                  <div
-                    //key={assessment.droseraOutputFile.name}
-                    className="flex items-center justify-between p-2 bg-white rounded"
-                  >
-                    <span className="text-sm text-gray-600">{assessment.droseraOutputFile}</span>
-                    
-                  </div>
-                
-              </div>
-            )} */}
+            
             {assessment.droseraOutputFile && assessment.droseraOutputFile.length > 0 && (
             <div className="mt-2 space-y-2">
             {assessment.droseraOutputFile.map((file, index) => (
@@ -2688,8 +2934,35 @@ let iGRC_colIndex =0
                   </div>
                 ))}
             </div>
-          )}
-            {/* <RiskAssessmentMap geoFiles={assessment.trajgeoFiles || []} /> */}
+            )}
+
+              <div>
+                Todo : Put here Drosera file results ! {assessment.droseraOutputResult}
+              </div>
+
+              <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Densité de population (ppl/km²)
+                    </label>
+                    <select
+                      value={assessment.populationDensity || 'Zone Contrôlée'}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          populationDensity: e.target.value as PopulationDensity,
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="Zone Contrôlée">Zone Contrôlée</option>
+                      <option value="<25">&lt;25</option>
+                      <option value="<250">&lt;250</option>
+                      <option value="<2,500">&lt;2,500</option>
+                      <option value="<25,000">&lt;25,000</option>
+                      <option value="<250,000">&lt;250,000</option>
+                      <option value=">250,000">&gt;250,000</option>
+                    </select>
+              </div>
           </div>
 
 
@@ -2765,27 +3038,27 @@ let iGRC_colIndex =0
                       
                           <th className="py-2 px-4 border-b bg-red-200 text-black">{row.PopDensity}</th>
                           <th className={
-                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==1//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==1
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS1}    </th>
                           <th className={
-                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==2//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==2
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS2}</th>
                           <th className={
-                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==3//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==3
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS3}</th>
                           <th className={
-                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==4//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==4
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS4}</th>
                           <th className={
-                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==5//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==5
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS5}</th>
