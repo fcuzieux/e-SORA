@@ -291,7 +291,7 @@ export const initialSoraForm: SoraForm = {
     trafficDetection: '',
     additionalDetails: '',
     operationalScenario: 'VLOS',
-    populationDensity: 'low',
+    populationDensity: 'Zone Contrôlée',
     necessaryToReduceRisk: 'NON',
     planInterventionUrgence: 'NON',
     confinementRequirements: 'Basiques',

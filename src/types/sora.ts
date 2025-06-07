@@ -34,7 +34,7 @@ export type reduceImpactAttenuation = 'Non' | 'Oui, faible' | 'Oui, moyenne' | '
 export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type OperationalScenario = 'VLOS' | 'BVLOS';
-export type PopulationDensity = 'low' | 'moderate' | 'high';
+export type PopulationDensity = 'Zone Contrôlée' | '<25' | '<250' | '<2,500' | '<25,000' | '<250,000' | '>250,000' ;
 export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
 export type ContingencyParachuteManeuver = 'OUI' | 'NON';
 export type GRB_FixedWingPowerOff = 'ACTIVATED' | 'NONACTIVE';
@@ -49,6 +49,10 @@ export type GRC_Final = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type assessmentCriticalArea =
   | 'Calcul selon les tables SORA'
   | 'Calcul selon les Modèles JARUS'
+  | 'Spécifiée par le déposant';
+export type assessmentiGRC =  
+  | 'Calcul selon les tables SORA'
+  | 'Calcul DROSERA'
   | 'Spécifiée par le déposant';
   export type assessmentGRB =
   | 'Approche Simplifiée, Règle 1:1'
@@ -127,6 +131,8 @@ export interface RiskAssessmentInfo {
   assessmentTypeHauteurVol: assessmentTypeHauteurVol;
   assessmentCriticalArea: assessmentCriticalArea;
   assessmentContingencyVolume: assessmentContingencyVolume;
+  assessmentiGRC: assessmentiGRC;
+  iGRCNumber: number;
   followTerrainHeight: number;
   PopulationDensityModulation: PopulationDensityModulation;
   assessmentStartTime: string;
@@ -142,6 +148,7 @@ export interface RiskAssessmentInfo {
   airRisk?: number;
   sailLevel?: string;
   trajgeoFiles: File[];
+  droseraOutputFile: File[];
   mitigationStrategique: mitigationStrategique;
   reduceImpactAttenuation: reduceImpactAttenuation;
   OperationalVolumeLevel: string;
@@ -186,6 +193,7 @@ export interface RiskAssessmentInfo {
   ContingencyVolumeWidth: number;
   ContingencyVolumeHeight: number;
   ContingencyVolume_Justification: string; 
+  PopulationDensity_Justification: string;
   ContingencyVolumeSGPS: number;
   ContingencyVolumeSpos: number;
   ContingencyVolumeSK: number;

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-
+import { FileText, ArrowLeft, ArrowRight } from 'lucide-react';
 import {
   RiskAssessmentInfo,
   DroneInfo,
@@ -8,6 +8,7 @@ import {
   assessmentCriticalArea,
   assessmentGRB,
   assessmentContingencyVolume,
+  assessmentiGRC,
   PopulationDensityModulation,
   SailLevel,
   OperationalScenario,
@@ -50,6 +51,62 @@ export function RiskAssessmentForm({
     { PopDensity: '<250,000',       MaxdimCS1: '7',MaxdimCS2: '8',MaxdimCS3: '9',MaxdimCS4: '10',MaxdimCS5: '11' },
     { PopDensity: '>250,000',       MaxdimCS1: '7',MaxdimCS2: '9',MaxdimCS3: 'Not part of Sora',MaxdimCS4: 'Not part of Sora',MaxdimCS5: 'Not part of Sora' },
   ];
+
+let iGRC_colIndex =0
+   
+    if (assessment.maxCharacteristicDimension <= 1.0) {
+      if (assessment.maxSpeed <= 25.0) {
+        iGRC_colIndex = 1;
+      } else if (assessment.maxSpeed <= 35.0) {
+        iGRC_colIndex = 2;
+      } else if (assessment.maxSpeed <= 75.0) {
+        iGRC_colIndex = 3;
+      } else if (assessment.maxSpeed <= 150.0) {
+        iGRC_colIndex = 4;
+      } else if (assessment.maxSpeed <= 200.0) {  
+        iGRC_colIndex = 5;
+      }  else {
+        iGRC_colIndex = 6;
+      }
+    } else if (assessment.maxCharacteristicDimension <= 3.0) {
+      if (assessment.maxSpeed <= 35.0) {
+        iGRC_colIndex = 2;
+      } else if (assessment.maxSpeed <= 75.0) {
+        iGRC_colIndex = 3;
+      } else if (assessment.maxSpeed <= 150.0) {
+        iGRC_colIndex = 4;
+      } else if (assessment.maxSpeed <= 200.0) {  
+        iGRC_colIndex = 5;
+      }  else {
+        iGRC_colIndex = 6;
+      }
+    } else if (assessment.maxCharacteristicDimension <= 8.0) {
+      if (assessment.maxSpeed <= 75.0) {
+        iGRC_colIndex = 3;
+      } else if (assessment.maxSpeed <= 150.0) {
+        iGRC_colIndex = 4;
+      } else if (assessment.maxSpeed <= 200.0) {  
+        iGRC_colIndex = 5;
+      }  else {
+        iGRC_colIndex = 6;
+      }
+    } else if (assessment.maxCharacteristicDimension <= 20.0) {
+      if (assessment.maxSpeed <= 150.0) {
+        iGRC_colIndex = 4;
+      } else if (assessment.maxSpeed <= 200.0) {  
+        iGRC_colIndex = 5;
+      }  else {
+        iGRC_colIndex = 6;
+      }
+    } else if (assessment.maxCharacteristicDimension <= 40.0) {
+      if (assessment.maxSpeed <= 200.0) {  
+        iGRC_colIndex = 5;
+      }  else {
+        iGRC_colIndex = 6;
+      }
+    } else {
+      iGRC_colIndex = 6;
+    }
 
   const handleOnChangeGlidingCapability = (e) => {
     onChange({
@@ -239,7 +296,27 @@ export function RiskAssessmentForm({
   }
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const DroserafileInputRef = useRef<HTMLInputElement>(null);
 
+
+    const handleDroseraOutputFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+    const files = event.target.files;
+    if (files) {
+    const newFile = files[0]; // Prendre le premier fichier seulement
+    onChange({ ...assessment, droseraOutputFile: [newFile] });
+    }
+    };
+
+
+  const handleRemoveDroseraOutputFile = (index: number) => {
+    const newFiles = [...(assessment.droseraOutputFile || [])];
+    newFiles.splice(index, 1);
+    onChange({ ...assessment, droseraOutputFile: newFiles });
+  };
+    
+  
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -2409,137 +2486,351 @@ export function RiskAssessmentForm({
         </div>
       </section>
 
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium">Ground Risk Assessment</h3>
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Scénario opérationnel
-            </label>
-            <select
-              value={assessment.operationalScenario || 'VLOS'}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  operationalScenario: e.target.value as OperationalScenario,
-                })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="VLOS">VLOS</option>
-              <option value="BVLOS">BVLOS</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Densité de population
-            </label>
-            <select
-              value={assessment.populationDensity || 'low'}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  populationDensity: e.target.value as PopulationDensity,
-                })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="low">Faible</option>
-              <option value="moderate">Modérée</option>
-              <option value="high">Élevée</option>
-            </select>
-          </div>
-
-
-          <div className="space-y-8">
-            <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
-            <table className="min-w-full bg-white">
-           <thead>
-
-              <tr className="bg-gray-100 text-black">
-                <th colspan="7" className='  py-2 px-4 border-b'>Classe d'iGRC</th>
-              </tr>
-             <tr className="bg-blue-500 text-white">
-               <th colspan="2" className="bg-blue-400 py-2 px-4 border-b">Dimension caractéristique Maimale</th>
-               <th className="py-2 px-4 border-b">1m / appro. 3ft</th>
-               <th className="py-2 px-4 border-b">3m / appro. 10ft</th>
-               <th className="py-2 px-4 border-b">8m / appro. 25ft</th>
-               <th className="py-2 px-4 border-b">20m / appro. 65ft</th>
-               <th className="py-2 px-4 border-b">40m / appro. 130ft</th>
-             </tr>
-             <tr className="bg-green-500 text-white">
-               <th colspan="2" className="bg-green-400 py-2 px-4 border-b">Vitesse de Croisière Maimale</th>
-               <th className="py-2 px-4 border-b">25 m/s</th>
-               <th className="py-2 px-4 border-b">35 m/s</th>
-               <th className="py-2 px-4 border-b">75 m/s</th>
-               <th className="py-2 px-4 border-b">150 m/s</th>
-               <th className="py-2 px-4 border-b">200 m/s</th>
-             </tr>
-           </thead>
-              <tbody>
-                <th rowspan="8" className="bg-red-200 text-black">Densité de population iGRC Maximale (ppl/km²)</th>
-                {tableiGRCData.map((row, index) => (
-                  <tr
-                    key={index}
-                    className={
-                        row.PopDensity === assessment.OperationalVolumeLevelMitigated//'ARC-b'//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
-                        ? 'bg-blue-900 text-white'
-                        : 'bg-gray-200 text-gray-400'
-                    }
-                  >
-                    
-                
-                    <th className="py-2 px-4 border-b bg-red-200 text-black">{row.PopDensity}</th>
-                    <th className="py-2 px-4 border-b">{row.MaxdimCS1}</th>
-                    <th className="py-2 px-4 border-b">{row.MaxdimCS2}</th>
-                    <th className="py-2 px-4 border-b">{row.MaxdimCS3}</th>
-                    <th className="py-2 px-4 border-b">{row.MaxdimCS4}</th>
-                    <th className="py-2 px-4 border-b">{row.MaxdimCS5}</th>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-
-
-
-
-
-
-
-
-        </div>
-        <h2 className="text-2xl font-semibold">iGRC</h2>
-          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+      <section className="space-y-4">  
+        <div className="bg-gray-200 p-4 rounded-lg space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+            <h2 className="text-lg font-medium">Ground Risk Assessment Initial</h2>
             <div>
-              <Tooltip text="Veuillez entrer le niveau GRC Initial calculé à l'aide de l'outil (c)DROSERA.">
-                <label className="block text-sm font-medium text-gray-700">
-                  iGRC
-                </label>
-              </Tooltip>
-              <select
-                value={assessment.iGRC}
-                onChange={(e) =>
-                              onChange({
-                                ...assessment,
-                                iGRC: e.target.value as iGRC,
-                              })
-                            }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                <Tooltip text={
+                                  <div>
+                                    <li>Le calcul de l'iGRC peut être déterminer par l'utilisateur qui devra alors fournir la densité de population, la vitesse maximale de l'UAS et la dimension caractéristique maximale étant alors utilisé pour déterminer un iGRC selon la table. Une justification de la densioté de population doit être fournie, en justifiant de la base de donnée de population utilisée.</li>
+                                    <br />                                    
+                                    <li>Sinon l'utilisateur peut choisir de générer un fichier d'input pour utiliser l'outil DROSERA(c). Il reportera le fichier de résultat DROSERA dans le champ à cet effet. </li>
+                                    <br />
+                                    <li>Enfin le déposant peut choisir de spécifier lui-même l'iGRC. Dans ce cas il devra remplir les informations tel que pour le calcul selon les table SORA qui lui fourniront alors à titre indicatif un iGRC. Le déposant devra alors sélectionner et justifier de son iGRC plus bas.</li>
+                                  </div>
+                }>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Méthode d'évaluation de l'iGRC
+                  </label>
+                </Tooltip>
+                <select
+                  value={assessment.assessmentiGRC}
+                  onChange={(e) =>
+                    onChange({
+                      ...assessment,
+                      assessmentiGRC: e.target
+                        .value as assessmentiGRC,
+                      iGRCNumber:
+                        e.target.value === 'Spécifiée par le déposant'
+                          ? assessment.iGRCNumber
+                          : 0,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="Sélectionner une méthode d'évaluation iGRC">
+                    Sélectionner une méthode d'évaluation iGRC
+                  </option>
+                  <option value="Calcul selon les tables SORA">
+                    Calcul selon les tables SORA 
+                  </option>
+                  <option value="Calcul DROSERA">
+                    Calcul DROSERA 
+                  </option>
+                  <option value="Spécifiée par le déposant">
+                    Spécifiée par le déposant
+                  </option>
+                </select>
+              </div>
+              
+                
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Dimensions caractéristiques maximales (m)
+                    </label>
+                    <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                      {assessment.maxCharacteristicDimension}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Vitesse maximales (m/s)
+                    </label>
+                    <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                      {assessment.maxSpeed}
+                    </div>
+                  </div>  
+                
+          </div>   
+
+          {assessment.assessmentiGRC ===
+              'Calcul selon les tables SORA' || assessment.assessmentiGRC ==='Spécifiée par le déposant' ? (
+                <div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Densité de population (ppl/km²)
+                    </label>
+                    <select
+                      value={assessment.populationDensity || 'Zone Contrôlée'}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          populationDensity: e.target.value as PopulationDensity,
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="Zone Contrôlée">Zone Contrôlée</option>
+                      <option value="<25">&lt;25</option>
+                      <option value="<250">&lt;250</option>
+                      <option value="<2,500">&lt;2,500</option>
+                      <option value="<25,000">&lt;25,000</option>
+                      <option value="<250,000">&lt;250,000</option>
+                      <option value=">250,000">&gt;250,000</option>
+                    </select>
+                  </div> 
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la Densité de population sélectionnée.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Densité de population
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.PopulationDensity_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            PopulationDensity_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>       
+                </div>  
+                
+              ) : assessment.assessmentiGRC === 'Calcul DROSERA' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    // onClick={() => exportToExcel(formData)}
+                    //onClick={() => generate(formData)}
+                    className=" flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <FileText className="w-5 h-5" />
+                    Générer le fichier d'input pour DROSERA
+                  </button>
+                  <div></div>
+                  
+                  {/* <button
+                    // onClick={() => exportToExcel(formData)}
+                    //onClick={() => generate(formData)}
+                    className=" flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    <FileText className="w-5 h-5" />
+                    Charger l'output de DROSERA (HTML)
+                  </button> */}
+                  {/* <input id="fileInput" name="file"
+                    type="file"
+                    accept=".html"
+                    onChange={handleDroseraOutputFileChange}
+                    //value={assessment.droseraOutputFile}
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  /> */}
+
+          <div>
+            <Tooltip text="Insérez fichier html output drosder">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Drosera ouptut HTML
+              </label>
+            </Tooltip>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors">
+              <input
+                ref={DroserafileInputRef}
+                type="file"
+                accept=".html"
+                onChange={handleDroseraOutputFileChange}
+                className="hidden"
+               // multiple
+              />
+              <div
+                onClick={() => DroserafileInputRef.current?.click()}
+                className="flex items-center justify-center gap-2 cursor-pointer"
               >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-              </select>
+                <Upload className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-600">
+                  Déposer le fichier Drosera HTML ici
+                </span>
+              </div>
             </div>
+            {errorMessage && (
+              <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
+                {errorMessage}
+              </div>
+            )}
+            {/* {assessment.droseraOutputFile && (
+              <div className="mt-2 space-y-2">
+                
+                  <div
+                    //key={assessment.droseraOutputFile.name}
+                    className="flex items-center justify-between p-2 bg-white rounded"
+                  >
+                    <span className="text-sm text-gray-600">{assessment.droseraOutputFile}</span>
+                    
+                  </div>
+                
+              </div>
+            )} */}
+            {assessment.droseraOutputFile && assessment.droseraOutputFile.length > 0 && (
+            <div className="mt-2 space-y-2">
+            {assessment.droseraOutputFile.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-white rounded"
+                  >
+                    <span className="text-sm text-gray-600">{file.name}</span>
+                    <button
+                      onClick={() => handleRemoveDroseraOutputFile(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                ))}
+            </div>
+          )}
+            {/* <RiskAssessmentMap geoFiles={assessment.trajgeoFiles || []} /> */}
           </div>
+
+
+
+
+
+
+
+
+
+                  {/* <input
+                ref={DroserafileInputRef}
+                type="file"
+                accept=".html"
+                onChange={handleDroseraOutputFileChange}
+                className="hidden"
+                //multiple
+              />
+                   <div
+                      onClick={() => DroserafileInputRef.current?.click()}
+                      className="flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Upload className="w-5 h-5 text-gray-400" />
+                      <span className="text-gray-600">
+                        Déposer le fichier output html ici
+                      </span>
+                    </div> */}
+                  {/* <input
+                              type="text" 
+                              value={assessment.droseraFiles.toString()}
+                              className="mt-1 block w-full rounded-md border-grey-200 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              defaultValue={"Sélectioonner un fichier DROSERA"}
+                              disabled
+                            />   */}
+                </div>
+              ) : (
+                <div></div>
+              )
+          }
+
+              <div className="space-y-8">
+                  <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
+                  <table className="min-w-full bg-white">
+                    <thead>
+                      <tr className="bg-gray-100 text-black">
+                        <th colspan="7" className='  py-2 px-4 border-b'>Classe d'iGRC</th>
+                      </tr>
+                      <tr className="bg-blue-500 text-white">
+                        <th colspan="2" className="bg-blue-400 py-2 px-4 border-b">Dimension caractéristique Maimale</th>
+                        <th className="py-2 px-4 border-b">1m / appro. 3ft</th>
+                        <th className="py-2 px-4 border-b">3m / appro. 10ft</th>
+                        <th className="py-2 px-4 border-b">8m / appro. 25ft</th>
+                        <th className="py-2 px-4 border-b">20m / appro. 65ft</th>
+                        <th className="py-2 px-4 border-b">40m / appro. 130ft</th>
+                      </tr>
+                      <tr className="bg-green-500 text-white">
+                        <th colspan="2" className="bg-green-400 py-2 px-4 border-b">Vitesse de Croisière Maximale</th>
+                        <th className="py-2 px-4 border-b">25 m/s</th>
+                        <th className="py-2 px-4 border-b">35 m/s</th>
+                        <th className="py-2 px-4 border-b">75 m/s</th>
+                        <th className="py-2 px-4 border-b">150 m/s</th>
+                        <th className="py-2 px-4 border-b">200 m/s</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <th rowspan="8" className="bg-red-200 text-black">Densité de population iGRC Maximale (ppl/km²)</th>
+                      {tableiGRCData.map((row, index) => (
+                        <tr
+                          key={index}
+                          className={'bg-gray-200 text-gray-400'}
+                        >
+                          
+                      
+                          <th className="py-2 px-4 border-b bg-red-200 text-black">{row.PopDensity}</th>
+                          <th className={
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==1//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          ? 'bg-blue-900  text-white'
+                          : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS1}    </th>
+                          <th className={
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==2//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          ? 'bg-blue-900  text-white'
+                          : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS2}</th>
+                          <th className={
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==3//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          ? 'bg-blue-900  text-white'
+                          : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS3}</th>
+                          <th className={
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==4//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          ? 'bg-blue-900  text-white'
+                          : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS4}</th>
+                          <th className={
+                          row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==5//formData.riskAssessment.OperationalVolumeLevel//OperationalVolumeLevelState
+                          ? 'bg-blue-900  text-white'
+                          : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS5}</th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+
+
+
+              
+              <h2 className="text-2xl font-semibold">iGRC</h2>
+                <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                  <div>
+                    <Tooltip text="Veuillez entrer le niveau GRC Initial calculé à l'aide de l'outil (c)DROSERA.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        iGRC
+                      </label>
+                    </Tooltip>
+                    <select
+                      value={assessment.iGRC}
+                      onChange={(e) =>
+                                    onChange({
+                                      ...assessment,
+                                      iGRC: e.target.value as iGRC,
+                                    })
+                                  }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                    </select>
+                  </div>
+                </div>
+        </div>
       </section>
+        
     </div>
   );
 }
