@@ -130,11 +130,13 @@ export interface OperationInfo {
 
 export interface RiskAssessmentInfo {
   droseraOutputResult: string;
+  DroseraResTable: number[];
   assessmentTypeHauteurVol: assessmentTypeHauteurVol;
   assessmentCriticalArea: assessmentCriticalArea;
   assessmentContingencyVolume: assessmentContingencyVolume;
   assessmentiGRC: assessmentiGRC;
   iGRCNumber: number;
+  iGRC_Justification: string;
   followTerrainHeight: number;
   PopulationDensityModulation: PopulationDensityModulation;
   PopulationDensityDataBase: PopulationDensityDataBase;

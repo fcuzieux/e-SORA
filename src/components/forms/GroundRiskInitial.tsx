@@ -314,55 +314,110 @@ let iGRC_colIndex =0
   const DroserafileInputRef = useRef<HTMLInputElement>(null);
 
 
-    const handleDroseraOutputFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-    const files = event.target.files;
-    if (files) {
-    const newFile = files[0]; // Prendre le premier fichier seulement
-    onChange({ ...assessment, droseraOutputFile: [newFile] });
-    }
-    
-    };
     // const handleDroseraOutputFileChange = async (
     // event: React.ChangeEvent<HTMLInputElement>
     // ) => {
     // const files = event.target.files;
     // if (files) {
     // const newFile = files[0]; // Prendre le premier fichier seulement
-
-    // const reader = new FileReader();
-    // reader.onload = (e) => {
-    //     const content = e.target?.result as string;
-    //     const parser = new DOMParser();
-    //     const doc = parser.parseFromString(content, 'text/html');
-
-    //     // Find the <h2>Population</h2> element
-    //     const populationHeader = doc.querySelector('h2');
-    //     if (populationHeader && populationHeader.textContent === 'Population') {
-    //         // Find the next sibling element which is a table
-    //         const nextSibling = populationHeader.nextElementSibling;
-    //         if (nextSibling && nextSibling.tagName === 'table') {
-    //             // Convert the table to a string
-    //             const tableString = nextSibling.outerHTML;
-    //             console.log(tableString);
-    //             assessment.droseraOutputResult = tableString;
-    //             console.error({tableString});
-
-    //             // Store the table string in the state or use it as needed
-    //             onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString });
-    //         } else {
-    //             console.error('No table found right after the <h2>Population</h2> title.');
-    //         }
-    //     } else {
-    //         console.error('<h2>Population</h2> title not found.'+{populationHeader});
-    //     }
-    // };
-    // reader.readAsText(newFile);
+    // onChange({ ...assessment, droseraOutputFile: [newFile] });
     // }
     
     // };
 
+const handleDroseraOutputFileChange = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const files = event.target.files;
+  if (files) {
+    const newFile = files[0]; // Prendre le premier fichier seulement
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      console.log('File content:', content); // Log the file content
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(content, 'text/html');
+      console.log('Parsed document:', doc); // Log the parsed document
+
+      // Find the <h2>Population</h2> element by iterating over all <h2> elements
+      const h2Elements = doc.querySelectorAll('h2');
+      let populationHeader = null;
+
+      for (const h2 of h2Elements) {
+        if (h2.textContent === 'Population') {
+          populationHeader = h2;
+          break;
+        }
+      }
+
+      //console.log('Population header:', populationHeader); // Log the population header
+      if (populationHeader) {
+        // Find the next sibling element which is a table
+        const nextSibling = populationHeader.nextElementSibling;
+        //console.log('Next sibling:', nextSibling); // Log the next sibling
+
+        if (nextSibling && nextSibling.tagName === 'TABLE') {
+          // Convert the table to a string
+          const tableString = nextSibling.outerHTML;
+          //console.log('Table string:', tableString); // Log the table string
+          assessment.droseraOutputResult = tableString;
+          //console.error({ tableString });
+
+          // Parse the table string to extract numerical values
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(tableString, 'text/html');
+          const table = doc.querySelector('table');
+          const rows = table?.querySelectorAll('tr');
+          const DroseraResTable = [];
+
+          if (rows) {
+            rows.forEach(row => {
+              const cells = row.querySelectorAll('td');
+              const rowData = [];
+              cells.forEach(cell => {
+                const value = parseFloat(cell.textContent || '');
+                if (!isNaN(value)) {
+                  rowData.push(value);
+                }
+              });
+              if (rowData.length > 0) {
+                DroseraResTable.push(rowData);
+              }
+            });
+          }
+          console.log('DroseraResTable:', DroseraResTable); // Log the DroseraResTable
+          assessment.DroseraResTable = DroseraResTable;
+          // Store the table string and DroseraResTable in the state or use it as needed
+          onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString, DroseraResTable });
+        } else {
+          console.error('No table found right after the <h2>Population</h2> title.');
+        }
+      // if (populationHeader) {
+      //   // Find the next sibling element which is a table
+      //   const nextSibling = populationHeader.nextElementSibling;
+      //   //console.log('Next sibling:', nextSibling); // Log the next sibling
+
+      //   if (nextSibling && nextSibling.tagName === 'TABLE') {
+      //     // Convert the table to a string
+      //     const tableString = nextSibling.outerHTML;
+      //     //console.log('Table string:', tableString); // Log the table string
+      //     assessment.droseraOutputResult = tableString;
+      //     //console.error({ tableString });
+
+      //     // Store the table string in the state or use it as needed
+      //     onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString });
+      //   } else {
+      //     console.error('No table found right after the <h2>Population</h2> title.');
+      //   }
+      } else {
+        console.error('<h2>Population</h2> title not found.');
+      }
+    };
+    reader.readAsText(newFile);
+  }
+};
   const handleRemoveDroseraOutputFile = (index: number) => {
     const newFiles = [...(assessment.droseraOutputFile || [])];
     newFiles.splice(index, 1);
@@ -2846,6 +2901,9 @@ let iGRC_colIndex =0
                       }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
+                      <option value="Sélectionner une Densité de population">
+                        Sélectionner une Densité de population
+                      </option>
                       <option value="Zone Contrôlée">Zone Contrôlée</option>
                       <option value="<25">&lt;25</option>
                       <option value="<250">&lt;250</option>
@@ -2886,122 +2944,121 @@ let iGRC_colIndex =0
                   </button>
                   <div></div>
 
-          <div>
-            <Tooltip text="Insérez fichier html output drosder">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Drosera ouptut HTML
-              </label>
-            </Tooltip>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors">
-              <input
-                ref={DroserafileInputRef}
-                type="file"
-                accept=".html"
-                onChange={handleDroseraOutputFileChange}
-                className="hidden"
-               // multiple
-              />
-              <div
-                onClick={() => DroserafileInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Upload className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-600">
-                  Déposer le fichier Drosera HTML ici
-                </span>
-              </div>
-            </div>
-            {errorMessage && (
-              <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
-                {errorMessage}
-              </div>
-            )}
-            
-            {assessment.droseraOutputFile && assessment.droseraOutputFile.length > 0 && (
-            <div className="mt-2 space-y-2">
-            {assessment.droseraOutputFile.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 bg-white rounded"
-                  >
-                    <span className="text-sm text-gray-600">{file.name}</span>
-                    <button
-                      onClick={() => handleRemoveDroseraOutputFile(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                ))}
-            </div>
-            )}
-
-              <div>
-                Todo : Put here Drosera file results ! {assessment.droseraOutputResult}
-              </div>
-
-              <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Densité de population (ppl/km²)
-                    </label>
-                    <select
-                      value={assessment.populationDensity || 'Zone Contrôlée'}
-                      onChange={(e) =>
-                        onChange({
-                          ...assessment,
-                          populationDensity: e.target.value as PopulationDensity,
-                        })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="Zone Contrôlée">Zone Contrôlée</option>
-                      <option value="<25">&lt;25</option>
-                      <option value="<250">&lt;250</option>
-                      <option value="<2,500">&lt;2,500</option>
-                      <option value="<25,000">&lt;25,000</option>
-                      <option value="<250,000">&lt;250,000</option>
-                      <option value=">250,000">&gt;250,000</option>
-                    </select>
-              </div>
-          </div>
-
-
-
-
-
-
-
-
-
-                  {/* <input
-                ref={DroserafileInputRef}
-                type="file"
-                accept=".html"
-                onChange={handleDroseraOutputFileChange}
-                className="hidden"
-                //multiple
-              />
-                   <div
-                      onClick={() => DroserafileInputRef.current?.click()}
-                      className="flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      <Upload className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-600">
-                        Déposer le fichier output html ici
-                      </span>
-                    </div> */}
-                  {/* <input
-                              type="text" 
-                              value={assessment.droseraFiles.toString()}
-                              className="mt-1 block w-full rounded-md border-grey-200 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                              defaultValue={"Sélectioonner un fichier DROSERA"}
-                              disabled
-                            />   */}
+                  <div>
+                    <Tooltip text="Insérez fichier html output drosder">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Drosera ouptut HTML
+                      </label>
+                    </Tooltip>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors">
+                      <input
+                        ref={DroserafileInputRef}
+                        type="file"
+                        accept=".html"
+                        onChange={handleDroseraOutputFileChange}
+                        className="hidden"
+                      // multiple
+                      />
+                      <div
+                        onClick={() => DroserafileInputRef.current?.click()}
+                        className="flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Upload className="w-5 h-5 text-gray-400" />
+                        <span className="text-gray-600">
+                          Déposer le fichier Drosera HTML ici
+                        </span>
+                      </div>
+                    </div>
+                    {errorMessage && (
+                      <div className="mt-2 p-2 bg-red-50 text-red-600 rounded">
+                        {errorMessage}
+                      </div>
+                    )}
+                    
+                    {assessment.droseraOutputFile && assessment.droseraOutputFile.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                    {assessment.droseraOutputFile.map((file, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-2 bg-white rounded"
+                          >
+                            <span className="text-sm text-gray-600">{file.name}</span>
+                            <button
+                              onClick={() => handleRemoveDroseraOutputFile(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                    )}
                 </div>
+                      <div className="bg-gray-400 p-4 md:col-span-2">
+                      
+                        <label className="block text-sm font-medium text-gray-700 mt-4">
+                          Résultat de l'analyse DROSERA
+                        </label>
+                              <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                                {assessment.DroseraResTable && assessment.DroseraResTable.length > 0 ? (
+                                  <table className="min-w-full bg-white">
+                                    <thead>
+                                      <tr className="bg-gray-100 text-black">
+                                        <th className="py-2 px-4 border-b">Critical area (m²)</th>
+                                        <th className="py-2 px-4 border-b">Max population density (ppl/km²)</th>
+                                        <th className="py-2 px-4 border-b">Max iGRC</th>
+                                        <th className="py-2 px-4 border-b">Average population density in adjacent area (ppl/km²)</th>
+                                        <th className="py-2 px-4 border-b">Average iGRC in adjacent area</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      
+                                        <tr className="bg-gray-50 text-gray-700">
+                                          <td className="py-2 px-4 border-b">{assessment.DroseraResTable[0]}</td>
+                                          <td className="py-2 px-4 border-b">{assessment.DroseraResTable[1]}</td>
+                                          <td className="py-2 px-4 border-b">{assessment.DroseraResTable[2]}</td>
+                                          <td className="py-2 px-4 border-b">{assessment.DroseraResTable[3]}</td>
+                                          <td className="py-2 px-4 border-b">{assessment.DroseraResTable[4]}</td>
+                                        </tr>   
+                                      
+                                    </tbody>
+                                  </table>  
+                                ) : (
+                                  <div className="text-gray-600">
+                                    Aucune donnée disponible. Veuillez télécharger un fichier DROSERA valide.   
+                                  </div>
+                                )}
+                              </div>
+                      </div>
+                      <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                              Densité de population (ppl/km²)
+                            </label>
+                            <select
+                              value={assessment.populationDensity || 'Zone Contrôlée'}
+                              onChange={(e) =>
+                                onChange({
+                                  ...assessment,
+                                  populationDensity: e.target.value as PopulationDensity,
+                                })
+                              }
+                              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            >
+                              <option value="Zone Contrôlée">Zone Contrôlée</option>
+                              <option value="<25">&lt;25</option>
+                              <option value="<250">&lt;250</option>
+                              <option value="<2,500">&lt;2,500</option>
+                              <option value="<25,000">&lt;25,000</option>
+                              <option value="<250,000">&lt;250,000</option>
+                              <option value=">250,000">&gt;250,000</option>
+                            </select>
+                      </div>
+                  </div>
+                
               ) : (
                 <div></div>
               )
-          }
+        }
 
               <div className="space-y-8">
                   <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
@@ -3075,7 +3132,7 @@ let iGRC_colIndex =0
               <h2 className="text-2xl font-semibold">iGRC</h2>
                 <div className="bg-gray-50 p-4 rounded-lg space-y-4">
                   <div>
-                    <Tooltip text="Veuillez entrer le niveau GRC Initial calculé à l'aide de l'outil (c)DROSERA.">
+                    <Tooltip text="Veuillez entrer le niveau GRC Initial déclaré.">
                       <label className="block text-sm font-medium text-gray-700">
                         iGRC
                       </label>
@@ -3099,6 +3156,23 @@ let iGRC_colIndex =0
                       <option value="7">7</option>
                       <option value="8">8</option>
                     </select>
+                    <div>
+                      <Tooltip text="Si votre iGRC déclaré diffère de celui calculé ou si vous avez choisi de spécifier vous même votre iGRC, une justification complémentaire devra être apportée. Dans les autres cas vous pouvez appoorter un complément d'information ou laisser ce champ vide.">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Justification complémnetaire de votre iGRC déclaré
+                        </label>
+                      </Tooltip>
+                      <textarea
+                          value={assessment.iGRC_Justification}
+                          onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              iGRC_Justification: e.target.value,
+                            })}
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          rows={4}
+                        />
+                    </div> 
                   </div>
                 </div>
         </div>
