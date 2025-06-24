@@ -26,6 +26,11 @@ import { Tooltip } from '../common/Tooltip';
 import { Upload, Clock, Pi } from 'lucide-react';
 import { RiskAssessmentMap } from './RiskAssessmentMap';
 import DefinitionOfVolumes from '../../image/DefinitionOfVolumes.png';
+import DefinitionOfFootprints from '../../image/DefinitionOfFootprints.png';
+import JARUSorHIModel from '../../image/JARUSorHIModel.png';
+import JARUSorHIModel_AC from '../../image/JARUSorHIModel_AC.png';
+import JARUSorHIModel_HC_High from '../../image/JARUSorHIModel_HC_High.png';
+import JARUSorHIModel_HC_Low from '../../image/JARUSorHIModel_HC_Low.png';
 
 interface RiskAssessmentFormProps {
   assessment: RiskAssessmentInfo;
@@ -108,6 +113,146 @@ let iGRC_colIndex =0
     } else {
       iGRC_colIndex = 6;
     }
+    const computeFrontalArea = () => {
+      let A = Number(1);
+      if (assessment.maxCharacteristicDimension <= 1.0) {
+        A=0.1;
+      } else if (assessment.maxCharacteristicDimension <= 3.0) {
+        A= 0.2*assessment.maxCharacteristicDimension - 0.1;
+      } else if (assessment.maxCharacteristicDimension <= 8.0) {
+        A= 0.4*assessment.maxCharacteristicDimension - 0.7; 
+      } else if (assessment.maxCharacteristicDimension <= 20.0) {
+        A= 0.8333*assessment.maxCharacteristicDimension - 4.1667;
+      } else if (assessment.maxCharacteristicDimension <= 40.0) {
+        A= 0.625*assessment.maxCharacteristicDimension;
+      } else {
+        A= 25.0; // Default value for very large UAs
+      }
+      return A;
+    }
+    const CalculCriticalArea_HAI = () => {
+      let CA= Number(1);  
+      let GRAVITY = 9.81; // m/s²
+      let rho = 1.225; // kg/m³ (density of air at sea level)
+      let A = computeFrontalArea(); // m² (frontal area of the UA, can be adjusted based on the UA's dimensions)
+      let Cd = 0.8; // Drag coefficient (fixed as per Annex F)
+      let Vterminal = Math.sqrt(2 * assessment.MTOW * GRAVITY / (rho*A*Cd)); // Terminal velocity
+      let Ek_terminal = 0.5 * assessment.MTOW * Math.pow(Vterminal, 2); // Kinetic energy at terminal velocity
+ 
+      let Fs = 1.4*Math.pow(Ek_terminal,0.2); // Safety factor
+            if (Ek_terminal < 12000) {
+              Fs =2.3;
+            } else if (Ek_terminal > 3125000) {
+              Fs =7.0;
+            }
+// 𝐴𝑐=𝐹𝑠∗𝜋∗𝑟𝐷2
+      let rPerson = 0.3; // Radius of a person in meters
+      let rD = rPerson + assessment.maxCharacteristicDimension / 2.0; // Radius of the drone
+      CA = Fs * Math.PI * Math.pow(rD, 2); // Critical Area calculation
+      assessment.CriticalArea = parseFloat((CA).toFixed(2));
+      console.error({ CA });
+      return CA;
+    }
+  const CalculImpactAngle = () => {
+//   ANNEX 1: Impact angle – mathematical model
+// The UA begins its descent from an initial Vertical Distance fixed at zero [m] (or Height [m]) at a maximum forward speed [m/s] = V(0) (=maximum cruise speed).
+// i.e. we put the origin of the axes at the height of the UA when it begins its descent.
+// So vertical distance (0) = 0.  
+// The iteration ends when the vertical distance (t) = - height (when the UA touches the ground).
+// (Note that the vertical velocity < 0)
+    //let V0= assessment.maxSpeed;
+    let Mass= assessment.MTOW;
+    let Velocity_t0 = Number(0); // Initial velocity at time t-1
+    //VerticalDistance
+    let VD_t0 = Number(0);
+    let VD_t1 = Number(0);
+    let HD_t0 = Number(0); // Horizontal Distance at time t-1
+    let HD_t1 = Number(0); // Horizontal Distance at time t
+    //Vertical Velocity
+    let VV_t0 = Number(0);
+    let VV_t1 = Number(0);
+    //Horizontal Velocity
+    let HV_t0 = assessment.maxSpeed; // Initial horizontal velocity
+    let HV_t1 = Number(0);
+  // Model Parameters :
+    let dt=Number(0.1); // Time step in seconds    
+    let GRAVITY = 9.81; // m/s²
+    let rho = 1.225; // kg/m³ (density of air at sea level)
+    let A = 0.7; // m² (frontal area of the UA, can be adjusted based on the UA's dimensions)
+    let Cd = 0.8; // Drag coefficient (fixed as per Annex F)
+    let DragForce_t0 = Number(0); // Drag Force at time t-1
+    let DragForceH_t0 = Number(0); // Drag Force Horizontal at time t-1
+    let DragForceV_t0 = Number(0); // Drag Force Vertical at time t-1
+    let ThetaImpactDeg =Number(0);  // Impact angle in degrees at time t
+    let Ek= Number(0); // Kinetic Energy at time t-1
+// We calculate at each step of the iteration:
+// HV_t1 = HV_t0+Drag-force-hiorizontal_t0*dt/m
+// VV_t1 = VV_t0-[GRAVITY-Drag-force-vertical_t0/m]*dt
+// Where
+// Drag Force horizontal (t−1)=cos Θ (t−1)∗ Drag Force (t−1)
+// Drag Force vertical (t−1)=sin Θ (t−1) ∗ Drag force (t−1)
+// Drag Force (t-1) = 0.5 .ϱ .𝑉 (𝑡−1)2 . 𝐴 .𝐶𝑑
+// Where: A is the frontal area of the UA expressed in m ² as per Annex F,
+// Cd = 0.8 (fixed as per Annex F),
+// ϱ = density of air and g= gravity
+// As
+// V (t)=√Vhorizontal (t)2+V vertical (t)²    
+// Tg Θ(t) =V vertical (t)/V horizontal (t)
+// We calculate: Θ (t)=Arctg V vertical (t)/V horizontal (t)
+    let ThetaImpact = Number(0); // Impact angle at time t
+    let timeofimpact = Number(0); // Time of impact
+    // Initialize an array to store the values
+    const results = [];
+    //while (VD_t1 >= -assessment.MinOperationalAltitude) {
+    for (let t = 0; VD_t1 >= -assessment.MinOperationalAltitude; t += dt) {
+    // We calculate: Θ (t-1)=Arctg (V vertical (t-1)/V horizontal (t-1)) 
+      ThetaImpact = Math.atan2(VV_t0, HV_t0);
+      // Calculate Velocity at time t-1
+      Velocity_t0= Math.sqrt(Math.pow(HV_t0, 2) + Math.pow(VV_t0, 2));
+
+      // Claculate drag Force at time t-1
+      DragForce_t0 = - 0.5 * rho * Math.pow(Velocity_t0, 2) * A * Cd;
+      // Calculate Drag Force Horizontal and Vertical at time t-1
+      DragForceH_t0 = Math.cos(ThetaImpact) * DragForce_t0;
+      DragForceV_t0 = Math.sin(ThetaImpact) * DragForce_t0;
+      ThetaImpactDeg = ThetaImpact * (180 / Math.PI); // Convert to degrees
+      // Calculate Kinetyic Energy at time t-1
+      Ek = 0.5 * Mass * Math.pow(Velocity_t0, 2);
+      // Store the values in the results array
+      results.push({
+        t,
+        HV_t0,
+        VV_t0,
+        Velocity_t0,
+        ThetaImpactDeg,
+        HD_t0,
+        VD_t0,
+        DragForce_t0,
+        DragForceH_t0,
+        DragForceV_t0,
+        Ek
+      });
+      // Update Horizontal and Vertical Velocities
+      HV_t1 = HV_t0 + (DragForceH_t0 / Mass) * dt;
+      VV_t1 = VV_t0 - (GRAVITY - (DragForceV_t0 / Mass)) * dt;
+      // Update Vertical Distance
+      VD_t1 = VD_t0 + 0.5*(VV_t0+VV_t1) * dt;
+      // Update Horizontal Distance
+      HD_t1 = HD_t0 + 0.5*(HV_t0+HV_t1) * dt;
+
+      // Prepare for next iteration
+      VD_t0 = VD_t1;
+      HD_t0 = HD_t1;
+      VV_t0 = VV_t1;
+      HV_t0 = HV_t1;
+      timeofimpact=t;
+    }
+    // Update the assessment with the calculated impact angle
+    assessment.ThetaImpact = parseFloat((ThetaImpactDeg).toFixed(2));
+    console.error({ ThetaImpactDeg, results }); // Log the impact angle and results for debugging
+
+     return [ThetaImpactDeg, results];
+  }
 
   const handleOnChangeGlidingCapability = (e) => {
     onChange({
@@ -134,7 +279,7 @@ let iGRC_colIndex =0
 
   const CalculAdjacentVolumeWidth = () => {
     let AdjacentVolumeWidth = Number(1);
-    AdjacentVolumeWidth=120.0*assessment.maxSpeed;
+    AdjacentVolumeWidth=3*60.0*assessment.maxSpeed;
     assessment.AdjacentVolumeWidth = parseFloat((AdjacentVolumeWidth).toFixed(1));
     return parseFloat((AdjacentVolumeWidth).toFixed(1));
   }
@@ -168,6 +313,7 @@ let iGRC_colIndex =0
     assessment.GRBWidth = parseFloat(GRB.toFixed(2));
     return parseFloat(GRB.toFixed(2));
   }
+
   const CalculContingencyVolumeWidth = (SGPS,Spos,SK,SRZ,SCM) => {
     let SCV = Number(1);
     //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
@@ -220,23 +366,38 @@ let iGRC_colIndex =0
     }
   }
 
- const ACtable = () => {
-    let AcFromTable = Number(8);
+//  const ACtable = () => {
+//     let AcFromTable = Number(8);
+//     if (assessment.maxCharacteristicDimension<=1.0) {
+//       AcFromTable = 8;
+//     } else if (assessment.maxCharacteristicDimension<=3.0) {
+//       AcFromTable = 80;
+//     } else if (assessment.maxCharacteristicDimension<=8.0) {
+//       AcFromTable = 800;
+//     } else if (assessment.maxCharacteristicDimension<=20.0) {
+//       AcFromTable = 8000;
+//     } else if (assessment.maxCharacteristicDimension<=40.0) {
+//       AcFromTable = 80000.0;
+//     } else {AcFromTable = 80000.0;}
+//     assessment.NominalCriticalArea = AcFromTable;
+//     return AcFromTable;
+//   };
+ const ThresholdACtable = () => {
+    let AcFromTable = Number(6.5);
     if (assessment.maxCharacteristicDimension<=1.0) {
-      AcFromTable = 8;
+      AcFromTable = 6.5;
     } else if (assessment.maxCharacteristicDimension<=3.0) {
-      AcFromTable = 80;
+      AcFromTable = 65;
     } else if (assessment.maxCharacteristicDimension<=8.0) {
-      AcFromTable = 800;
+      AcFromTable = 650;
     } else if (assessment.maxCharacteristicDimension<=20.0) {
-      AcFromTable = 8000;
+      AcFromTable = 6500;
     } else if (assessment.maxCharacteristicDimension<=40.0) {
-      AcFromTable = 80000.0;
-    } else {AcFromTable = 80000.0;}
-    assessment.CriticalArea = AcFromTable;
+      AcFromTable = 65000.0;
+    } else {AcFromTable = 65000.0;}
+    assessment.NominalCriticalArea = AcFromTable;
     return AcFromTable;
   };
-
   const CalculJARUSCriticalArea = () => {
     let Ac = Number(5);
     let rPerson = 0.3;
@@ -255,8 +416,8 @@ let iGRC_colIndex =0
       Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
     }
 //    Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
-    assessment.CriticalArea = Ac;
-    return Ac;
+    assessment.CriticalArea = parseFloat(Ac.toFixed(2));
+    return parseFloat(Ac.toFixed(2));
   }
 
 
@@ -277,15 +438,15 @@ let iGRC_colIndex =0
       //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
       let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
       // Coefficient of restitution 0.8 //0.65
-      let coefficient_of_restitution=0.8;//-0.42*(assessment.ThetaGlide-10.0)/70.0;
+      let coefficient_of_restitution=0.65;//-0.42*(assessment.ThetaGlide-10.0)/70.0;
       // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
       let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
       // if (assessment.maxCharacteristicDimension>1.0) {
       //   let Vglide = assessment.maxSpeed*0.65;
       //   vhorizontale = Vglide;
       // }
-      // Coefficient of friction 0.75 
-      let Cg = 0.6;
+      // Coefficient of friction 0.75 au lieu de 0.6
+      let Cg = 0.75;
       let GRAVITY = 9.81;
       let acceleration = Cg * GRAVITY;
       // t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
@@ -293,6 +454,9 @@ let iGRC_colIndex =0
       // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
       let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
       assessment.dSlideReduced = parseFloat(dslide_reduced.toFixed(2));
+      assessment.vnonlethal = parseFloat(vnonlethal.toFixed(4));
+      assessment.vhorizontale = parseFloat(vhorizontale.toFixed(4));
+      assessment.tsafe = parseFloat(tsafe.toFixed(4));
       return assessment.dSlideReduced;
     } else {
       return 0.0;
@@ -394,6 +558,24 @@ const handleDroseraOutputFileChange = async (
         } else {
           console.error('No table found right after the <h2>Population</h2> title.');
         }
+
+        // if (assessment.DroseraResTable[1]>250000) {
+        //   assessment.populationDensity = ">250,000";
+        // } else if (assessment.DroseraResTable[1]<250000) {
+        //   assessment.populationDensity = "<250,000";
+        // } else if (assessment.DroseraResTable[1]<25000) {
+        //   assessment.populationDensity = "<25,000";
+        // } else if (assessment.DroseraResTable[1]<2500) {
+        //   assessment.populationDensity = "<2,500";
+        // } else if (assessment.DroseraResTable[1]<250) {
+        //   assessment.populationDensity = "<250";
+        // } else if (assessment.DroseraResTable[1]<25) {
+        //   assessment.populationDensity = "<25";
+        // } else if (assessment.DroseraResTable[1]<0) {
+        //   assessment.populationDensity = "Zone Contrôlée";
+        // } else {
+        //   assessment.populationDensity = "Zone Contrôlée";
+        // }
       // if (populationHeader) {
       //   // Find the next sibling element which is a table
       //   const nextSibling = populationHeader.nextElementSibling;
@@ -444,7 +626,7 @@ const handleDroseraOutputFileChange = async (
     <terrain_following unit="m">0</terrain_following>`
       : `<compute_terrain_following>true</compute_terrain_following>
     <terrain_following unit="m">${assessment.followTerrainHeight}</terrain_following>`}
-    <cruise_speed unit="m/s">${assessment.CruiseSpeed}</cruise_speed>
+    <cruise_speed unit="m/s">${assessment.VCruise}</cruise_speed>
     ${assessment.PopulationDensityModulation.includes('OUI')
       ? `<compute_flight_start>true</compute_flight_start>`
       : `<compute_flight_start>false</compute_flight_start>`}
@@ -663,20 +845,19 @@ const handleDroseraOutputFileChange = async (
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
             <div>
-              <label className="block text-sm font-medium text-gray-700">Vitesse de Croisière (m/s)</label>
-              <input
-                type="number"
-                value={assessment.CruiseSpeed}
-                max={assessment.maxSpeed}
-                min={assessment.minSpeed}
-                onChange={(e) => onChange({ ...assessment, CruiseSpeed: parseFloat(e.target.value) })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+              
+              <label className="block text-sm font-medium text-gray-700">
+                Vitesse de Croisière (m/s)
+              </label>
+              <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                {assessment.VCruise}
+              </div>
+            
+            <div>
+
             </div>
-            
-            
-            <div>
               <Tooltip text=" XXX ">
                 <label className="block text-sm font-medium text-gray-700">
                   Moduler la densité de population en fonction du temps de vol
@@ -794,11 +975,122 @@ const handleDroseraOutputFileChange = async (
           Determination de l'iGRC : Intrinsic Ground Risk Class 
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
 
             <h2 className="text-lg font-medium">
             Etape 1 : Determination de la surface critique de crash (Ac).
             </h2>
+            {/* <div>
+              <label className="block text-sm font-medium text-gray-700">
+                  Valeur indicative de la Surface Critique Nominale
+              </label>
+              <div>
+                <table className="min-w-full bg-white">
+                  <thead>
+                    <tr className="bg-black text-black">
+                      <th className="bg-gray-200 py-2 px-4 border-b">Max. characteristic dimension (m)</th>
+                      <th className="bg-white py-2 px-4 border-b">≤1</th>
+                      <th className="bg-white py-2 px-4 border-b">≤3</th>
+                      <th className="bg-white py-2 px-4 border-b">≤8</th>
+                      <th className="bg-white py-2 px-4 border-b">≤20</th>
+                      <th className="bg-white py-2 px-4 border-b">≤40</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-gray-200">
+                      <th className="bg-gray-200 py-2 px-4 border-b">Nominal Critical area (m²)</th>
+                      <th className="bg-white py-2 px-4 border-b">8</th>
+                      <th className="bg-white py-2 px-4 border-b">80</th>
+                      <th className="bg-white py-2 px-4 border-b">800</th>
+                      <th className="bg-white py-2 px-4 border-b">8000</th>
+                      <th className="bg-white py-2 px-4 border-b">80000</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+              <Tooltip  text={
+                                <div>
+                                  Valeur de la Surface Critique Nominale (m²) selon les tables SORA.
+                                  <br />
+                                  Cette valeur est donnée à titre indicatif et devra être minimiser de 90% en cas d'application d'une mitigation M2 de type 1 lors de l'étape 3.
+                                </div>
+                              }>
+                <label className="block text-sm font-medium text-gray-700">
+                  Valeur de la Surface Critique <b>Nominale</b> selon les tables (m²). 
+                </label>
+              </Tooltip>
+              <input
+                type="number"
+                value={ACtable()}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    NominalCriticalArea: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="mt-1 block w-full rounded-md border-black-500 text-gray-500 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                disabled
+              />
+              </div>
+            </div> */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                  Valeur indicative du seuil de Surface Critique associée à la dimension caractéristique maximale de l'UAS
+              </label>
+              <div>
+                <table className="min-w-full bg-white">
+                  <thead>
+                    <tr className="bg-black text-black">
+                      <th className="bg-gray-200 py-2 px-4 border-b">Dimension characteristique Max. (m)</th>
+                      <th className="bg-white py-2 px-4 border-b">≤1</th>
+                      <th className="bg-white py-2 px-4 border-b">≤3</th>
+                      <th className="bg-white py-2 px-4 border-b">≤8</th>
+                      <th className="bg-white py-2 px-4 border-b">≤20</th>
+                      <th className="bg-white py-2 px-4 border-b">≤40</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-gray-200">
+                      <th className="bg-gray-200 py-2 px-4 border-b">Valeur Seuil de la Surface Critique (m²)</th>
+                      <th className="bg-white py-2 px-4 border-b">6.5</th>
+                      <th className="bg-white py-2 px-4 border-b">65</th>
+                      <th className="bg-white py-2 px-4 border-b">650</th>
+                      <th className="bg-white py-2 px-4 border-b">6500</th>
+                      <th className="bg-white py-2 px-4 border-b">65000</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+              <Tooltip  text={
+                                <div>
+                                  Valeur Seuil de la Surface Critique (m²) selon les tables SORA.
+                                  <br />
+                                  Cf. doc Guidelines for the Assessment of the Critical Area of an Unmanned Aircraft
+                                  <br />
+                                  Ces valeurs peuvent être trop conservatrices pour certains cas d'utilisation, c'est pourquoi le modèle JARUS et le modèle à fort angle d'impact ciblent ces scénarios. Si votre valeur de surface critique est inférieure à ces valeurs, vous pourrez vous repporter dans la colonne de dimension maximale associée lors de l'étape d'évaluation de votre iGRC.
+                                </div>
+                              }>
+                <label className="block text-sm font-medium text-gray-700">
+                  Valeur <b>Seuil</b> de Surface Critique selon les tables (m²). 
+                </label>
+              </Tooltip>
+              <input
+                type="number"
+                value={ThresholdACtable()}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    ThresholdCriticalArea: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="mt-1 block w-full rounded-md border-black-500 text-gray-500 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                disabled
+              />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Tooltip text="Aussi appelée Critical Area ou Surface de Crash">
                 <label className="block text-sm font-medium text-gray-700">
@@ -812,19 +1104,16 @@ const handleDroseraOutputFileChange = async (
                     ...assessment,
                     assessmentCriticalArea: e.target
                       .value as assessmentCriticalArea,
-                    CriticalArea:
-                      e.target.value === 'Spécifiée par le déposant'
-                        ? assessment.CriticalArea
-                        : 0,
+                    // CriticalArea:
+                    //   e.target.value === 'Spécifiée par le déposant'
+                    //     ? assessment.CriticalArea
+                    //     : 0,
                   })
                 }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               >
                 <option value="Sélectionner une méthode d'évaluation">
                   Sélectionner une méthode d'évaluation
-                </option>
-                <option value="Calcul selon les tables SORA">
-                  Calcul selon les tables SORA
                 </option>
                 <option value="Calcul selon les Modèles JARUS">
                   Calcul selon les Modèles JARUS
@@ -878,75 +1167,122 @@ const handleDroseraOutputFileChange = async (
                   </div>
                 </div>
               ) : assessment.assessmentCriticalArea ===
-              'Calcul selon les Modèles JARUS' ? (
-              <div>
+              'Calcul selon les Modèles JARUS' ? ( 
+
+  
+  // | 'Avion'
+  // | 'Hélicoptère'
+  // | 'Multirotor'
+  // | 'Hybride/VTOL'
+  // | "Plus léger que l'air"
+  // | 'Autre';              
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Valeur de la Surface Critique Calculée (m²)
-                  </label>
-                  <div className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    {Math.round(CalculJARUSCriticalArea())}
-                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Valeur de la Surface Critique Calculée (m²)
+                    </label>
+                    <div className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                      {assessment.GlidingCapability === "OUI" || assessment.HighImpactAngle === 'NON' ? ( 
+                        
+                        parseFloat(CalculJARUSCriticalArea().toFixed(2))
+                      ) : (
+                        parseFloat(CalculCriticalArea_HAI().toFixed(2))
+                      )}
+                      
+                    </div>
+                    {(assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') ? (
+                    <div>
+                      <Tooltip text=" ">
+                        <label className="block text-sm font-medium text-gray-700">
+                          L'appareil est-il capable de planer ?
+                        </label>
+                      </Tooltip>
+                      <select
+                        value={assessment.GlidingCapability}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            GlidingCapability: e.target
+                              .value as GlidingCapability,
+                          })
+                        }
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="Sélectionner une méthode d'évaluation">
+                          Sélectionner une méthode d'évaluation
+                        </option>
+                        <option value="NON">NON</option>
+                        <option value="OUI">OUI</option>
+                      </select>
+                      {assessment.GlidingCapability === 'NON' && (
+                      // L'angle d'impact serait-il supérieur à 60° ? 
+                      <div>
+                        <Tooltip text=" ">
+                          <label className="block text-sm font-medium text-gray-700">
+                            L'angle d'impact serait-il supérieur à 60° ?
+                          </label>
+                        </Tooltip>
+                        <select
+                          value={assessment.HighImpactAngle}
+                          onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              HighImpactAngle: e.target
+                                .value as HighImpactAngle,
+                            })
+                          }
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                          <option value="Sélectionner une méthode d'évaluation">
+                            Sélectionner une méthode d'évaluation
+                          </option>
+                          <option value="NON">NON</option>
+                          <option value="OUI">OUI</option>
+                        </select>
+                      </div>
+                      )}
+                      <br />
+                    </div>) : (
+                      <>
+                      Gliding Capability : {assessment.GlidingCapability = 'OUI'}
+                        
+                      </>
+                    )}
                 </div>
+                {((assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL') && assessment.GlidingCapability == 'OUI') ? (
+                <img  
+                  src={JARUSorHIModel_AC}
+                  alt="JARUSorHIModelAirplane" 
+                  className="w-auto h-auto mb-6 mx-auto"
+                />
+                
+                ) : ((assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') && assessment.HighImpactAngle === 'NON') ? (
+                  <img 
+                    src={JARUSorHIModel_HC_Low}
+                    alt="JARUModel" 
+                    className="w-auto h-auto mb-6 mx-auto"
+                  />
+                ) : ((assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') && assessment.HighImpactAngle === 'OUI') ? (
+                  <img 
+                    src={JARUSorHIModel_HC_High}
+                    alt="JARUSorHIModel" 
+                    className="w-auto h-auto mb-6 mx-auto"
+                  />
+                ) : (
+                  <img 
+                    src={JARUSorHIModel}
+                    alt="JARUSorHIModel" 
+                    className="w-auto h-auto mb-6 mx-auto"
+                  />
+                )
+                }
+                
                 
 
                 
-                <div>
-                  <Tooltip text=" ">
-                    <label className="block text-sm font-medium text-gray-700">
-                      L'appareil est-il capable de planer ?
-                    </label>
-                  </Tooltip>
-                  <select
-                    value={assessment.GlidingCapability}
-                    onChange={(e) =>
-                      onChange({
-                        ...assessment,
-                        GlidingCapability: e.target
-                          .value as GlidingCapability,
-                      })
-                    }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    <option value="Sélectionner une méthode d'évaluation">
-                      Sélectionner une méthode d'évaluation
-                    </option>
-                    <option value="NON">NON</option>
-                    <option value="OUI">OUI</option>
-                  </select>
-                </div>
-                  
-                {assessment.GlidingCapability === 'NON' && (
-                  // L'angle d'impact serait-il supérieur à 60° ? 
-                  <div>
-                    <Tooltip text=" ">
-                      <label className="block text-sm font-medium text-gray-700">
-                        L'angle d'impact serait-il supérieur à 60° ?
-                      </label>
-                    </Tooltip>
-                    <select
-                      value={assessment.HighImpactAngle}
-                      onChange={(e) =>
-                        onChange({
-                          ...assessment,
-                          HighImpactAngle: e.target
-                            .value as HighImpactAngle,
-                        })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    >
-                      <option value="Sélectionner une méthode d'évaluation">
-                        Sélectionner une méthode d'évaluation
-                      </option>
-                      <option value="NON">NON</option>
-                      <option value="OUI">OUI</option>
-                    </select>
-                  </div>
                 
-                    
-                      
-              
-                )} 
+                  
+                 
                 
                 {assessment.GlidingCapability === "OUI" || assessment.HighImpactAngle === 'NON' ? ( 
                   
@@ -1063,8 +1399,8 @@ const handleDroseraOutputFileChange = async (
                             })
                           }
                           step="0.1"
-                          min={0}
-                          max={90}
+                          min={assessment.HighImpactAngle === 'OUI' ? 60 : 0}
+                          max={assessment.HighImpactAngle === 'OUI' ? 90 : 60}
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                           placeholder={AdviceThetaGlide().toString()}
                         />     
@@ -1152,6 +1488,33 @@ const handleDroseraOutputFileChange = async (
                       />
                       
                     </div>
+                    <div>
+                      
+                        <label className="block text-sm font-medium text-gray-700">
+                          Vhorizointal (s)
+                        </label>
+                        <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                          {assessment.vhorizontale}
+                        </div>           
+                    </div>
+                    <div>
+                      
+                        <label className="block text-sm font-medium text-gray-700">
+                          Lethal Speed (m/s)
+                        </label>
+                        <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                          {assessment.vnonlethal}
+                        </div>           
+                    </div>
+                    <div>
+                      
+                        <label className="block text-sm font-medium text-gray-700">
+                          tsafe (s)
+                        </label>
+                        <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                          {assessment.tsafe}
+                        </div>           
+                    </div>
                 
                   </div>
 
@@ -1159,7 +1522,73 @@ const handleDroseraOutputFileChange = async (
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <h3 className="text-lg font-medium">High Impact Angle Model</h3>                 
+
+                    <div className="text-red-900 border-gray-300 rounded md:col-span-2">
+                      <b>Rappels</b> :
+                      <br />
+                      <b>Note 1 :</b> Pour évaluer la surface critique à l'aide de ce modèle, l'altitude minimale opérationnelle doit être fixée comme limite dans le manuel de l'opérateur.
+                      <br />
+                      <b>Note 2 :</b> Si l'exploitant choisit d'utiliser les résultats du modèle d'angle d'impact élevé, il doit procéder par itération pour trouver l'altitude de vol minimale qui passe le seuil de l'outil d'évaluation.
+                      <br />
+                      Si l'une des conditions ci-dessus n'est pas remplie, il convient d'appliquer le modèle d'angle d'impact faible conformément à l'annexe F du JARUS.
+                      <br />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Vitesse maximales (m/s)
+                    </label>
+                    <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                      {assessment.maxSpeed}
+                    </div>
+                  </div> 
+                    <div>
+                      <Tooltip  text={
+                                  <div>
+                                    Altitude minimale opérationnelle.
+                                    <br />
+                                    Telle que fixée comme limite dans le manuel de l'opérateur.
+                                  </div>
+                                }>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Altitude minimale opérationnelle (m)
+                        </label>
+                      </Tooltip>
+                      <input
+                        type="number"
+                        value={assessment.MinOperationalAltitude}
+                        onChange={(e) => {
+                          const newValue = parseFloat(e.target.value) || 0.000;
+                          onChange({
+                            ...assessment,
+                            MinOperationalAltitude: newValue
+                          });
+                          CalculImpactAngle();
+                        }}
+                        step="0.1"
+                        min={0}
+                        //max={operation.maxOperationHeight.toString()} // Ajustez la valeur maximale selon vos besoins
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        //placeholder={operation.maxOperationHeight.toString()}
+                      />
+                      
+                    </div>
+                    <div>
+                          
+                    </div>
                     
+
+
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      ThetaImpact (deg)
+                    </label>
+                    <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                      {CalculImpactAngle().at(0)}
+                    </div>
+                    </div>
+
+
+
                   </div>
 
                 )}
@@ -1169,59 +1598,59 @@ const handleDroseraOutputFileChange = async (
 
                 
               </div>
-              ) : assessment.assessmentCriticalArea ===
-              'Calcul selon les tables SORA' ? (
-                <div>
-                <div>
-                  <table className="min-w-full bg-white">
-                    <thead>
-                      <tr className="bg-black text-black">
-                        <th className="bg-gray-200 py-2 px-4 border-b">Max. characteristic dimension (m)</th>
-                        <th className="bg-white py-2 px-4 border-b">≤1</th>
-                        <th className="bg-white py-2 px-4 border-b">≤3</th>
-                        <th className="bg-white py-2 px-4 border-b">≤8</th>
-                        <th className="bg-white py-2 px-4 border-b">≤20</th>
-                        <th className="bg-white py-2 px-4 border-b">≤40</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="bg-gray-200">
-                        <th className="bg-gray-200 py-2 px-4 border-b">Critical area (m²)</th>
-                        <th className="bg-white py-2 px-4 border-b">8</th>
-                        <th className="bg-white py-2 px-4 border-b">80</th>
-                        <th className="bg-white py-2 px-4 border-b">800</th>
-                        <th className="bg-white py-2 px-4 border-b">8000</th>
-                        <th className="bg-white py-2 px-4 border-b">80000</th>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                <Tooltip  text={
-                                  <div>
-                                    Valeur de la Surface Critique (m²) selon les tables SORA.
-                                    <br />
-                                    Ces valeurs peuvent être trop conservatrices pour certains cas d'utilisation!
-                                  </div>
-                                }>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Valeur de la Surface Critique selon les tables (m²). 
-                  </label>
-                </Tooltip>
-                <input
-                  type="number"
-                  value={ACtable()}
-                  onChange={(e) =>
-                    onChange({
-                      ...assessment,
-                      CriticalArea: parseInt(e.target.value) || 0,
-                    })
-                  }
-                  className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  disabled
-                />
-                </div>
-                </div>
+              // ) : assessment.assessmentCriticalArea ===
+              // 'Calcul selon les tables SORA' ? (
+              //   <div>
+                //   <div>
+                //     <table className="min-w-full bg-white">
+                //       <thead>
+                //         <tr className="bg-black text-black">
+                //           <th className="bg-gray-200 py-2 px-4 border-b">Max. characteristic dimension (m)</th>
+                //           <th className="bg-white py-2 px-4 border-b">≤1</th>
+                //           <th className="bg-white py-2 px-4 border-b">≤3</th>
+                //           <th className="bg-white py-2 px-4 border-b">≤8</th>
+                //           <th className="bg-white py-2 px-4 border-b">≤20</th>
+                //           <th className="bg-white py-2 px-4 border-b">≤40</th>
+                //         </tr>
+                //       </thead>
+                //       <tbody>
+                //         <tr className="bg-gray-200">
+                //           <th className="bg-gray-200 py-2 px-4 border-b">Critical area (m²)</th>
+                //           <th className="bg-white py-2 px-4 border-b">8</th>
+                //           <th className="bg-white py-2 px-4 border-b">80</th>
+                //           <th className="bg-white py-2 px-4 border-b">800</th>
+                //           <th className="bg-white py-2 px-4 border-b">8000</th>
+                //           <th className="bg-white py-2 px-4 border-b">80000</th>
+                //         </tr>
+                //       </tbody>
+                //     </table>
+                //   </div>
+                //   <div>
+                //   <Tooltip  text={
+                //                     <div>
+                //                       Valeur de la Surface Critique (m²) selon les tables SORA.
+                //                       <br />
+                //                       Ces valeurs peuvent être trop conservatrices pour certains cas d'utilisation!
+                //                     </div>
+                //                   }>
+                //     <label className="block text-sm font-medium text-gray-700">
+                //       Valeur de la Surface Critique selon les tables (m²). 
+                //     </label>
+                //   </Tooltip>
+                //   <input
+                //     type="number"
+                //     value={ACtable()}
+                //     onChange={(e) =>
+                //       onChange({
+                //         ...assessment,
+                //         CriticalArea: parseInt(e.target.value) || 0,
+                //       })
+                //     }
+                //     className="mt-1 block w-full rounded-md border-black border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                //     disabled
+                //   />
+                //   </div>
+              //   </div>
               ) : (
                 <div>
 
@@ -2726,9 +3155,9 @@ const handleDroseraOutputFileChange = async (
                                       <div>
                                         Largeur Zone Adjacente (Adjacent Volume)
                                         <br />
-                                         
+                                        Calculé selon l'hyposthèse que l'UAS vole à sa vitesse maximale durant 3 minutes.
                                         <br />
-                                        
+                                        5 km &lt; Largeur Zone Adjacente &lt; 35 km
                                       </div>
                                     }>
                     <label className="block text-sm font-medium text-gray-700">
@@ -2742,7 +3171,7 @@ const handleDroseraOutputFileChange = async (
                     //step="0.1"
                     //min={assessment.FlightGeographyWidth} // Définit la valeur minimale autorisée
                     className="mt-1 block w-full rounded-md border-black border-2 font-bold bg-gray-400 text-black  border-2 font-bold  shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    placeholder={(0.0)}
+                    placeholder={(5000.0)}
                     disabled
                   />  
                 </div> 
@@ -2841,7 +3270,12 @@ const handleDroseraOutputFileChange = async (
                       {assessment.maxSpeed}
                     </div>
                   </div>  
+                  <img 
 
+                    src={DefinitionOfFootprints}
+                    alt="Centres d'Essais Drones France" 
+                    className="w-auto h-auto mb-6 mx-auto md:col-span-2"
+                  />
            <div>
                 <Tooltip text={
                                   <div>
@@ -2886,10 +3320,10 @@ const handleDroseraOutputFileChange = async (
 
           {assessment.assessmentiGRC ===
               'Calcul selon les tables SORA' || assessment.assessmentiGRC ==='Spécifiée par le déposant' ? (
-                <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Densité de population (ppl/km²)
+                      iGRC Footprint : Densité Maximale de population(ppl/km²)
                     </label>
                     <select
                       value={assessment.populationDensity || 'Zone Contrôlée'}
@@ -2916,7 +3350,7 @@ const handleDroseraOutputFileChange = async (
                   <div>
                     <Tooltip text="Vous devez apporter des éléments de justification de la Densité de population sélectionnée.">
                       <label className="block text-sm font-medium text-gray-700">
-                        Justification de votre Densité de population
+                        Justification de votre Densité Maximale de population (iGRC Footprint)
                       </label>
                     </Tooltip>
                     <textarea
@@ -2929,7 +3363,50 @@ const handleDroseraOutputFileChange = async (
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         rows={4}
                       />
-                  </div>       
+                  </div> 
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Zone adjacente : Densité Moyenne de population(ppl/km²)
+                      </label>
+                      <select
+                        value={assessment.populationDensityAdjacentArea || 'Zone Contrôlée'}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            populationDensityAdjacentArea: e.target.value as PopulationDensity,
+                          })
+                        }
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      >
+                        <option value="Sélectionner une Densité de population">
+                          Sélectionner une Densité de population
+                        </option>
+                        <option value="Zone Contrôlée">Zone Contrôlée</option>
+                        <option value="<25">&lt;25</option>
+                        <option value="<250">&lt;250</option>
+                        <option value="<2,500">&lt;2,500</option>
+                        <option value="<25,000">&lt;25,000</option>
+                        <option value="<250,000">&lt;250,000</option>
+                        <option value=">250,000">&gt;250,000</option>
+                      </select>
+                    </div> 
+                  <div>
+                    <Tooltip text="Vous devez apporter des éléments de justification de la Densité de population sélectionnée.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Justification de votre Densité de population moyenne en zone adjacente
+                      </label>
+                    </Tooltip>
+                    <textarea
+                        value={assessment.PopulationDensity_Justification}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            PopulationDensity_Justification: e.target.value,
+                          })}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        rows={4}
+                      />
+                  </div>      
                 </div>  
                 
               ) : assessment.assessmentiGRC === 'Calcul DROSERA' ? (
@@ -3032,7 +3509,7 @@ const handleDroseraOutputFileChange = async (
                       </div>
                       <div>
                             <label className="block text-sm font-medium text-gray-700">
-                              Densité de population (ppl/km²)
+                              iGRC Footprint : Densité Maximale de population(ppl/km²)
                             </label>
                             <select
                               value={assessment.populationDensity || 'Zone Contrôlée'}
@@ -3053,6 +3530,32 @@ const handleDroseraOutputFileChange = async (
                               <option value=">250,000">&gt;250,000</option>
                             </select>
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Zone adjacente : Densité Moyenne de population(ppl/km²)
+                        </label>
+                        <select
+                          value={assessment.populationDensityAdjacentArea || 'Zone Contrôlée'}
+                          onChange={(e) =>
+                            onChange({
+                              ...assessment,
+                              populationDensityAdjacentArea: e.target.value as PopulationDensity,
+                            })
+                          }
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                          <option value="Sélectionner une Densité de population">
+                            Sélectionner une Densité de population
+                          </option>
+                          <option value="Zone Contrôlée">Zone Contrôlée</option>
+                          <option value="<25">&lt;25</option>
+                          <option value="<250">&lt;250</option>
+                          <option value="<2,500">&lt;2,500</option>
+                          <option value="<25,000">&lt;25,000</option>
+                          <option value="<250,000">&lt;250,000</option>
+                          <option value=">250,000">&gt;250,000</option>
+                        </select>
+                      </div> 
                   </div>
                 
               ) : (
@@ -3130,11 +3633,12 @@ const handleDroseraOutputFileChange = async (
 
               
               <h2 className="text-2xl font-semibold">iGRC</h2>
-                <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Tooltip text="Veuillez entrer le niveau GRC Initial déclaré.">
+                    <Tooltip text="Veuillez entrer le niveau GRC Initial Maximal déclaré pour la zone d'Empreinte au sol de l'opération : Volume Opérationel + Zone Tampon.">
                       <label className="block text-sm font-medium text-gray-700">
-                        iGRC
+                        Maximum iGRC (Empreinte au sol de l'opération UAS)
                       </label>
                     </Tooltip>
                     <select
@@ -3145,7 +3649,7 @@ const handleDroseraOutputFileChange = async (
                                       iGRC: e.target.value as iGRC,
                                     })
                                   }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                     className="mt-1 block w-full rounded-md border-blue-900 border-2 font-bold bg-blue-50 text-blue-600 shadow-sm focus:border-red-500 focus:ring-red-500"
                     >
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -3156,10 +3660,37 @@ const handleDroseraOutputFileChange = async (
                       <option value="7">7</option>
                       <option value="8">8</option>
                     </select>
-                    <div>
+                  </div>
+                  <div>
+                    <Tooltip text="Veuillez entrer le niveau GRC Initial déclaré.">
+                      <label className="block text-sm font-medium text-gray-700">
+                        iGRC Moyen (Zone adjacente)
+                      </label>
+                    </Tooltip>
+                    <select
+                      value={assessment.iGRCadjacentArea}
+                      onChange={(e) =>
+                                    onChange({
+                                      ...assessment,
+                                      iGRCadjacentArea: e.target.value as iGRC,
+                                    })
+                                  }
+                      className="mt-1 block w-full rounded-md border-blue-900 border-2 font-bold bg-blue-50 text-blue-600 shadow-sm focus:border-red-500 focus:ring-red-500"
+                    >
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                    </select>
+                  </div>
+                    <div className="bg-gray-400 p-4 md:col-span-2">
                       <Tooltip text="Si votre iGRC déclaré diffère de celui calculé ou si vous avez choisi de spécifier vous même votre iGRC, une justification complémentaire devra être apportée. Dans les autres cas vous pouvez appoorter un complément d'information ou laisser ce champ vide.">
                         <label className="block text-sm font-medium text-gray-700">
-                          Justification complémnetaire de votre iGRC déclaré
+                          Justification complémnetaire de vos iGRC déclarés
                         </label>
                       </Tooltip>
                       <textarea
@@ -3173,7 +3704,7 @@ const handleDroseraOutputFileChange = async (
                           rows={4}
                         />
                     </div> 
-                  </div>
+                  
                 </div>
         </div>
       </section>

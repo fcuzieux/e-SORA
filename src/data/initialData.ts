@@ -206,6 +206,7 @@ export const initialSoraForm: SoraForm = {
     acousticCertificateNumber: '',
     technicalDocuments: [],
     mass: 0,
+    CruiseSpeed: 0,
     maxSpeed: 0,
     minSpeed: 0,
     maxCharacteristicDimension: 0,

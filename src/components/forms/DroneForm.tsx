@@ -170,12 +170,35 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
+        {/* <div>
+          <label className="block text-sm font-medium text-gray-700">Vitesse de Croisière (m/s)</label>
+          <input
+            type="number"
+            value={drone.CruiseSpeed}
+            step="0.1"
+            max={drone.maxSpeed}
+            min={drone.minSpeed}
+            onChange={(e) => onChange({ ...drone, CruiseSpeed: parseFloat(e.target.value) })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div> */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Vitesse de Croisière (m/s)</label>
+          <input
+            type="number"
+            value={drone.VCruise}
+            step="0.1"
+            onChange={(e) => onChange({ ...drone, VCruise: parseFloat(e.target.value) })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div> 
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Vitesse minimale (m/s)</label>
           <input
             type="number"
             value={drone.minSpeed}
+            step="0.1"
             onChange={(e) => onChange({ ...drone, minSpeed: parseFloat(e.target.value) })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
@@ -188,6 +211,7 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
           <input
             type="number"
             value={drone.maxSpeed}
+            step="0.1"
             onChange={(e) => onChange({ ...drone, maxSpeed: parseFloat(e.target.value) })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
@@ -199,6 +223,7 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
           <input
             type="number"
             value={drone.MTOW}
+            step="0.1"
             onChange={(e) => onChange({ ...drone, MTOW: parseFloat(e.target.value) })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
@@ -389,6 +414,9 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
+
+
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700">

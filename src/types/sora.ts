@@ -48,7 +48,6 @@ export type assessmentTypeHauteurVol =
 export type iGRC = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type GRC_Final = '1' | '2' | '3' | '4' | '5' | '6' | '7'| '8';
 export type assessmentCriticalArea =
-  | 'Calcul selon les tables SORA'
   | 'Calcul selon les Modèles JARUS'
   | 'Spécifiée par le déposant';
 export type assessmentiGRC =  
@@ -90,6 +89,8 @@ export interface DroneInfo {
   acousticCertificateNumber: string;
   technicalDocuments: File[];
   MTOW: number;
+  CruiseSpeed: number;
+  VCruise: number;
   maxSpeed: number;
   minSpeed: number;
   maxCharacteristicDimension: number;
@@ -137,12 +138,15 @@ export interface RiskAssessmentInfo {
   assessmentiGRC: assessmentiGRC;
   iGRCNumber: number;
   iGRC_Justification: string;
+  iGRCadjacentArea: string;
   followTerrainHeight: number;
   PopulationDensityModulation: PopulationDensityModulation;
   PopulationDensityDataBase: PopulationDensityDataBase;
   PopulationDensityDataBaseNumber: number;
   assessmentStartTime: string;
   CriticalArea: number;
+  NominalCriticalArea: number;
+  ThresholdCriticalArea: number;
   ContingencyVolume: number;
   maxDistanceFromPilot: number;
   confinementLevel: ConfinementLevel;
@@ -164,6 +168,7 @@ export interface RiskAssessmentInfo {
   additionalDetails: string;
   operationalScenario?: OperationalScenario;
   populationDensity?: PopulationDensity;
+  populationDensityAdjacentArea?: PopulationDensity;
   necessaryToReduceRisk: necessaryToReduceRisk
   planInterventionUrgence: mitigationStrategique;
   confinementRequirements: 'Basiques' | 'Amélioré';
@@ -182,6 +187,8 @@ export interface RiskAssessmentInfo {
   iGRCcomputation: number;
   SAIL: SailLevel;
   maxCharacteristicDimension: number;
+  VCruise: number;
+  CruiseSpeed: number;
   maxSpeed: number;
   minSpeed: number;
   ObstaclesModulation: ObstaclesModulation;
@@ -189,6 +196,9 @@ export interface RiskAssessmentInfo {
   HighImpactAngle:HighImpactAngle;
   dGlide: number;
   dSlideReduced: number;
+  vhorizontale: number;
+  vnonlethal: number;
+  tsafe: number;
   DetailedJarusModel:DetailedJarusModel;
   ThetaGlide: number;
   MTOW: number;
@@ -228,7 +238,8 @@ export interface RiskAssessmentInfo {
   GRB_Justification: string;
   GRB_FixedWingPowerOff:GRB_FixedWingPowerOff;
   environmentalLimitations: EnvironmentalLimitations;
-  CruiseSpeed: number;
+  MinOperationalAltitude: number;
+  ThetaImpact: number;
 }
 
 

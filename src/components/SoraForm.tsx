@@ -91,6 +91,8 @@ export function SoraForm() {
                   riskAssessment: {
                     ...formData.riskAssessment,
                     maxCharacteristicDimension: drone.maxCharacteristicDimension,
+                    VCruise: drone.VCruise,
+                    CruiseSpeed: drone.CruiseSpeed,
                     maxSpeed: drone.maxSpeed,
                     minSpeed: drone.minSpeed,
                     uasType: drone.uasType,
