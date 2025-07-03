@@ -31,13 +31,17 @@ export type necessaryToReduceRisk = 'OUI' | 'NON';
 export type DayNightOperation = 'Jour' | 'Nuit' | 'Jour & Nuit';
 export type ConfinementLevel = 'Basic' | 'Enhanced';
 export type mitigationStrategique = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
+
+export type planInterventionUrgence = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
 export type reduceImpactAttenuation = 'Non' | 'Oui, faible' | 'Oui, moyenne' | 'Oui, élevée';
 export type OperationalVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type AdjacentVolumeLevel = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type OperationalScenario = 'VLOS' | 'BVLOS';
-export type PopulationDensity = 'Zone Contrôlée' | '<25' | '<250' | '<2,500' | '<25,000' | '<250,000' | '>250,000' ;
+export type PopulationDensity = 'Zone Contrôlée' | '<5' | '<50' | '<500' | '<5,000' | '<50,000' | '>50,000' ;
 export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
 export type ContingencyParachuteManeuver = 'OUI' | 'NON';
+export type UsemaxCharacteristicDimension = 'OUI' | 'NON';
+export type AdjacentVolumeWidthEqualMaxRange = 'OUI' | 'NON';
 export type GRB_FixedWingPowerOff = 'ACTIVATED' | 'NONACTIVE';
 export type StrategicMitigationAvailable = 'OUI' | 'NON';
 export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
@@ -159,8 +163,10 @@ export interface RiskAssessmentInfo {
   sailLevel?: string;
   trajgeoFiles: File[];
   droseraOutputFile: File[];
-  mitigationStrategique: mitigationStrategique;
-  reduceImpactAttenuation: reduceImpactAttenuation;
+  mitigationStrategiqueM1A: mitigationStrategique;
+  mitigationStrategiqueM1B: mitigationStrategique;
+  mitigationTactiqueM1C: mitigationStrategique;
+  reduceImpactAttenuationM2: reduceImpactAttenuation;
   OperationalVolumeLevel: string;
   AdjacentVolumeLevel: string;
   detectAndAvoid: string;
@@ -170,9 +176,13 @@ export interface RiskAssessmentInfo {
   populationDensity?: PopulationDensity;
   populationDensityAdjacentArea?: PopulationDensity;
   necessaryToReduceRisk: necessaryToReduceRisk
-  planInterventionUrgence: mitigationStrategique;
+  planInterventionUrgence: planInterventionUrgence;
   confinementRequirements: 'Basiques' | 'Amélioré';
   additionalRemarks?: string;
+  M1A_Justification: string;
+  M1B_Justification: string;
+  M1C_Justification: string;
+  M2_Justification: string;
   airspaceClasses: airspaceClasses;
   uspaceProvider: string;
   otherDetails: string;
@@ -219,6 +229,8 @@ export interface RiskAssessmentInfo {
   ContingencyVolumeParachute: boolean;
   ContingencyVolumeSCM: number;
   ContingencyParachuteManeuver:ContingencyParachuteManeuver;
+  UsemaxCharacteristicDimension:UsemaxCharacteristicDimension;
+  AdjacentVolumeWidthEqualMaxRange:AdjacentVolumeWidthEqualMaxRange;
   ParachuteTime: number;
   VzParachute: number;
   VwindParachute: number;
@@ -240,6 +252,10 @@ export interface RiskAssessmentInfo {
   environmentalLimitations: EnvironmentalLimitations;
   MinOperationalAltitude: number;
   ThetaImpact: number;
+  AdjacentVolume_Justification: string;
+  maxCharacteristicDimensionClass: number;
+  iGRC_colIndex: number;
+  iGRCControledZone: number;
 }
 
 

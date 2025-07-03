@@ -31,6 +31,7 @@ import JARUSorHIModel from '../../image/JARUSorHIModel.png';
 import JARUSorHIModel_AC from '../../image/JARUSorHIModel_AC.png';
 import JARUSorHIModel_HC_High from '../../image/JARUSorHIModel_HC_High.png';
 import JARUSorHIModel_HC_Low from '../../image/JARUSorHIModel_HC_Low.png';
+import AdjacenteArea from '../../image/AdjacenteArea.png';
 
 interface RiskAssessmentFormProps {
   assessment: RiskAssessmentInfo;
@@ -49,70 +50,221 @@ export function RiskAssessmentForm({
 }: RiskAssessmentFormProps) {
 
   const tableiGRCData = [
-    { PopDensity: 'Zone Contrôlée', MaxdimCS1: '1',MaxdimCS2: '2',MaxdimCS3: '3',MaxdimCS4: '4',MaxdimCS5: '5' },
-    { PopDensity: '<25',            MaxdimCS1: '3',MaxdimCS2: '4',MaxdimCS3: '5',MaxdimCS4: '6',MaxdimCS5: '7' },
-    { PopDensity: '<250',           MaxdimCS1: '4',MaxdimCS2: '5',MaxdimCS3: '6',MaxdimCS4: '7',MaxdimCS5: '8' },
-    { PopDensity: '<2,500',         MaxdimCS1: '5',MaxdimCS2: '6',MaxdimCS3: '7',MaxdimCS4: '8',MaxdimCS5: '9' },
-    { PopDensity: '<25,000',        MaxdimCS1: '6',MaxdimCS2: '7',MaxdimCS3: '8',MaxdimCS4: '9',MaxdimCS5: '10' },
-    { PopDensity: '<250,000',       MaxdimCS1: '7',MaxdimCS2: '8',MaxdimCS3: '9',MaxdimCS4: '10',MaxdimCS5: '11' },
-    { PopDensity: '>250,000',       MaxdimCS1: '7',MaxdimCS2: '9',MaxdimCS3: 'Not part of Sora',MaxdimCS4: 'Not part of Sora',MaxdimCS5: 'Not part of Sora' },
+    { PopDensity: 'Zone Contrôlée', MaxdimCS1: '1',MaxdimCS2: '1',MaxdimCS3: '2',MaxdimCS4: '3',MaxdimCS5: '3' },
+    { PopDensity: '<5',             MaxdimCS1: '2',MaxdimCS2: '3',MaxdimCS3: '4',MaxdimCS4: '5',MaxdimCS5: '6' },
+    { PopDensity: '<50',            MaxdimCS1: '3',MaxdimCS2: '4',MaxdimCS3: '5',MaxdimCS4: '6',MaxdimCS5: '7' },
+    { PopDensity: '<500',           MaxdimCS1: '4',MaxdimCS2: '5',MaxdimCS3: '6',MaxdimCS4: '7',MaxdimCS5: '8' },
+    { PopDensity: '<5,000',         MaxdimCS1: '5',MaxdimCS2: '6',MaxdimCS3: '7',MaxdimCS4: '8',MaxdimCS5: '9' },
+    { PopDensity: '<50,000',        MaxdimCS1: '6',MaxdimCS2: '7',MaxdimCS3: '8',MaxdimCS4: '9',MaxdimCS5: '10' },
+    { PopDensity: '>50,000',        MaxdimCS1: '7',MaxdimCS2: '8',MaxdimCS3: 'Not part of Sora',MaxdimCS4: 'Not part of Sora',MaxdimCS5: 'Not part of Sora' },
   ];
 
-let iGRC_colIndex =0
+// let iGRC_colIndex =0
    
-    if (assessment.maxCharacteristicDimension <= 1.0) {
-      if (assessment.maxSpeed <= 25.0) {
-        iGRC_colIndex = 1;
-      } else if (assessment.maxSpeed <= 35.0) {
-        iGRC_colIndex = 2;
-      } else if (assessment.maxSpeed <= 75.0) {
-        iGRC_colIndex = 3;
-      } else if (assessment.maxSpeed <= 150.0) {
-        iGRC_colIndex = 4;
-      } else if (assessment.maxSpeed <= 200.0) {  
-        iGRC_colIndex = 5;
-      }  else {
-        iGRC_colIndex = 6;
-      }
-    } else if (assessment.maxCharacteristicDimension <= 3.0) {
-      if (assessment.maxSpeed <= 35.0) {
-        iGRC_colIndex = 2;
-      } else if (assessment.maxSpeed <= 75.0) {
-        iGRC_colIndex = 3;
-      } else if (assessment.maxSpeed <= 150.0) {
-        iGRC_colIndex = 4;
-      } else if (assessment.maxSpeed <= 200.0) {  
-        iGRC_colIndex = 5;
-      }  else {
-        iGRC_colIndex = 6;
-      }
-    } else if (assessment.maxCharacteristicDimension <= 8.0) {
-      if (assessment.maxSpeed <= 75.0) {
-        iGRC_colIndex = 3;
-      } else if (assessment.maxSpeed <= 150.0) {
-        iGRC_colIndex = 4;
-      } else if (assessment.maxSpeed <= 200.0) {  
-        iGRC_colIndex = 5;
-      }  else {
-        iGRC_colIndex = 6;
-      }
-    } else if (assessment.maxCharacteristicDimension <= 20.0) {
-      if (assessment.maxSpeed <= 150.0) {
-        iGRC_colIndex = 4;
-      } else if (assessment.maxSpeed <= 200.0) {  
-        iGRC_colIndex = 5;
-      }  else {
-        iGRC_colIndex = 6;
-      }
-    } else if (assessment.maxCharacteristicDimension <= 40.0) {
-      if (assessment.maxSpeed <= 200.0) {  
-        iGRC_colIndex = 5;
-      }  else {
-        iGRC_colIndex = 6;
-      }
-    } else {
-      iGRC_colIndex = 6;
+//     if (assessment.maxCharacteristicDimension <= 1.0) {
+//       if (assessment.maxSpeed <= 25.0) {
+//         iGRC_colIndex = 1;
+//       } else if (assessment.maxSpeed <= 35.0) {
+//         iGRC_colIndex = 2;
+//       } else if (assessment.maxSpeed <= 75.0) {
+//         iGRC_colIndex = 3;
+//       } else if (assessment.maxSpeed <= 150.0) {
+//         iGRC_colIndex = 4;
+//       } else if (assessment.maxSpeed <= 200.0) {  
+//         iGRC_colIndex = 5;
+//       }  else {
+//         iGRC_colIndex = 6;
+//       }
+//     } else if (assessment.maxCharacteristicDimension <= 3.0) {
+//       if (assessment.maxSpeed <= 35.0) {
+//         iGRC_colIndex = 2;
+//       } else if (assessment.maxSpeed <= 75.0) {
+//         iGRC_colIndex = 3;
+//       } else if (assessment.maxSpeed <= 150.0) {
+//         iGRC_colIndex = 4;
+//       } else if (assessment.maxSpeed <= 200.0) {  
+//         iGRC_colIndex = 5;
+//       }  else {
+//         iGRC_colIndex = 6;
+//       }
+//     } else if (assessment.maxCharacteristicDimension <= 8.0) {
+//       if (assessment.maxSpeed <= 75.0) {
+//         iGRC_colIndex = 3;
+//       } else if (assessment.maxSpeed <= 150.0) {
+//         iGRC_colIndex = 4;
+//       } else if (assessment.maxSpeed <= 200.0) {  
+//         iGRC_colIndex = 5;
+//       }  else {
+//         iGRC_colIndex = 6;
+//       }
+//     } else if (assessment.maxCharacteristicDimension <= 20.0) {
+//       if (assessment.maxSpeed <= 150.0) {
+//         iGRC_colIndex = 4;
+//       } else if (assessment.maxSpeed <= 200.0) {  
+//         iGRC_colIndex = 5;
+//       }  else {
+//         iGRC_colIndex = 6;
+//       }
+//     } else if (assessment.maxCharacteristicDimension <= 40.0) {
+//       if (assessment.maxSpeed <= 200.0) {  
+//         iGRC_colIndex = 5;
+//       }  else {
+//         iGRC_colIndex = 6;
+//       }
+//     } else {
+//       iGRC_colIndex = 6;
+//     }
+//     assessment.iGRC_colIndex = iGRC_colIndex;
+   const ComputeiGRC_colIndex = () => {
+
+    let iGRC_colIndex =0
+    let maxCharacteristicDimensionClass = assessment.maxCharacteristicDimension;
+    if (assessment.UsemaxCharacteristicDimension === 'OUI') {
+      maxCharacteristicDimensionClass = assessment.maxCharacteristicDimensionClass;
     }
+    if (maxCharacteristicDimensionClass <= 1.0) {
+        if (assessment.maxSpeed <= 25.0) {
+          iGRC_colIndex = 1;
+        } else if (assessment.maxSpeed <= 35.0) {
+          iGRC_colIndex = 2;
+        } else if (assessment.maxSpeed <= 75.0) {
+          iGRC_colIndex = 3;
+        } else if (assessment.maxSpeed <= 150.0) {
+          iGRC_colIndex = 4;
+        } else if (assessment.maxSpeed <= 200.0) {  
+          iGRC_colIndex = 5;
+        }  else {
+          iGRC_colIndex = 6;
+        }
+      } else if (maxCharacteristicDimensionClass <= 3.0) {
+        if (assessment.maxSpeed <= 35.0) {
+          iGRC_colIndex = 2;
+        } else if (assessment.maxSpeed <= 75.0) {
+          iGRC_colIndex = 3;
+        } else if (assessment.maxSpeed <= 150.0) {
+          iGRC_colIndex = 4;
+        } else if (assessment.maxSpeed <= 200.0) {  
+          iGRC_colIndex = 5;
+        }  else {
+          iGRC_colIndex = 6;
+        }
+      } else if (maxCharacteristicDimensionClass <= 8.0) {
+        if (assessment.maxSpeed <= 75.0) {
+          iGRC_colIndex = 3;
+        } else if (assessment.maxSpeed <= 150.0) {
+          iGRC_colIndex = 4;
+        } else if (assessment.maxSpeed <= 200.0) {  
+          iGRC_colIndex = 5;
+        }  else {
+          iGRC_colIndex = 6;
+        }
+      } else if (maxCharacteristicDimensionClass <= 20.0) {
+        if (assessment.maxSpeed <= 150.0) {
+          iGRC_colIndex = 4;
+        } else if (assessment.maxSpeed <= 200.0) {  
+          iGRC_colIndex = 5;
+        }  else {
+          iGRC_colIndex = 6;
+        }
+      } else if (maxCharacteristicDimensionClass <= 40.0) {
+        if (assessment.maxSpeed <= 200.0) {  
+          iGRC_colIndex = 5;
+        }  else {
+          iGRC_colIndex = 6;
+        }
+      } else {
+        iGRC_colIndex = 6;
+      }
+      let UsemaxCharacteristicDimension = assessment.UsemaxCharacteristicDimension;
+      console.error({UsemaxCharacteristicDimension, iGRC_colIndex });
+      assessment.iGRC_colIndex = iGRC_colIndex;
+      assessment.iGRCControledZone=parseInt(tableiGRCData.at(0)?.[`MaxdimCS${iGRC_colIndex}`]);
+      // let tmp= assessment.iGRCControledZone;
+      // console.error({tmp});
+    
+      return iGRC_colIndex;
+   }
+// ==============================
+// CRITICAL AREA SECTION
+//
+// 1) JARUS Critical Area Calculation
+    const CalculJARUSCriticalArea = () => {
+    let Ac = Number(5);
+    let rPerson = 0.3;
+    let rD=rPerson+assessment.maxCharacteristicDimension/2.0;
+    let Modulation=1.0;
+    if (assessment.ObstaclesModulation === 'OUI') {
+      Modulation=0.6;
+    } else {
+      Modulation=1.0;
+    }
+    if (assessment.maxCharacteristicDimension<=1.0) {
+      Ac = 2.0*rD*assessment.dGlide+Math.PI*Math.pow(rD, 2);
+    } else if (assessment.maxCharacteristicDimension<8.0) {
+      Ac = Modulation*(2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD);
+    } else if (assessment.maxCharacteristicDimension>=8.0) {
+      Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
+    }
+//    Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
+    assessment.CriticalArea = parseFloat(Ac.toFixed(2));
+    return parseFloat(Ac.toFixed(2));
+    }
+
+// ==============================
+  const AdviceThetaGlide = () => {
+    if (assessment.maxCharacteristicDimension<=1.0) {
+      //assessment.ThetaGlide = 35.0;
+      return 35.0;
+    } else {
+      //assessment.ThetaGlide = 10.0;
+      return 10.0;    
+    }
+  }
+// ==============================
+  const AdvicedSlideReduced = () => {
+    if (assessment.DetailedJarusModel == 'OUI') {
+      // Non-lethal kinetic energy limit : (290.0 J)
+      let Knonlethal =290.0;
+      //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
+      let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
+      // Coefficient of restitution 0.8 //0.65
+      let coefficient_of_restitution=0.65;//-0.42*(assessment.ThetaGlide-10.0)/70.0;
+      // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
+      let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
+      // if (assessment.maxCharacteristicDimension>1.0) {
+      //   let Vglide = assessment.maxSpeed*0.65;
+      //   vhorizontale = Vglide;
+      // }
+      // Coefficient of friction 0.75 au lieu de 0.6
+      let Cg = 0.75;
+      let GRAVITY = 9.81;
+      let acceleration = Cg * GRAVITY;
+      // t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
+      let tsafe = Math.max((coefficient_of_restitution          * vhorizontale            - vnonlethal       ) / acceleration,0.0);
+      // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
+      let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
+      assessment.dSlideReduced = parseFloat(dslide_reduced.toFixed(2));
+      assessment.vnonlethal = parseFloat(vnonlethal.toFixed(4));
+      assessment.vhorizontale = parseFloat(vhorizontale.toFixed(4));
+      assessment.tsafe = parseFloat(tsafe.toFixed(4));
+      return assessment.dSlideReduced;
+    } else {
+      return 0.0;
+    }
+  }
+// ==============================
+  const AdvicedGlide = () => {
+    let hPerson = 1.8;
+    if (assessment.DetailedJarusModel == 'OUI') {
+      assessment.dGlide=parseFloat((hPerson / Math.tan(assessment.ThetaGlide * Math.PI / 180.0)).toFixed(2));
+      return parseFloat(assessment.dGlide.toFixed(2));
+      
+    } else {
+      return 0.0;
+    }
+  }
+    
+// 2) High Impact Angle Calculation
     const computeFrontalArea = () => {
       let A = Number(1);
       if (assessment.maxCharacteristicDimension <= 1.0) {
@@ -153,218 +305,228 @@ let iGRC_colIndex =0
       console.error({ CA });
       return CA;
     }
-  const CalculImpactAngle = () => {
-//   ANNEX 1: Impact angle – mathematical model
-// The UA begins its descent from an initial Vertical Distance fixed at zero [m] (or Height [m]) at a maximum forward speed [m/s] = V(0) (=maximum cruise speed).
-// i.e. we put the origin of the axes at the height of the UA when it begins its descent.
-// So vertical distance (0) = 0.  
-// The iteration ends when the vertical distance (t) = - height (when the UA touches the ground).
-// (Note that the vertical velocity < 0)
-    //let V0= assessment.maxSpeed;
-    let Mass= assessment.MTOW;
-    let Velocity_t0 = Number(0); // Initial velocity at time t-1
-    //VerticalDistance
-    let VD_t0 = Number(0);
-    let VD_t1 = Number(0);
-    let HD_t0 = Number(0); // Horizontal Distance at time t-1
-    let HD_t1 = Number(0); // Horizontal Distance at time t
-    //Vertical Velocity
-    let VV_t0 = Number(0);
-    let VV_t1 = Number(0);
-    //Horizontal Velocity
-    let HV_t0 = assessment.maxSpeed; // Initial horizontal velocity
-    let HV_t1 = Number(0);
-  // Model Parameters :
-    let dt=Number(0.1); // Time step in seconds    
-    let GRAVITY = 9.81; // m/s²
-    let rho = 1.225; // kg/m³ (density of air at sea level)
-    let A = 0.7; // m² (frontal area of the UA, can be adjusted based on the UA's dimensions)
-    let Cd = 0.8; // Drag coefficient (fixed as per Annex F)
-    let DragForce_t0 = Number(0); // Drag Force at time t-1
-    let DragForceH_t0 = Number(0); // Drag Force Horizontal at time t-1
-    let DragForceV_t0 = Number(0); // Drag Force Vertical at time t-1
-    let ThetaImpactDeg =Number(0);  // Impact angle in degrees at time t
-    let Ek= Number(0); // Kinetic Energy at time t-1
-// We calculate at each step of the iteration:
-// HV_t1 = HV_t0+Drag-force-hiorizontal_t0*dt/m
-// VV_t1 = VV_t0-[GRAVITY-Drag-force-vertical_t0/m]*dt
-// Where
-// Drag Force horizontal (t−1)=cos Θ (t−1)∗ Drag Force (t−1)
-// Drag Force vertical (t−1)=sin Θ (t−1) ∗ Drag force (t−1)
-// Drag Force (t-1) = 0.5 .ϱ .𝑉 (𝑡−1)2 . 𝐴 .𝐶𝑑
-// Where: A is the frontal area of the UA expressed in m ² as per Annex F,
-// Cd = 0.8 (fixed as per Annex F),
-// ϱ = density of air and g= gravity
-// As
-// V (t)=√Vhorizontal (t)2+V vertical (t)²    
-// Tg Θ(t) =V vertical (t)/V horizontal (t)
-// We calculate: Θ (t)=Arctg V vertical (t)/V horizontal (t)
-    let ThetaImpact = Number(0); // Impact angle at time t
-    let timeofimpact = Number(0); // Time of impact
-    // Initialize an array to store the values
-    const results = [];
-    //while (VD_t1 >= -assessment.MinOperationalAltitude) {
-    for (let t = 0; VD_t1 >= -assessment.MinOperationalAltitude; t += dt) {
-    // We calculate: Θ (t-1)=Arctg (V vertical (t-1)/V horizontal (t-1)) 
-      ThetaImpact = Math.atan2(VV_t0, HV_t0);
-      // Calculate Velocity at time t-1
-      Velocity_t0= Math.sqrt(Math.pow(HV_t0, 2) + Math.pow(VV_t0, 2));
+    const CalculImpactAngle = () => {
+  //   ANNEX 1: Impact angle – mathematical model
+  // The UA begins its descent from an initial Vertical Distance fixed at zero [m] (or Height [m]) at a maximum forward speed [m/s] = V(0) (=maximum cruise speed).
+  // i.e. we put the origin of the axes at the height of the UA when it begins its descent.
+  // So vertical distance (0) = 0.  
+  // The iteration ends when the vertical distance (t) = - height (when the UA touches the ground).
+  // (Note that the vertical velocity < 0)
+      //let V0= assessment.maxSpeed;
+      let Mass= assessment.MTOW;
+      let Velocity_t0 = Number(0); // Initial velocity at time t-1
+      //VerticalDistance
+      let VD_t0 = Number(0);
+      let VD_t1 = Number(0);
+      let HD_t0 = Number(0); // Horizontal Distance at time t-1
+      let HD_t1 = Number(0); // Horizontal Distance at time t
+      //Vertical Velocity
+      let VV_t0 = Number(0);
+      let VV_t1 = Number(0);
+      //Horizontal Velocity
+      let HV_t0 = assessment.maxSpeed; // Initial horizontal velocity
+      let HV_t1 = Number(0);
+    // Model Parameters :
+      let dt=Number(0.1); // Time step in seconds    
+      let GRAVITY = 9.81; // m/s²
+      let rho = 1.225; // kg/m³ (density of air at sea level)
+      let A = 0.7; // m² (frontal area of the UA, can be adjusted based on the UA's dimensions)
+      let Cd = 0.8; // Drag coefficient (fixed as per Annex F)
+      let DragForce_t0 = Number(0); // Drag Force at time t-1
+      let DragForceH_t0 = Number(0); // Drag Force Horizontal at time t-1
+      let DragForceV_t0 = Number(0); // Drag Force Vertical at time t-1
+      let ThetaImpactDeg =Number(0);  // Impact angle in degrees at time t
+      let Ek= Number(0); // Kinetic Energy at time t-1
+  // We calculate at each step of the iteration:
+  // HV_t1 = HV_t0+Drag-force-hiorizontal_t0*dt/m
+  // VV_t1 = VV_t0-[GRAVITY-Drag-force-vertical_t0/m]*dt
+  // Where
+  // Drag Force horizontal (t−1)=cos Θ (t−1)∗ Drag Force (t−1)
+  // Drag Force vertical (t−1)=sin Θ (t−1) ∗ Drag force (t−1)
+  // Drag Force (t-1) = 0.5 .ϱ .𝑉 (𝑡−1)2 . 𝐴 .𝐶𝑑
+  // Where: A is the frontal area of the UA expressed in m ² as per Annex F,
+  // Cd = 0.8 (fixed as per Annex F),
+  // ϱ = density of air and g= gravity
+  // As
+  // V (t)=√Vhorizontal (t)2+V vertical (t)²    
+  // Tg Θ(t) =V vertical (t)/V horizontal (t)
+  // We calculate: Θ (t)=Arctg V vertical (t)/V horizontal (t)
+      let ThetaImpact = Number(0); // Impact angle at time t
+      let timeofimpact = Number(0); // Time of impact
+      // Initialize an array to store the values
+      const results = [];
+      //while (VD_t1 >= -assessment.MinOperationalAltitude) {
+      for (let t = 0; VD_t1 >= -assessment.MinOperationalAltitude; t += dt) {
+      // We calculate: Θ (t-1)=Arctg (V vertical (t-1)/V horizontal (t-1)) 
+        ThetaImpact = Math.atan2(VV_t0, HV_t0);
+        // Calculate Velocity at time t-1
+        Velocity_t0= Math.sqrt(Math.pow(HV_t0, 2) + Math.pow(VV_t0, 2));
 
-      // Claculate drag Force at time t-1
-      DragForce_t0 = - 0.5 * rho * Math.pow(Velocity_t0, 2) * A * Cd;
-      // Calculate Drag Force Horizontal and Vertical at time t-1
-      DragForceH_t0 = Math.cos(ThetaImpact) * DragForce_t0;
-      DragForceV_t0 = Math.sin(ThetaImpact) * DragForce_t0;
-      ThetaImpactDeg = ThetaImpact * (180 / Math.PI); // Convert to degrees
-      // Calculate Kinetyic Energy at time t-1
-      Ek = 0.5 * Mass * Math.pow(Velocity_t0, 2);
-      // Store the values in the results array
-      results.push({
-        t,
-        HV_t0,
-        VV_t0,
-        Velocity_t0,
-        ThetaImpactDeg,
-        HD_t0,
-        VD_t0,
-        DragForce_t0,
-        DragForceH_t0,
-        DragForceV_t0,
-        Ek
-      });
-      // Update Horizontal and Vertical Velocities
-      HV_t1 = HV_t0 + (DragForceH_t0 / Mass) * dt;
-      VV_t1 = VV_t0 - (GRAVITY - (DragForceV_t0 / Mass)) * dt;
-      // Update Vertical Distance
-      VD_t1 = VD_t0 + 0.5*(VV_t0+VV_t1) * dt;
-      // Update Horizontal Distance
-      HD_t1 = HD_t0 + 0.5*(HV_t0+HV_t1) * dt;
+        // Claculate drag Force at time t-1
+        DragForce_t0 = - 0.5 * rho * Math.pow(Velocity_t0, 2) * A * Cd;
+        // Calculate Drag Force Horizontal and Vertical at time t-1
+        DragForceH_t0 = Math.cos(ThetaImpact) * DragForce_t0;
+        DragForceV_t0 = Math.sin(ThetaImpact) * DragForce_t0;
+        ThetaImpactDeg = ThetaImpact * (180 / Math.PI); // Convert to degrees
+        // Calculate Kinetyic Energy at time t-1
+        Ek = 0.5 * Mass * Math.pow(Velocity_t0, 2);
+        // Store the values in the results array
+        results.push({
+          t,
+          HV_t0,
+          VV_t0,
+          Velocity_t0,
+          ThetaImpactDeg,
+          HD_t0,
+          VD_t0,
+          DragForce_t0,
+          DragForceH_t0,
+          DragForceV_t0,
+          Ek
+        });
+        // Update Horizontal and Vertical Velocities
+        HV_t1 = HV_t0 + (DragForceH_t0 / Mass) * dt;
+        VV_t1 = VV_t0 - (GRAVITY - (DragForceV_t0 / Mass)) * dt;
+        // Update Vertical Distance
+        VD_t1 = VD_t0 + 0.5*(VV_t0+VV_t1) * dt;
+        // Update Horizontal Distance
+        HD_t1 = HD_t0 + 0.5*(HV_t0+HV_t1) * dt;
 
-      // Prepare for next iteration
-      VD_t0 = VD_t1;
-      HD_t0 = HD_t1;
-      VV_t0 = VV_t1;
-      HV_t0 = HV_t1;
-      timeofimpact=t;
-    }
-    // Update the assessment with the calculated impact angle
-    assessment.ThetaImpact = parseFloat((ThetaImpactDeg).toFixed(2));
-    console.error({ ThetaImpactDeg, results }); // Log the impact angle and results for debugging
-
-     return [ThetaImpactDeg, results];
-  }
-
-  const handleOnChangeGlidingCapability = (e) => {
-    onChange({
-      ...assessment,
-      GlidingCapability: e.target
-        .value as GlidingCapability,
-        assessmentGRB: e.target.value === 'NON' ? "Approche Simplifiée, Règle 1:1" : assessment.assessmentGRB,
-    });
-  }
-
-  const handleOnChangeFixedWingPowerOff = (e) => {
-    const isChecked = e.target.checked;
-    onChange({
-      ...assessment,
-      GRB_FixedWingPowerOff: isChecked ? 'ACTIVATED' : 'NONACTIVE',
-      assessmentGRB:"Approche Simplifiée, Règle 1:1",
-    });
-  };
-
-  const GRB_FixedWingPowerOffActivationbydefault=() => {
-    assessment.GRB_FixedWingPowerOff = 'ACTIVATED'
-    return true;
-  }
-
-  const CalculAdjacentVolumeWidth = () => {
-    let AdjacentVolumeWidth = Number(1);
-    AdjacentVolumeWidth=3*60.0*assessment.maxSpeed;
-    assessment.AdjacentVolumeWidth = parseFloat((AdjacentVolumeWidth).toFixed(1));
-    return parseFloat((AdjacentVolumeWidth).toFixed(1));
-  }
-  const CalculAdjacentVolumeHeight = () => {
-    let AdjacentVolumeHeight = Number(1);
-    AdjacentVolumeHeight = assessment.ContingencyVolumeHeight+150.0; 
-    assessment.AdjacentVolumeHeight = parseFloat((AdjacentVolumeHeight).toFixed(1));
-    return parseFloat((AdjacentVolumeHeight).toFixed(1));
-  }
-
-  const CalulGRB =() =>{
-    let GRB = Number(1);
-    let GRAVITY = 9.81;
-    let Vwind=assessment.environmentalLimitations.maxGustSpeed;
-    
-
-    
-    if (assessment.assessmentGRB === 'Approche Simplifiée, Règle 1:1') {
-      GRB =assessment.ContingencyVolumeHeight+0.5*assessment.maxCharacteristicDimension;
-    } else if (assessment.assessmentGRB === 'Approche Balistique (Hélicoptère ou Multirotor)') {
-      GRB =assessment.maxSpeed*Math.sqrt(2*assessment.ContingencyVolumeHeight/GRAVITY) +0.5*assessment.maxCharacteristicDimension;
-    } else if (assessment.assessmentGRB === 'Terminaison Aile Fixe') {
-      GRB =assessment.ContingencyVolumeHeight/Math.tan(assessment.ThetaGlide*Math.PI/180.0);
-
-    } else if (assessment.assessmentGRB === 'Terminaison avec parachute') {
-      GRB =assessment.maxSpeed*assessment.ParachuteTime+Vwind*assessment.ContingencyVolumeHeight/assessment.VzParachute;   //+0.5*assessment.maxCharacteristicDimension;
-    } else  {
-      GRB =0.0;
-
-    }
-    assessment.GRBWidth = parseFloat(GRB.toFixed(2));
-    return parseFloat(GRB.toFixed(2));
-  }
-
-  const CalculContingencyVolumeWidth = (SGPS,Spos,SK,SRZ,SCM) => {
-    let SCV = Number(1);
-    //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
-    SCV=SGPS+Spos+SK+SRZ+SCM;
-    assessment.ContingencyVolumeWidth = parseFloat((SCV).toFixed(1));
-    return parseFloat((SCV).toFixed(1));
-  }
-  
-  const CalculContingencyVolumeHeight = (Hbaro,HRZ,HCM) => {
-    let HCV = Number(1);
-    //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
-    HCV=Hbaro+HRZ+HCM+assessment.FlightGeographyHeight;
-    assessment.ContingencyVolumeHeight = parseFloat((HCV).toFixed(1));
-    return parseFloat((HCV).toFixed(1));
-  }
-//Contigency Maneuvre Volume
-  const CalculVolumeSCM = () => {
-    let SCM = Number(1);
-    let HCM = Number(1);
-    let GRAVITY = 9.81;
-  // | 'Avion'
-  // | 'Hélicoptère'
-  // | 'Multirotor'
-  // | 'Hybride/VTOL'
-  // | "Plus léger que l'air"
-  // | 'Autre';
-  // ContingencyVolumeSCM: assessment.ParachuteTime*assessment.maxSpeed, 
-  // ContingencyVolumeHCM: parseFloat((assessment.ParachuteTime*0.7*assessment.maxSpeed).toFixed(2)) , 
-    if (assessment.ContingencyParachuteManeuver === 'OUI') {
-      SCM = assessment.ParachuteTime*assessment.maxSpeed;
-      HCM = parseFloat((assessment.ParachuteTime*0.7*assessment.maxSpeed).toFixed(2));
-    } else {
-      if (assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL' || assessment.uasType === "Plus léger que l'air") {
-        SCM = assessment.maxSpeed*assessment.maxSpeed/(GRAVITY*Math.tan(assessment.PhiMaxPlane*Math.PI/180.0));
-        HCM = 0.3*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
-        //Cas 2 based on Maximum Turn Rate :
-        //SCM = 0.5*assessment.maxSpeed*(90.0/assessment.turnRate);
-      } else if (assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') {
-        SCM = 0.5*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY*Math.tan(assessment.ThetaStopCopter*Math.PI/180.0));
-        HCM = 0.5*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
-      } else if (assessment.uasType === 'Autre') {
-        SCM = 0.5*assessment.maxSpeed*(90.0/assessment.turnRate);
-        HCM = 0.3*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
-      } else {  
-        SCM = 0 / 0;
+        // Prepare for next iteration
+        VD_t0 = VD_t1;
+        HD_t0 = HD_t1;
+        VV_t0 = VV_t1;
+        HV_t0 = HV_t1;
+        timeofimpact=t;
       }
-      assessment.ContingencyVolumeSCM = parseFloat(SCM.toFixed(2));
-      assessment.ContingencyVolumeHCM = parseFloat(HCM.toFixed(2));
-      return [SCM, HCM];
+      // Update the assessment with the calculated impact angle
+      assessment.ThetaImpact = parseFloat((ThetaImpactDeg).toFixed(2));
+      console.error({ ThetaImpactDeg, results }); // Log the impact angle and results for debugging
+
+      return [ThetaImpactDeg, results];
     }
-  }
+// ==============================
+// GLIDING CAPABILITY SECTION
+    const handleOnChangeGlidingCapability = (e) => {
+      onChange({
+        ...assessment,
+        GlidingCapability: e.target
+          .value as GlidingCapability,
+          assessmentGRB: e.target.value === 'NON' ? "Approche Simplifiée, Règle 1:1" : assessment.assessmentGRB,
+      });
+    }
+
+// ==============================
+// GRB SECTION
+    const CalulGRB =() =>{
+      let GRB = Number(1);
+      let GRAVITY = 9.81;
+      let Vwind=assessment.VwindParachute;//assessment.environmentalLimitations.maxGustSpeed;
+      
+
+      
+      if (assessment.assessmentGRB === 'Approche Simplifiée, Règle 1:1') {
+        GRB =assessment.ContingencyVolumeHeight+0.5*assessment.maxCharacteristicDimension;
+      } else if (assessment.assessmentGRB === 'Approche Balistique (Hélicoptère ou Multirotor)') {
+        GRB =assessment.maxSpeed*Math.sqrt(2*assessment.ContingencyVolumeHeight/GRAVITY) +0.5*assessment.maxCharacteristicDimension;
+      } else if (assessment.assessmentGRB === 'Terminaison Aile Fixe') {
+        GRB =assessment.ContingencyVolumeHeight/Math.tan(assessment.ThetaGlide*Math.PI/180.0);
+
+      } else if (assessment.assessmentGRB === 'Terminaison avec parachute') {
+        GRB =assessment.maxSpeed*assessment.ParachuteTime+Vwind*assessment.ContingencyVolumeHeight/assessment.VzParachute;   //+0.5*assessment.maxCharacteristicDimension;
+      } else  {
+        GRB =0.0;
+
+      }
+      assessment.GRBWidth = parseFloat(GRB.toFixed(2));
+      return parseFloat(GRB.toFixed(2));
+    }    
+// Fixed Wing Power Off : Automated switch to GRB assessment with simplified 1:1 approach
+    const handleOnChangeFixedWingPowerOff = (e) => {
+      const isChecked = e.target.checked;
+      onChange({
+        ...assessment,
+        GRB_FixedWingPowerOff: isChecked ? 'ACTIVATED' : 'NONACTIVE',
+        assessmentGRB:"Approche Simplifiée, Règle 1:1",
+      });
+    };
+
+    const GRB_FixedWingPowerOffActivationbydefault=() => {
+      assessment.GRB_FixedWingPowerOff = 'ACTIVATED'
+      return true;
+    }
+// ==============================
+// ADJACENT VOLUME SECTION
+    const CalculAdjacentVolumeWidth = () => {
+      let AdjacentVolumeWidth = Number(1);
+      if (assessment.AdjacentVolumeWidthEqualMaxRange === 'NON') {
+        AdjacentVolumeWidth=Math.max(3*60.0*assessment.maxSpeed*1.0,5000.0); // Minimum width of 5000 m
+      } else {
+        AdjacentVolumeWidth=Math.min(3*60.0*assessment.maxSpeed*1.0,35000.0); // Minimum width of 35000 m
+      }
+      return parseFloat((AdjacentVolumeWidth).toFixed(1));
+    }
+
+    const CalculAdjacentVolumeHeight = () => {
+      let AdjacentVolumeHeight = Number(1);
+      AdjacentVolumeHeight = assessment.ContingencyVolumeHeight+150.0; 
+      assessment.AdjacentVolumeHeight = parseFloat((AdjacentVolumeHeight).toFixed(1));
+      return parseFloat((AdjacentVolumeHeight).toFixed(1));
+    }
+
+// ==============================
+// CONTINGENCY VOLUME SECTION
+    const CalculContingencyVolumeWidth = (SGPS,Spos,SK,SRZ,SCM) => {
+      let SCV = Number(1);
+      //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
+      SCV=SGPS+Spos+SK+SRZ+SCM;
+      assessment.ContingencyVolumeWidth = parseFloat((SCV).toFixed(1));
+      return parseFloat((SCV).toFixed(1));
+    }
+  
+    const CalculContingencyVolumeHeight = (Hbaro,HRZ,HCM) => {
+      let HCV = Number(1);
+      //assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM
+      HCV=Hbaro+HRZ+HCM+assessment.FlightGeographyHeight;
+      assessment.ContingencyVolumeHeight = parseFloat((HCV).toFixed(1));
+      return parseFloat((HCV).toFixed(1));
+    }
+  //Contigency Maneuvre Volume
+    const CalculVolumeSCM = () => {
+      let SCM = Number(1);
+      let HCM = Number(1);
+      let GRAVITY = 9.81;
+    // | 'Avion'
+    // | 'Hélicoptère'
+    // | 'Multirotor'
+    // | 'Hybride/VTOL'
+    // | "Plus léger que l'air"
+    // | 'Autre';
+    // ContingencyVolumeSCM: assessment.ParachuteTime*assessment.maxSpeed, 
+    // ContingencyVolumeHCM: parseFloat((assessment.ParachuteTime*0.7*assessment.maxSpeed).toFixed(2)) , 
+      if (assessment.ContingencyParachuteManeuver === 'OUI') {
+        SCM = assessment.ParachuteTime*assessment.maxSpeed;
+        HCM = parseFloat((assessment.ParachuteTime*0.7*assessment.maxSpeed).toFixed(2));
+      } else {
+        if (assessment.uasType === 'Avion' || assessment.uasType === 'Hybride/VTOL' || assessment.uasType === "Plus léger que l'air") {
+          SCM = assessment.maxSpeed*assessment.maxSpeed/(GRAVITY*Math.tan(assessment.PhiMaxPlane*Math.PI/180.0));
+          HCM = 0.3*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
+          //Cas 2 based on Maximum Turn Rate :
+          //SCM = 0.5*assessment.maxSpeed*(90.0/assessment.turnRate);
+        } else if (assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') {
+          SCM = 0.5*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY*Math.tan(assessment.ThetaStopCopter*Math.PI/180.0));
+          HCM = 0.5*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
+        } else if (assessment.uasType === 'Autre') {
+          SCM = 0.5*assessment.maxSpeed*(90.0/assessment.turnRate);
+          HCM = 0.3*assessment.maxSpeed*assessment.maxSpeed/(GRAVITY);
+        } else {  
+          SCM = 0 / 0;
+        }
+        assessment.ContingencyVolumeSCM = parseFloat(SCM.toFixed(2));
+        assessment.ContingencyVolumeHCM = parseFloat(HCM.toFixed(2));
+        return [SCM, HCM];
+      }
+    }
 
 //  const ACtable = () => {
 //     let AcFromTable = Number(8);
@@ -382,6 +544,28 @@ let iGRC_colIndex =0
 //     assessment.NominalCriticalArea = AcFromTable;
 //     return AcFromTable;
 //   };
+// ==============================
+// CHARACTERISTIC DIMENSION CLASSIFICATION SECTION
+  const CalculmaxCharacteristicDimensionClass = () => {
+    let MaxdimClass=Number(1);
+    if (assessment.CriticalArea <= 6.5) {
+      MaxdimClass= 1;
+    } else if (assessment.CriticalArea <= 65.0) {
+      MaxdimClass= 3;
+    } else if (assessment.CriticalArea <= 650.0) {
+      MaxdimClass= 8;
+    } else if (assessment.CriticalArea <= 6500.0) {
+      MaxdimClass= 20;
+    } else if (assessment.CriticalArea <= 65000.0) {
+      MaxdimClass= 40;
+    } else {
+      MaxdimClass= 40; // For very large UAs
+    }
+    assessment.maxCharacteristicDimensionClass = MaxdimClass;
+    return MaxdimClass;
+  }
+// ==============================
+// THRESHOLD AC SECTION 
  const ThresholdACtable = () => {
     let AcFromTable = Number(6.5);
     if (assessment.maxCharacteristicDimension<=1.0) {
@@ -398,85 +582,13 @@ let iGRC_colIndex =0
     assessment.NominalCriticalArea = AcFromTable;
     return AcFromTable;
   };
-  const CalculJARUSCriticalArea = () => {
-    let Ac = Number(5);
-    let rPerson = 0.3;
-    let rD=rPerson+assessment.maxCharacteristicDimension/2.0;
-    let Modulation=1.0;
-    if (assessment.ObstaclesModulation === 'OUI') {
-      Modulation=0.6;
-    } else {
-      Modulation=1.0;
-    }
-    if (assessment.maxCharacteristicDimension<=1.0) {
-      Ac = 2.0*rD*assessment.dGlide+Math.PI*Math.pow(rD, 2);
-    } else if (assessment.maxCharacteristicDimension<8.0) {
-      Ac = Modulation*(2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD);
-    } else if (assessment.maxCharacteristicDimension>=8.0) {
-      Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
-    }
-//    Ac = 2.0*rD*(assessment.dGlide+assessment.dSlideReduced)+Math.PI*rD*rD;
-    assessment.CriticalArea = parseFloat(Ac.toFixed(2));
-    return parseFloat(Ac.toFixed(2));
-  }
 
 
-  const AdviceThetaGlide = () => {
-    if (assessment.maxCharacteristicDimension<=1.0) {
-      //assessment.ThetaGlide = 35.0;
-      return 35.0;
-    } else {
-      //assessment.ThetaGlide = 10.0;
-      return 10.0;    
-    }
-  }
-
-  const AdvicedSlideReduced = () => {
-    if (assessment.DetailedJarusModel == 'OUI') {
-      // Non-lethal kinetic energy limit : (290.0 J)
-      let Knonlethal =290.0;
-      //velocity_min_kill = np.sqrt(2 * lethal_kinetic_energy / aircraft.mass)
-      let vnonlethal    = Math.sqrt(2 * Knonlethal /assessment.MTOW);
-      // Coefficient of restitution 0.8 //0.65
-      let coefficient_of_restitution=0.65;//-0.42*(assessment.ThetaGlide-10.0)/70.0;
-      // horizontal_speed_from_angle =  np.fabs(  np.cos(np.radians(impact_angle            ))) * impact_speed
-      let vhorizontale               = Math.abs(Math.cos(assessment.ThetaGlide*Math.PI/180.0))  * assessment.maxSpeed;
-      // if (assessment.maxCharacteristicDimension>1.0) {
-      //   let Vglide = assessment.maxSpeed*0.65;
-      //   vhorizontale = Vglide;
-      // }
-      // Coefficient of friction 0.75 au lieu de 0.6
-      let Cg = 0.75;
-      let GRAVITY = 9.81;
-      let acceleration = Cg * GRAVITY;
-      // t_safe = (aircraft.coefficient_of_restitution * horizontal_impact_speed - velocity_min_kill) / acceleration
-      let tsafe = Math.max((coefficient_of_restitution          * vhorizontale            - vnonlethal       ) / acceleration,0.0);
-      // slide_distance_non_lethal = (aircraft.coefficient_of_restitution * horizontal_impact_speed * t_safe) - (0.5 * acceleration * t_safe * t_safe)
-      let dslide_reduced           = (coefficient_of_restitution          * vhorizontale            * tsafe ) - (0.5 * acceleration * tsafe  * tsafe );
-      assessment.dSlideReduced = parseFloat(dslide_reduced.toFixed(2));
-      assessment.vnonlethal = parseFloat(vnonlethal.toFixed(4));
-      assessment.vhorizontale = parseFloat(vhorizontale.toFixed(4));
-      assessment.tsafe = parseFloat(tsafe.toFixed(4));
-      return assessment.dSlideReduced;
-    } else {
-      return 0.0;
-    }
-  }
-
-  const AdvicedGlide = () => {
-    let hPerson = 1.8;
-    if (assessment.DetailedJarusModel == 'OUI') {
-      assessment.dGlide=parseFloat((hPerson / Math.tan(assessment.ThetaGlide * Math.PI / 180.0)).toFixed(2));
-      return parseFloat(assessment.dGlide.toFixed(2));
-      
-    } else {
-      return 0.0;
-    }
-  }
+// ==============================
+// HANDLE FILES SECTION:
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const DroserafileInputRef = useRef<HTMLInputElement>(null);
-
 
     // const handleDroseraOutputFileChange = async (
     // event: React.ChangeEvent<HTMLInputElement>
@@ -489,124 +601,124 @@ let iGRC_colIndex =0
     
     // };
 
-const handleDroseraOutputFileChange = async (
-  event: React.ChangeEvent<HTMLInputElement>
-) => {
-  const files = event.target.files;
-  if (files) {
-    const newFile = files[0]; // Prendre le premier fichier seulement
+// ==============================
+// DROSERA SECTION:
+  const handleDroseraOutputFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files) {
+      const newFile = files[0]; // Prendre le premier fichier seulement
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      console.log('File content:', content); // Log the file content
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        console.log('File content:', content); // Log the file content
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(content, 'text/html');
-      console.log('Parsed document:', doc); // Log the parsed document
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, 'text/html');
+        console.log('Parsed document:', doc); // Log the parsed document
 
-      // Find the <h2>Population</h2> element by iterating over all <h2> elements
-      const h2Elements = doc.querySelectorAll('h2');
-      let populationHeader = null;
+        // Find the <h2>Population</h2> element by iterating over all <h2> elements
+        const h2Elements = doc.querySelectorAll('h2');
+        let populationHeader = null;
 
-      for (const h2 of h2Elements) {
-        if (h2.textContent === 'Population') {
-          populationHeader = h2;
-          break;
+        for (const h2 of h2Elements) {
+          if (h2.textContent === 'Population') {
+            populationHeader = h2;
+            break;
+          }
         }
-      }
 
-      //console.log('Population header:', populationHeader); // Log the population header
-      if (populationHeader) {
-        // Find the next sibling element which is a table
-        const nextSibling = populationHeader.nextElementSibling;
-        //console.log('Next sibling:', nextSibling); // Log the next sibling
+        //console.log('Population header:', populationHeader); // Log the population header
+        if (populationHeader) {
+          // Find the next sibling element which is a table
+          const nextSibling = populationHeader.nextElementSibling;
+          //console.log('Next sibling:', nextSibling); // Log the next sibling
 
-        if (nextSibling && nextSibling.tagName === 'TABLE') {
-          // Convert the table to a string
-          const tableString = nextSibling.outerHTML;
-          //console.log('Table string:', tableString); // Log the table string
-          assessment.droseraOutputResult = tableString;
-          //console.error({ tableString });
+          if (nextSibling && nextSibling.tagName === 'TABLE') {
+            // Convert the table to a string
+            const tableString = nextSibling.outerHTML;
+            //console.log('Table string:', tableString); // Log the table string
+            assessment.droseraOutputResult = tableString;
+            //console.error({ tableString });
 
-          // Parse the table string to extract numerical values
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(tableString, 'text/html');
-          const table = doc.querySelector('table');
-          const rows = table?.querySelectorAll('tr');
-          const DroseraResTable = [];
+            // Parse the table string to extract numerical values
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(tableString, 'text/html');
+            const table = doc.querySelector('table');
+            const rows = table?.querySelectorAll('tr');
+            const DroseraResTable = [];
 
-          if (rows) {
-            rows.forEach(row => {
-              const cells = row.querySelectorAll('td');
-              const rowData = [];
-              cells.forEach(cell => {
-                const value = parseFloat(cell.textContent || '');
-                if (!isNaN(value)) {
-                  rowData.push(value);
+            if (rows) {
+              rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = [];
+                cells.forEach(cell => {
+                  const value = parseFloat(cell.textContent || '');
+                  if (!isNaN(value)) {
+                    rowData.push(value);
+                  }
+                });
+                if (rowData.length > 0) {
+                  DroseraResTable.push(rowData);
                 }
               });
-              if (rowData.length > 0) {
-                DroseraResTable.push(rowData);
-              }
-            });
+            }
+            console.log('DroseraResTable:', DroseraResTable); // Log the DroseraResTable
+            assessment.DroseraResTable = DroseraResTable;
+            // Store the table string and DroseraResTable in the state or use it as needed
+            onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString, DroseraResTable });
+          } else {
+            console.error('No table found right after the <h2>Population</h2> title.');
           }
-          console.log('DroseraResTable:', DroseraResTable); // Log the DroseraResTable
-          assessment.DroseraResTable = DroseraResTable;
-          // Store the table string and DroseraResTable in the state or use it as needed
-          onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString, DroseraResTable });
+
+          // if (assessment.DroseraResTable[1]>250000) {
+          //   assessment.populationDensity = ">250,000";
+          // } else if (assessment.DroseraResTable[1]<250000) {
+          //   assessment.populationDensity = "<250,000";
+          // } else if (assessment.DroseraResTable[1]<25000) {
+          //   assessment.populationDensity = "<25,000";
+          // } else if (assessment.DroseraResTable[1]<2500) {
+          //   assessment.populationDensity = "<2,500";
+          // } else if (assessment.DroseraResTable[1]<250) {
+          //   assessment.populationDensity = "<250";
+          // } else if (assessment.DroseraResTable[1]<25) {
+          //   assessment.populationDensity = "<25";
+          // } else if (assessment.DroseraResTable[1]<0) {
+          //   assessment.populationDensity = "Zone Contrôlée";
+          // } else {
+          //   assessment.populationDensity = "Zone Contrôlée";
+          // }
+        // if (populationHeader) {
+        //   // Find the next sibling element which is a table
+        //   const nextSibling = populationHeader.nextElementSibling;
+        //   //console.log('Next sibling:', nextSibling); // Log the next sibling
+
+        //   if (nextSibling && nextSibling.tagName === 'TABLE') {
+        //     // Convert the table to a string
+        //     const tableString = nextSibling.outerHTML;
+        //     //console.log('Table string:', tableString); // Log the table string
+        //     assessment.droseraOutputResult = tableString;
+        //     //console.error({ tableString });
+
+        //     // Store the table string in the state or use it as needed
+        //     onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString });
+        //   } else {
+        //     console.error('No table found right after the <h2>Population</h2> title.');
+        //   }
         } else {
-          console.error('No table found right after the <h2>Population</h2> title.');
+          console.error('<h2>Population</h2> title not found.');
         }
-
-        // if (assessment.DroseraResTable[1]>250000) {
-        //   assessment.populationDensity = ">250,000";
-        // } else if (assessment.DroseraResTable[1]<250000) {
-        //   assessment.populationDensity = "<250,000";
-        // } else if (assessment.DroseraResTable[1]<25000) {
-        //   assessment.populationDensity = "<25,000";
-        // } else if (assessment.DroseraResTable[1]<2500) {
-        //   assessment.populationDensity = "<2,500";
-        // } else if (assessment.DroseraResTable[1]<250) {
-        //   assessment.populationDensity = "<250";
-        // } else if (assessment.DroseraResTable[1]<25) {
-        //   assessment.populationDensity = "<25";
-        // } else if (assessment.DroseraResTable[1]<0) {
-        //   assessment.populationDensity = "Zone Contrôlée";
-        // } else {
-        //   assessment.populationDensity = "Zone Contrôlée";
-        // }
-      // if (populationHeader) {
-      //   // Find the next sibling element which is a table
-      //   const nextSibling = populationHeader.nextElementSibling;
-      //   //console.log('Next sibling:', nextSibling); // Log the next sibling
-
-      //   if (nextSibling && nextSibling.tagName === 'TABLE') {
-      //     // Convert the table to a string
-      //     const tableString = nextSibling.outerHTML;
-      //     //console.log('Table string:', tableString); // Log the table string
-      //     assessment.droseraOutputResult = tableString;
-      //     //console.error({ tableString });
-
-      //     // Store the table string in the state or use it as needed
-      //     onChange({ ...assessment, droseraOutputFile: [newFile], populationTable: tableString });
-      //   } else {
-      //     console.error('No table found right after the <h2>Population</h2> title.');
-      //   }
-      } else {
-        console.error('<h2>Population</h2> title not found.');
-      }
-    };
-    reader.readAsText(newFile);
-  }
-};
+      };
+      reader.readAsText(newFile);
+    }
+  };
   const handleRemoveDroseraOutputFile = (index: number) => {
     const newFiles = [...(assessment.droseraOutputFile || [])];
     newFiles.splice(index, 1);
     onChange({ ...assessment, droseraOutputFile: newFiles });
   };
-   
-  
   const generateDroseraInputFile = () => {
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="DroseraDataModel.xsl"?><DroseraDataModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="drosera.xsd">
@@ -735,7 +847,8 @@ const handleDroseraOutputFileChange = async (
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-  
+// ==============================
+// Trajectoire et Zone File Handling
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -770,9 +883,6 @@ const handleDroseraOutputFileChange = async (
       });
     }
   };
-
-
-
   
   const handleRemoveFile = (index: number) => {
     const newFiles = [...(assessment.trajgeoFiles || [])];
@@ -780,6 +890,8 @@ const handleDroseraOutputFileChange = async (
     onChange({ ...assessment, trajgeoFiles: newFiles });
   };
 
+// ====================================================================================\\
+//                   Render the component Ground Rishk Initial                         \\  
   return (
     <div className="space-y-8">
       <h2 className="text-xl font-semibold">Évaluation des Risques</h2>
@@ -833,13 +945,18 @@ const handleDroseraOutputFileChange = async (
                 <input
                   type="number"
                   value={assessment.followTerrainHeight}
+                  min={0}
                   onChange={(e) =>
                     onChange({
                       ...assessment,
                       followTerrainHeight: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.followTerrainHeight === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                 />
               </div>
             )}
@@ -1041,23 +1158,133 @@ const handleDroseraOutputFileChange = async (
               <div>
                 <table className="min-w-full bg-white">
                   <thead>
-                    <tr className="bg-black text-black">
+                    <tr className="bg-gray-200">
                       <th className="bg-gray-200 py-2 px-4 border-b">Dimension characteristique Max. (m)</th>
-                      <th className="bg-white py-2 px-4 border-b">≤1</th>
-                      <th className="bg-white py-2 px-4 border-b">≤3</th>
-                      <th className="bg-white py-2 px-4 border-b">≤8</th>
-                      <th className="bg-white py-2 px-4 border-b">≤20</th>
-                      <th className="bg-white py-2 px-4 border-b">≤40</th>
+                      
+                      <th className={
+                          assessment.maxCharacteristicDimension<=1 && assessment.maxCharacteristicDimensionClass<=1
+                          ? 'bg-blue-200  text-white border-2 border-green-500'
+                          : assessment.maxCharacteristicDimensionClass<=1
+                            ? 'bg-white py-2 px-4 border-2 border-green-500'
+                            : 'bg-white py-2 px-4 border-b'
+                          }>≤1</th>
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=3 && assessment.maxCharacteristicDimension>1
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=3  && assessment.maxCharacteristicDimensionClass>1
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=3  && assessment.maxCharacteristicDimensionClass>1
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>≤3</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=8 && assessment.maxCharacteristicDimension>3
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=8  && assessment.maxCharacteristicDimensionClass>3
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=8  && assessment.maxCharacteristicDimensionClass>3
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>≤8</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=20 && assessment.maxCharacteristicDimension>8
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=20  && assessment.maxCharacteristicDimensionClass>8
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=20  && assessment.maxCharacteristicDimensionClass>8
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>≤20</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=40 && assessment.maxCharacteristicDimension>20
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=40  && assessment.maxCharacteristicDimensionClass>20
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=40  && assessment.maxCharacteristicDimensionClass>20
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>≤40</th>
+
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="bg-gray-200">
                       <th className="bg-gray-200 py-2 px-4 border-b">Valeur Seuil de la Surface Critique (m²)</th>
-                      <th className="bg-white py-2 px-4 border-b">6.5</th>
-                      <th className="bg-white py-2 px-4 border-b">65</th>
-                      <th className="bg-white py-2 px-4 border-b">650</th>
-                      <th className="bg-white py-2 px-4 border-b">6500</th>
-                      <th className="bg-white py-2 px-4 border-b">65000</th>
+                      
+                      <th className={
+                          assessment.maxCharacteristicDimension<=1 && assessment.maxCharacteristicDimensionClass<=1
+                          ? 'bg-blue-200  text-white border-2 border-green-500'
+                          : assessment.maxCharacteristicDimensionClass<=1
+                            ? 'bg-white py-2 px-4 border-2 border-green-500'
+                            : 'bg-white py-2 px-4 border-b'
+                          }>6.5</th>
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=3 && assessment.maxCharacteristicDimension>1
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=3  && assessment.maxCharacteristicDimensionClass>1
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=3  && assessment.maxCharacteristicDimensionClass>1
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>65</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=8 && assessment.maxCharacteristicDimension>3
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=8  && assessment.maxCharacteristicDimensionClass>3
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=8  && assessment.maxCharacteristicDimensionClass>3
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>650</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=20 && assessment.maxCharacteristicDimension>8
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=20  && assessment.maxCharacteristicDimensionClass>8
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=20  && assessment.maxCharacteristicDimensionClass>8
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>6500</th>
+                          
+
+                      <th className={
+                            assessment.maxCharacteristicDimension<=40 && assessment.maxCharacteristicDimension>20
+                              ?  (
+                                assessment.maxCharacteristicDimensionClass<=40  && assessment.maxCharacteristicDimensionClass>20
+                                  ? 'bg-blue-500  text-white border-2 border-green-500'
+                                  : 'bg-blue-500  text-white'
+                              )
+                              :  assessment.maxCharacteristicDimensionClass<=40  && assessment.maxCharacteristicDimensionClass>20
+                                  ? 'bg-white py-2 px-4 border-2 border-green-500'
+                                  : 'bg-white py-2 px-4 border-b'
+                          }>65000</th>
+
                     </tr>
                   </tbody>
                 </table>
@@ -1123,6 +1350,29 @@ const handleDroseraOutputFileChange = async (
                 </option>
               </select>
             </div>
+            <div>
+              <Tooltip text="D'après la valeur de la Surface Critique (m²) le seuil applicable dans le tableau ci-dessus sera appliqué pour les calcul iGRC.">
+              <label className="block text-sm font-medium text-gray-700">
+                Classe de Dimension Caractéristique Max. Applicable (m)
+              </label>
+              </Tooltip>
+              <div>
+                {/* &le;{assessment.maxCharacteristicDimensionClass} */}
+              
+              <input
+                type="number"
+                value={CalculmaxCharacteristicDimensionClass()}
+                onChange={(e) =>
+                  onChange({
+                    ...assessment,
+                    maxCharacteristicDimensionClass: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="mt-1 block w-full rounded-md border-blue-500 text-blue-500 border-2 font-bold shadow-sm focus:border-blue-800 focus:ring-blue-800"
+                disabled
+              />
+              </div>
+              </div>
 
           </div>
             {assessment.assessmentCriticalArea ===
@@ -1189,6 +1439,10 @@ const handleDroseraOutputFileChange = async (
                         parseFloat(CalculCriticalArea_HAI().toFixed(2))
                       )}
                       
+                    </div>
+                    <div className="text-gray-100">
+                     {/* Just to force recompute of maxCharacteristicDimensionClass */}
+                        {CalculmaxCharacteristicDimensionClass()}
                     </div>
                     {(assessment.uasType === 'Hélicoptère' || assessment.uasType === 'Multirotor') ? (
                     <div>
@@ -1401,7 +1655,11 @@ const handleDroseraOutputFileChange = async (
                           step="0.1"
                           min={assessment.HighImpactAngle === 'OUI' ? 60 : 0}
                           max={assessment.HighImpactAngle === 'OUI' ? 90 : 60}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ThetaGlide === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                           placeholder={AdviceThetaGlide().toString()}
                         />     
                       
@@ -1455,7 +1713,11 @@ const handleDroseraOutputFileChange = async (
                           })
                         }
                         step="0.01"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.dGlide === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                         placeholder={(AdvicedGlide()).toString()}
                         
                       />
@@ -1483,7 +1745,11 @@ const handleDroseraOutputFileChange = async (
                           })
                         }
                         step="0.01"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.dSlideReduced === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                         placeholder={AdvicedSlideReduced().toString()}
                       />
                       
@@ -1952,7 +2218,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, ContingencyVolumeSGPS: parseFloat(e.target.value), ContingencyVolumeWidth: CalculContingencyVolumeWidth(parseFloat(e.target.value),assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM) } )}
                       step="0.1"
                       min={0.0} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ContingencyVolumeSGPS === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={'TO BE DEFINED'}
                     />
                   </div>
@@ -1977,7 +2247,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, ContingencyVolumeHbaro: parseFloat(e.target.value), ContingencyVolumeHeight: CalculContingencyVolumeHeight(parseFloat(e.target.value),assessment.ContingencyVolumeHRZ,assessment.ContingencyVolumeHCM) })}
                       step="0.1"
                       min={0.0} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ContingencyVolumeHbaro === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={'TO BE DEFINED'}
                     />                  
                   </div>
@@ -2003,7 +2277,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, ContingencyVolumeSpos: parseFloat(e.target.value), ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,parseFloat(e.target.value),assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM)  })}
                       step="0.1"
                       min={0.5} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ContingencyVolumeSpos === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={'TO BE DEFINED'}
                     />
                   </div>
@@ -2033,7 +2311,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, ContingencyVolumeSK: parseFloat(e.target.value) , ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,parseFloat(e.target.value),assessment.ContingencyVolumeSRZ,assessment.ContingencyVolumeSCM) })}
                       step="0.1"
                       min={0.0} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200  shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ContingencyVolumeSK === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={'TO BE DEFINED'}
                     />  
                   </div>
@@ -2065,7 +2347,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, ContingencyTimeRZ: parseFloat(e.target.value), ContingencyVolumeSRZ: parseFloat(e.target.value)*assessment.maxSpeed, ContingencyVolumeHRZ: parseFloat(e.target.value)*0.7*assessment.maxSpeed , ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,parseFloat(e.target.value)*assessment.maxSpeed,assessment.ContingencyVolumeSCM), ContingencyVolumeHeight: CalculContingencyVolumeHeight(assessment.ContingencyVolumeHbaro,parseFloat(e.target.value)*0.7*assessment.maxSpeed ,assessment.ContingencyVolumeHCM)  })}
                       step="0.1"
                       min={0.0} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ContingencyTimeRZ === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={'TO BE DEFINED'}
                     />
                   </div> 
@@ -2149,7 +2435,11 @@ const handleDroseraOutputFileChange = async (
                               onChange={(e) => onChange({ ...assessment, ParachuteTime: parseFloat(e.target.value), ContingencyVolumeSCM: parseFloat(e.target.value)*assessment.maxSpeed, ContingencyVolumeHCM: parseFloat((parseFloat(e.target.value)*0.7*assessment.maxSpeed).toFixed(2)) , ContingencyVolumeWidth: CalculContingencyVolumeWidth(assessment.ContingencyVolumeSGPS,assessment.ContingencyVolumeSpos,assessment.ContingencyVolumeSK,assessment.ContingencyVolumeSRZ,parseFloat(e.target.value)*assessment.maxSpeed), ContingencyVolumeHeight: CalculContingencyVolumeHeight(assessment.ContingencyVolumeHbaro,assessment.ContingencyVolumeHRZ,parseFloat((parseFloat(e.target.value)*0.7*assessment.maxSpeed).toFixed(2))) })}
                               step="0.1"
                               min={1.0} // Définit la valeur minimale autorisée
-                              className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ParachuteTime === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                               placeholder={'TO BE DEFINED'}
                             />
                           </div>
@@ -2232,7 +2522,11 @@ const handleDroseraOutputFileChange = async (
                                 step="1.0"
                                 min={0.0} // Définit la valeur minimale autorisée
                                 max={30.0} // Définit la valeur maximale autorisée
-                                className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.PhiMaxPlane === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                                 placeholder={'TO BE DEFINED'}
                               />
                             </div>
@@ -2895,7 +3189,11 @@ const handleDroseraOutputFileChange = async (
                             step="0.1"
                             min={0}
                             max={90}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.ThetaGlide === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                             //placeholder={AdviceThetaGlide().toString()}
                             
                           /> 
@@ -3009,7 +3307,11 @@ const handleDroseraOutputFileChange = async (
                       onChange={(e) => onChange({ ...assessment, VzParachute: parseFloat(e.target.value) })}
                       step="0.1"
                       min={3.0} // Définit la valeur minimale autorisée
-                      className="mt-1 block w-full rounded-md border-grey-200 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 ${
+                        assessment.VzParachute === undefined
+                          ? 'border-red-300 focus:border-red-500 bg-red-50'
+                          : 'border-gray-300 focus:border-blue-500'
+                      }`}
                       placeholder={"6.0"}
                     />
                   </div>
@@ -3148,16 +3450,23 @@ const handleDroseraOutputFileChange = async (
 
           
           <h2 className="text-lg font-medium">Etape 2.4 : Determination de la Zone Adjacente (Adjacent Volume).</h2>    
+          <img 
+                    src={AdjacenteArea}
+                    alt="AdjacenteArea" 
+                    className="w-auto h-auto mb-6 mx-auto"
+                  />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-          <div>
+            
                 <div>
                   <Tooltip  text={
                                       <div>
                                         Largeur Zone Adjacente (Adjacent Volume)
                                         <br />
-                                        Calculé selon l'hyposthèse que l'UAS vole à sa vitesse maximale durant 3 minutes.
+                                        Calculé selon l'hyposthèse que l'UAS vole à sa vitesse maximale de croisière durant 3 minutes.
                                         <br />
                                         5 km &lt; Largeur Zone Adjacente &lt; 35 km
+                                        <br />
+                                        Sauf si le déposant peut démontrer que la portée maximale de l'UAS n'excèdera pas la condition des 3minutes à sa vitesse maximale de croisière.
                                       </div>
                                     }>
                     <label className="block text-sm font-medium text-gray-700">
@@ -3176,11 +3485,30 @@ const handleDroseraOutputFileChange = async (
                   />  
                 </div> 
                 <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Limité à la valeur maximale du Range atteignable par l'UAS en 3 minutes.
+                      </label>
+                      <input
+                        type="checkbox"
+                        checked={(assessment.AdjacentVolumeWidthEqualMaxRange || []).includes('OUI')}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            AdjacentVolumeWidthEqualMaxRange: e.target.checked
+                              ? 'OUI'
+                              : 'NON',
+                              // AdjacentVolumeWidth: CalculAdjacentVolumeWidth(),
+                          })}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                        
+                      />
+                </div>
+                <div>
                   <Tooltip  text={
                                       <div>
                                         Hauteur Zone Adjacente (Adjacent Volume)
                                         <br />
-                                         
+                                         𝐻𝐴𝑉 = 𝐻𝐶𝑉 + 150 𝑚
                                         <br />
                                         
                                       </div>
@@ -3199,9 +3527,33 @@ const handleDroseraOutputFileChange = async (
                     placeholder={(0.0)}
                     disabled
                   />  
-                </div>              
+                </div> 
+                {assessment.AdjacentVolumeWidthEqualMaxRange ===
+              'OUI' ? (
+                <div>
+                  <Tooltip text="Vous devez apporter des éléments de justification de la définition de votre Zone Adjacente.">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Justification de votre Zone Adjacente (Adjacent Volume)
+                    </label>
+                  </Tooltip>
+                  <textarea
+                      value={assessment.AdjacentVolume_Justification}
+                      onChange={(e) =>
+                        onChange({
+                          ...assessment,
+                          AdjacentVolume_Justification: e.target.value,
+                        })}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      rows={4}
+                    />
                 </div>
+              ) : (
+                <div>
+                  </div>
+              )}             
+             
           </div> 
+          
         </div>
       </section>
 
@@ -3339,12 +3691,12 @@ const handleDroseraOutputFileChange = async (
                         Sélectionner une Densité de population
                       </option>
                       <option value="Zone Contrôlée">Zone Contrôlée</option>
-                      <option value="<25">&lt;25</option>
-                      <option value="<250">&lt;250</option>
-                      <option value="<2,500">&lt;2,500</option>
-                      <option value="<25,000">&lt;25,000</option>
-                      <option value="<250,000">&lt;250,000</option>
-                      <option value=">250,000">&gt;250,000</option>
+                      <option value="<5">&lt;5</option>
+                      <option value="<50">&lt;50</option>
+                      <option value="<500">&lt;500</option>
+                      <option value="<5,000">&lt;5,000</option>
+                      <option value="<50,000">&lt;50,000</option>
+                      <option value=">50,000">&gt;50,000</option>
                     </select>
                   </div> 
                   <div>
@@ -3382,12 +3734,12 @@ const handleDroseraOutputFileChange = async (
                           Sélectionner une Densité de population
                         </option>
                         <option value="Zone Contrôlée">Zone Contrôlée</option>
-                        <option value="<25">&lt;25</option>
-                        <option value="<250">&lt;250</option>
-                        <option value="<2,500">&lt;2,500</option>
-                        <option value="<25,000">&lt;25,000</option>
-                        <option value="<250,000">&lt;250,000</option>
-                        <option value=">250,000">&gt;250,000</option>
+                      <option value="<5">&lt;5</option>
+                      <option value="<50">&lt;50</option>
+                      <option value="<500">&lt;500</option>
+                      <option value="<5,000">&lt;5,000</option>
+                      <option value="<50,000">&lt;50,000</option>
+                      <option value=">50,000">&gt;50,000</option>
                       </select>
                     </div> 
                   <div>
@@ -3522,12 +3874,12 @@ const handleDroseraOutputFileChange = async (
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             >
                               <option value="Zone Contrôlée">Zone Contrôlée</option>
-                              <option value="<25">&lt;25</option>
-                              <option value="<250">&lt;250</option>
-                              <option value="<2,500">&lt;2,500</option>
-                              <option value="<25,000">&lt;25,000</option>
-                              <option value="<250,000">&lt;250,000</option>
-                              <option value=">250,000">&gt;250,000</option>
+                              <option value="<5">&lt;5</option>
+                              <option value="<50">&lt;50</option>
+                              <option value="<500">&lt;500</option>
+                              <option value="<5,000">&lt;5,000</option>
+                              <option value="<50,000">&lt;50,000</option>
+                              <option value=">50,000">&gt;50,000</option>
                             </select>
                       </div>
                       <div>
@@ -3548,12 +3900,12 @@ const handleDroseraOutputFileChange = async (
                             Sélectionner une Densité de population
                           </option>
                           <option value="Zone Contrôlée">Zone Contrôlée</option>
-                          <option value="<25">&lt;25</option>
-                          <option value="<250">&lt;250</option>
-                          <option value="<2,500">&lt;2,500</option>
-                          <option value="<25,000">&lt;25,000</option>
-                          <option value="<250,000">&lt;250,000</option>
-                          <option value=">250,000">&gt;250,000</option>
+                          <option value="<5">&lt;5</option>
+                          <option value="<50">&lt;50</option>
+                          <option value="<500">&lt;500</option>
+                          <option value="<5,000">&lt;5,000</option>
+                          <option value="<50,000">&lt;50,000</option>
+                          <option value=">50,000">&gt;50,000</option>
                         </select>
                       </div> 
                   </div>
@@ -3563,9 +3915,36 @@ const handleDroseraOutputFileChange = async (
               )
         }
 
-              <div className="space-y-8">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
                   <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
-                  <table className="min-w-full bg-white">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Utiliser la classe de Dimension Caractéristique Max. Applicable selon le calcul de la crash Area
+                      </label>
+                      <div> </div>
+                      <input
+                        type="checkbox"
+                        checked={(assessment.UsemaxCharacteristicDimension || []).includes('OUI')}
+                        onChange={(e) =>
+                          onChange({
+                            ...assessment,
+                            UsemaxCharacteristicDimension: e.target.checked
+                              ? 'OUI'
+                              : 'NON',
+                          })}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                        
+                      />
+                <div className=" text-gray-200">{ComputeiGRC_colIndex()} </div>   
+                <Tooltip text="Attention : Si vous activez une réduction de l'iGRC via cette option, et que vous la confirmée plus bas, vous devrez considérer que toute mitigation de type M2 lors de l'étape 3 sera jugée en regard de la catégorie de dimension attenante.">
+                {assessment.UsemaxCharacteristicDimension ===
+              'OUI' ? (
+
+                    
+                <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimensionClass}m</div>
+                  ): (
+                <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimension}m </div>)}</Tooltip>
+                  <table className="min-w-full bg-white md:col-span-2">
                     <thead>
                       <tr className="bg-gray-100 text-black">
                         <th colspan="7" className='  py-2 px-4 border-b'>Classe d'iGRC</th>
@@ -3597,7 +3976,7 @@ const handleDroseraOutputFileChange = async (
                           
                       
                           <th className="py-2 px-4 border-b bg-red-200 text-black">{row.PopDensity}</th>
-                          <th className={
+                          {/* <th className={
                           row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==1
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
@@ -3621,12 +4000,77 @@ const handleDroseraOutputFileChange = async (
                           row.PopDensity.endsWith(assessment.populationDensity) && iGRC_colIndex==5
                           ? 'bg-blue-900  text-white'
                           : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS5}</th> */}
+                          <th className={
+                            assessment.iGRC_colIndex == 1
+                              ?  (
+                                row.PopDensity.endsWith(assessment.populationDensity) && row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
+                                  : row.PopDensity.endsWith(assessment.populationDensity)
+                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
+                                    : row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
+                                    : 'py-2 px-4 border-b'
+                              )
+                              : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS1}    </th>
+                          <th className={
+                           assessment.iGRC_colIndex==2
+                              ?  (
+                                row.PopDensity.endsWith(assessment.populationDensity) && row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
+                                  : row.PopDensity.endsWith(assessment.populationDensity)
+                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
+                                    : row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
+                                    : 'py-2 px-4 border-b'
+                              )
+                              : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS2}</th>
+                          <th className={
+                           assessment.iGRC_colIndex==3
+                              ? (
+                                row.PopDensity.endsWith(assessment.populationDensity) && row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
+                                  : row.PopDensity.endsWith(assessment.populationDensity)
+                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
+                                    : row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
+                                    : 'py-2 px-4 border-b'
+                              )
+                              : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS3}</th>
+                          <th className={
+                           assessment.iGRC_colIndex==4
+                              ?  (
+                                row.PopDensity.endsWith(assessment.populationDensity) && row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
+                                  : row.PopDensity.endsWith(assessment.populationDensity)
+                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
+                                    : row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
+                                    : 'py-2 px-4 border-b'
+                              )
+                              : 'py-2 px-4 border-b'
+                          }>{row.MaxdimCS4}</th>
+                          <th className={
+                           assessment.iGRC_colIndex==5
+                              ?  (
+                                row.PopDensity.endsWith(assessment.populationDensity) && row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
+                                  : row.PopDensity.endsWith(assessment.populationDensity)
+                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
+                                    : row.PopDensity.endsWith(assessment.populationDensityAdjacentArea)
+                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
+                                    : 'py-2 px-4 border-b'
+                              )
+                              : 'py-2 px-4 border-b'
                           }>{row.MaxdimCS5}</th>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                </div>
+              </div>
 
 
 
@@ -3688,7 +4132,7 @@ const handleDroseraOutputFileChange = async (
                     </select>
                   </div>
                     <div className="bg-gray-400 p-4 md:col-span-2">
-                      <Tooltip text="Si votre iGRC déclaré diffère de celui calculé ou si vous avez choisi de spécifier vous même votre iGRC, une justification complémentaire devra être apportée. Dans les autres cas vous pouvez appoorter un complément d'information ou laisser ce champ vide.">
+                      <Tooltip text="Si votre iGRC déclaré diffère de celui calculé ou si vous avez choisi de spécifier vous même votre iGRC, une justification complémentaire devra être apportée. Dans les autres cas vous pouvez apporter un complément d'information ou laisser ce champ vide.">
                         <label className="block text-sm font-medium text-gray-700">
                           Justification complémnetaire de vos iGRC déclarés
                         </label>
