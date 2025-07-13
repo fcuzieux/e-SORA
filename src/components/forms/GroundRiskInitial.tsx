@@ -3824,10 +3824,12 @@ export function RiskAssessmentForm({
                     )}
                 </div>
                       <div className="bg-gray-400 p-4 md:col-span-2">
-                      
                         <label className="block text-sm font-medium text-gray-700 mt-4">
                           Résultat de l'analyse DROSERA
                         </label>
+                        <div>
+                          
+                        </div>
                               <div className="mt-1 p-2 bg-gray-50 rounded-md">
                                 {assessment.DroseraResTable && assessment.DroseraResTable.length > 0 ? (
                                   <table className="min-w-full bg-white">
@@ -3918,10 +3920,13 @@ export function RiskAssessmentForm({
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
                   <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
+                    {assessment.assessmentiGRC !== 'Calcul DROSERA' ? (
+                      <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Utiliser la classe de Dimension Caractéristique Max. Applicable selon le calcul de la crash Area
                       </label>
                       <div> </div>
+                      
                       <input
                         type="checkbox"
                         checked={(assessment.UsemaxCharacteristicDimension || []).includes('OUI')}
@@ -3935,15 +3940,27 @@ export function RiskAssessmentForm({
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                         
                       />
-                <div className=" text-gray-200">{ComputeiGRC_colIndex()} </div>   
-                <Tooltip text="Attention : Si vous activez une réduction de l'iGRC via cette option, et que vous la confirmée plus bas, vous devrez considérer que toute mitigation de type M2 lors de l'étape 3 sera jugée en regard de la catégorie de dimension attenante.">
-                {assessment.UsemaxCharacteristicDimension ===
-              'OUI' ? (
+                      <div className=" text-gray-200">{ComputeiGRC_colIndex()} </div>   
+                      <Tooltip text="Attention : Si vous activez une réduction de l'iGRC via cette option, et que vous la confirmée plus bas, vous devrez considérer que toute mitigation de type M2 lors de l'étape 3 sera jugée en regard de la catégorie de dimension attenante.">
+                        {assessment.UsemaxCharacteristicDimension ===
+                      'OUI' ? (
+                        <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimensionClass}m</div>
+                          ): (
+                        <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimension}m</div>)}
+                      </Tooltip>
+                      </div>
+                                          ) : (
+                          <div className=" text-gray-200">
+                            {assessment.UsemaxCharacteristicDimension = 'NON'}
+                            {ComputeiGRC_colIndex()}
+                            <div className=" text-gray-600">
+                              Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimension}m
+                            </div>
+                          </div>
+                    )}
 
-                    
-                <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimensionClass}m</div>
-                  ): (
-                <div> Dimension Caractéristique Maximale utilisée : {assessment.maxCharacteristicDimension}m </div>)}</Tooltip>
+
+
                   <table className="min-w-full bg-white md:col-span-2">
                     <thead>
                       <tr className="bg-gray-100 text-black">

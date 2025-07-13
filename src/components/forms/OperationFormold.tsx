@@ -9,7 +9,6 @@ import {
 import { Tooltip } from '../common/Tooltip';
 import { Upload, Clock } from 'lucide-react';
 import { OperationMap } from './OperationMap';
-import { getGeoFileMimeTypes, isValidGeoFile } from '../../lib/kmzProcessor';
 
 interface OperationFormProps {
   operation: OperationInfo;
@@ -22,19 +21,21 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
   ) => {
     const files = event.target.files;
     if (files) {
-      const validFiles = Array.from(files).filter(isValidGeoFile);
-      
-      if (validFiles.length !== files.length) {
-        const invalidFiles = Array.from(files).filter(file => !isValidGeoFile(file));
-        alert(`Fichiers non supportés ignorés: ${invalidFiles.map(f => f.name).join(', ')}\nFormats supportés: KML, KMZ, GeoJSON`);
-      }
+      const newFiles = Array.from(files).filter(
+        (file) => file.name.endsWith('.kml') || file.name.endsWith('.geojson')
+      );
 
-      if (validFiles.length > 0) {
-        onChange({
-          ...operation,
-          geoFiles: [...(operation.geoFiles || []), ...validFiles],
-        });
-      }
+      const fileCopies = await Promise.all(
+        newFiles.map(async (file) => {
+          const content = await file.text();
+          return new File([content], file.name, { type: file.type });
+        })
+      );
+
+      onChange({
+        ...operation,
+        geoFiles: [...(operation.geoFiles || []), ...fileCopies],
+      });
     }
   };
 
@@ -320,14 +321,14 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
       </div>
 
       <div className="md:col-span-2">
-        <Tooltip text="Déposez des fichiers KML, KMZ ou GeoJSON détaillant la mission">
+        <Tooltip text="Déposez des fichiers KML ou GeoJSON détaillant la mission">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Zone Géographique
           </label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition-colors">
             <input
               type="file"
-              accept={getGeoFileMimeTypes()}
+              accept=".kml,.geojson"
               onChange={handleFileChange}
               className="hidden"
               id="geo-upload"
@@ -339,7 +340,7 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
             >
               <Upload className="w-5 h-5 text-gray-400" />
               <span className="text-gray-600">
-                Déposer des fichiers KML, KMZ ou GeoJSON ici
+                Déposer des fichiers KML ou GeoJSON ici
               </span>
             </label>
           </div>
@@ -352,12 +353,7 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
                 key={index}
                 className="flex items-center justify-between p-2 bg-gray-50 rounded"
               >
-                <span className="text-sm text-gray-600 flex items-center gap-2">
-                  {file.name}
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {file.name.split('.').pop()?.toUpperCase()}
-                  </span>
-                </span>
+                <span className="text-sm text-gray-600">{file.name}</span>
                 <button
                   onClick={() => handleRemoveFile(index)}
                   className="text-red-500 hover:text-red-700"

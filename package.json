@@ -16,6 +16,7 @@
     "docx-templates": "^4.14.1",
     "docxtemplater": "^3.63.2",
     "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.344.0",
     "openai": "^4.28.0",
