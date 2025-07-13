@@ -35,7 +35,7 @@ export interface GroundOverlay {
  */
 async function extractImagesFromKmz(zip: JSZip): Promise<ProcessedImage[]> {
   const images: ProcessedImage[] = [];
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif', '.webp'];
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif'];
 
   for (const [filename, zipEntry] of Object.entries(zip.files)) {
     if (!zipEntry.dir) {
@@ -45,24 +45,12 @@ async function extractImagesFromKmz(zip: JSZip): Promise<ProcessedImage[]> {
       if (isImage) {
         try {
           const imageBlob = await zipEntry.async('blob');
-          // Ensure proper MIME type for different image formats
-          let mimeType = 'image/jpeg'; // default
-          if (lowerFilename.endsWith('.png')) mimeType = 'image/png';
-          else if (lowerFilename.endsWith('.gif')) mimeType = 'image/gif';
-          else if (lowerFilename.endsWith('.bmp')) mimeType = 'image/bmp';
-          else if (lowerFilename.endsWith('.tiff') || lowerFilename.endsWith('.tif')) mimeType = 'image/tiff';
-          else if (lowerFilename.endsWith('.webp')) mimeType = 'image/webp';
-          
-          // Create blob with correct MIME type
-          const typedBlob = new Blob([imageBlob], { type: mimeType });
-          const imageUrl = URL.createObjectURL(typedBlob);
-          
-          console.log(`Extracted image: ${filename} (${mimeType}) - URL: ${imageUrl}`);
+          const imageUrl = URL.createObjectURL(imageBlob);
           
           images.push({
             name: filename,
             url: imageUrl,
-            blob: typedBlob
+            blob: imageBlob
           });
         } catch (error) {
           console.warn(`Failed to extract image ${filename}:`, error);
@@ -71,9 +59,6 @@ async function extractImagesFromKmz(zip: JSZip): Promise<ProcessedImage[]> {
     }
   }
 
-  console.log(`Total images extracted: ${images.length}`);
-  images.forEach(img => console.log(`- ${img.name}: ${img.url}`));
-  
   return images;
 }
 
@@ -84,8 +69,6 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
   const groundOverlays: GroundOverlay[] = [];
   const overlayElements = kmlDoc.querySelectorAll('GroundOverlay');
 
-  console.log(`Found ${overlayElements.length} GroundOverlay elements`);
-
   overlayElements.forEach((overlay, index) => {
     try {
       const name = overlay.querySelector('name')?.textContent || `Ground Overlay ${index + 1}`;
@@ -95,53 +78,19 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
       const iconElement = overlay.querySelector('Icon href');
       let imageUrl = iconElement?.textContent || '';
       
-      console.log(`Processing overlay ${name} with image reference: ${imageUrl}`);
-      
       // If it's a relative path, find the corresponding extracted image
       if (imageUrl && !imageUrl.startsWith('http')) {
-        // Try multiple matching strategies
         const matchingImage = images.find(img => 
-          img.name === imageUrl || 
-          img.name.endsWith(imageUrl) ||
-          img.name.toLowerCase() === imageUrl.toLowerCase() ||
-          img.name.toLowerCase().endsWith(imageUrl.toLowerCase()) ||
-          // Handle cases where path separators might differ
-          img.name.replace(/\\/g, '/') === imageUrl.replace(/\\/g, '/') ||
-          img.name.replace(/\\/g, '/').endsWith(imageUrl.replace(/\\/g, '/'))
+          img.name === imageUrl || img.name.endsWith(imageUrl)
         );
-        
         if (matchingImage) {
           imageUrl = matchingImage.url;
-          console.log(`Matched image for overlay ${name}: ${imageUrl}`);
-        } else {
-          console.warn(`No matching image found for overlay ${name} with reference ${imageUrl}`);
-          console.log('Available images:', images.map(img => img.name));
-          console.log('Looking for:', imageUrl);
-          
-          // Try a more flexible search as fallback
-          const flexibleMatch = images.find(img => {
-            const imgBasename = img.name.split('/').pop()?.toLowerCase() || '';
-            const refBasename = imageUrl.split('/').pop()?.toLowerCase() || '';
-            return imgBasename === refBasename;
-          });
-          
-          if (flexibleMatch) {
-            imageUrl = flexibleMatch.url;
-            console.log(`Found flexible match for overlay ${name}: ${imageUrl}`);
-          }
         }
       }
 
       // Get LatLonBox bounds
       const latLonBox = overlay.querySelector('LatLonBox');
-      if (!latLonBox) {
-        console.warn(`No LatLonBox found for overlay ${name}`);
-        return;
-      }
-      if (!imageUrl) {
-        console.warn(`No image URL found for overlay ${name}`);
-        return;
-      }
+      if (!latLonBox || !imageUrl) return;
 
       const north = parseFloat(latLonBox.querySelector('north')?.textContent || '0');
       const south = parseFloat(latLonBox.querySelector('south')?.textContent || '0');
@@ -149,7 +98,6 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
       const west = parseFloat(latLonBox.querySelector('west')?.textContent || '0');
       const rotation = parseFloat(latLonBox.querySelector('rotation')?.textContent || '0');
 
-      console.log(`Overlay ${name} bounds:`, { north, south, east, west });
       // Get color/opacity if available
       const colorElement = overlay.querySelector('color');
       let opacity = 1;
@@ -171,14 +119,11 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
         rotation,
         opacity
       });
-      
-      console.log(`Successfully added overlay ${name}`);
     } catch (error) {
       console.warn(`Failed to parse ground overlay ${index}:`, error);
     }
   });
 
-  console.log(`Total ground overlays parsed: ${groundOverlays.length}`);
   return groundOverlays;
 }
 
