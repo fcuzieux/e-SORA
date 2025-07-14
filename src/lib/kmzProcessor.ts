@@ -94,8 +94,8 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
       // Get icon/image reference
       const iconElement = overlay.querySelector('Icon href');
       let imageUrl = iconElement?.textContent || '';
-      
-      console.log(`Processing overlay ${name} with image reference: ${imageUrl}`);
+      console.log(`Extracted image: - URL: ${imageUrl}`);
+      console.log(`KML : Processing overlay ${name} with image reference: ${imageUrl}`);
       
       // If it's a relative path, find the corresponding extracted image
       if (imageUrl && !imageUrl.startsWith('http')) {
@@ -253,6 +253,7 @@ export async function processKmzFile(file: File): Promise<ProcessedGeoFile[]> {
  * Processes various geo file formats (KML, KMZ, GeoJSON)
  */
 export async function processGeoFile(file: File): Promise<ProcessedGeoFile[]> {
+
   const fileName = file.name.toLowerCase();
   
   try {
