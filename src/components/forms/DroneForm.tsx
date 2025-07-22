@@ -161,7 +161,20 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
         </div>
 
         <div>
+          <Tooltip  text={
+                          <div>                                              
+                          Exemples de dimensions caractéristiques maximales de l'UA :
+                          <br />
+                          i. Envergure d'une aile fixe,
+                          <br />
+                          ii. Diamètre des pales pour les giravions,
+                          <br />
+                          iii. Distance maximale entre les extrémités des pales pour les multicoptères.
+                          </div>
+                                          }>
+                   
           <label className="block text-sm font-medium text-gray-700">Dimensions caractéristiques maximales (m)</label>
+          </Tooltip>
           <input
             type="number"
             value={drone.maxCharacteristicDimension}

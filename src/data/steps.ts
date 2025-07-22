@@ -19,7 +19,7 @@ export const STEPS: StepInfo[] = [
   {
     id: 'final-grc',
     title: 'Étape 3 : Atténuation du risque sol et GRC Final',
-    description: 'Déterminez le risque sol final après atténuation'
+    description: 'Déterminez le risque sol final après atténuation (Optionel)'
   },
   {
     id: 'initial-arc',

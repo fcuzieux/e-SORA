@@ -3922,9 +3922,11 @@ export function RiskAssessmentForm({
                   <h2 className="text-1xl font-semibold">Tableau de détermination de l'iGRC</h2>
                     {assessment.assessmentiGRC !== 'Calcul DROSERA' ? (
                       <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Utiliser la classe de Dimension Caractéristique Max. Applicable selon le calcul de la crash Area
-                      </label>
+                        <Tooltip text="Attention : Si vous activez une réduction de l'iGRC via cette option, et que vous la confirmée plus bas, vous devrez considérer que toute mitigation de type M2 lors de l'étape 3 sera jugée en regard de la catégorie de dimension attenante.">
+                          <label className="block text-sm font-medium text-gray-700">
+                            Utiliser la classe de Dimension Caractéristique Max. Applicable selon le calcul de la crash Area
+                          </label>
+                        </Tooltip>
                       <div> </div>
                       
                       <input

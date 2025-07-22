@@ -40,10 +40,13 @@ export type OperationalScenario = 'VLOS' | 'BVLOS';
 export type PopulationDensity = 'Zone Contrôlée' | '<5' | '<50' | '<500' | '<5,000' | '<50,000' | '>50,000' ;
 export type airspaceClasses = 'Classe A' | 'Classe B' | 'Classe C' | 'Classe D' | 'Classe E' | 'Classe F' | 'Classe G' | 'U-Space' | 'Autre | Préciser';
 export type ContingencyParachuteManeuver = 'OUI' | 'NON';
+export type AirCollisionRiskMap = 'OUI' | 'NON';
 export type UsemaxCharacteristicDimension = 'OUI' | 'NON';
 export type AdjacentVolumeWidthEqualMaxRange = 'OUI' | 'NON';
 export type GRB_FixedWingPowerOff = 'ACTIVATED' | 'NONACTIVE';
-export type StrategicMitigationAvailable = 'OUI' | 'NON';
+export type StrategicMitigationOperationalRestrictionsAvailable = 'OUI' | 'NON';
+export type StrategicMitigationCommonStructuresAvailable = 'OUI' | 'NON';
+
 export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type TacticalMitigationAvailable = 'OUI' | 'NON';
 export type assessmentTypeHauteurVol =
@@ -186,8 +189,10 @@ export interface RiskAssessmentInfo {
   airspaceClasses: airspaceClasses;
   uspaceProvider: string;
   otherDetails: string;
-  StrategicMitigationAvailable: StrategicMitigationAvailable;
-  StrategicMitigationJustification: string;
+  StrategicMitigationOperationalRestrictionsAvailable: StrategicMitigationOperationalRestrictionsAvailable;
+  StrategicMitigationOperationalRestrictionsJustification: string;
+  StrategicMitigationCommonStructuresAvailable: StrategicMitigationCommonStructuresAvailable;
+  StrategicMitigationCommonStructuresJustification: string;
   OperationalVolumeLevelMitigated: OperationalVolumeLevelMitigated;
   TacticalMitigationAvailable: TacticalMitigationAvailable;
   TacticalMitigationJustification: string;
@@ -256,6 +261,8 @@ export interface RiskAssessmentInfo {
   maxCharacteristicDimensionClass: number;
   iGRC_colIndex: number;
   iGRCControledZone: number;
+  AirCollisionRiskMap: AirCollisionRiskMap;
+  AirCollisionRiskMapJustification: string;
 }
 
 

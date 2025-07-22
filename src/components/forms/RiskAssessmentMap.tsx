@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { MapContainer, TileLayer, GeoJSON, LayersControl, ImageOverlay } from 'react-leaflet';
 import { processGeoFile, ProcessedGeoFile, GroundOverlay, cleanupImageUrls } from '../../lib/kmzProcessor';
+import { MapTypeSelector } from '../MapTypeSelector';
 import 'leaflet/dist/leaflet.css';
 
 interface RiskAssessmentMapProps {
@@ -23,6 +24,7 @@ export function RiskAssessmentMap({ geoFiles }: RiskAssessmentMapProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [processedImages, setProcessedImages] = useState<any[]>([]);
+  const [mapType, setMapType] = useState<'standard' | 'satellite'>('standard');
 
   const colors = [
     '#3388ff', '#ff4444', '#33cc33', '#ff9900', '#9933cc',
@@ -195,12 +197,12 @@ export function RiskAssessmentMap({ geoFiles }: RiskAssessmentMapProps) {
     loadFiles();
   }, [geoFiles, extractBounds, extractGroundOverlayBounds]);
 
-  const center = mapBounds.length > 1 
-    ? [
+  const center = mapBounds.length > 1
+    ? ([
         mapBounds.reduce((sum, coord) => sum + coord[0], 0) / mapBounds.length,
         mapBounds.reduce((sum, coord) => sum + coord[1], 0) / mapBounds.length,
-      ] as [number, number]
-    : [46.227638, 2.213749];
+      ] as [number, number])
+    : ([46.227638, 2.213749] as [number, number]);
 
   return (
     <div className="space-y-4">
@@ -222,60 +224,67 @@ export function RiskAssessmentMap({ geoFiles }: RiskAssessmentMapProps) {
         </div>
       )}
 
-      <div className="h-96 w-full rounded-lg overflow-hidden border border-gray-300">
-        <MapContainer
-          center={center}
-          zoom={zoom}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <LayersControl position="topright">
-            {layers.map((layer) => (
-              <React.Fragment key={layer.id}>
-                {/* Regular GeoJSON features */}
-                {layer.data.features && layer.data.features.length > 0 && (
-                  <LayersControl.Overlay 
-                    name={`${layer.name} (${layer.type.toUpperCase()})`}
-                    checked
-                  >
-                    <GeoJSON
-                      data={layer.data}
-                      style={() => ({
-                        color: layer.color,
-                        weight: 3,
-                        opacity: 1,
-                        fillColor: layer.color,
-                        fillOpacity: 0.2
-                      })}
-                      onEachFeature={onEachFeature}
-                    />
-                  </LayersControl.Overlay>
-                )}
+      <div className="space-y-2">
+        <MapTypeSelector mapType={mapType} onChange={setMapType} />
+        <div className="h-96 w-full rounded-lg overflow-hidden border border-gray-300">
+          <MapContainer
+            center={center}
+            zoom={zoom}
+            style={{ height: '100%', width: '100%' }}
+          >
+            <TileLayer
+              url={mapType === 'standard'
+                ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"}
+              attribution={mapType === 'standard'
+                ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                : '&copy; <a href="https://www.arcgis.com/home/item.html?id=10df227921484f18b483e4ef61416222">Esri</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}
+            />
+            <LayersControl position="topright">
+              {layers.map((layer) => (
+                <React.Fragment key={layer.id}>
+                  {/* Regular GeoJSON features */}
+                  {layer.data.features && layer.data.features.length > 0 && (
+                    <LayersControl.Overlay
+                      name={`${layer.name} (${layer.type.toUpperCase()})`}
+                      checked
+                    >
+                      <GeoJSON
+                        data={layer.data}
+                        style={() => ({
+                          color: layer.color,
+                          weight: 3,
+                          opacity: 1,
+                          fillColor: layer.color,
+                          fillOpacity: 0.2
+                        })}
+                        onEachFeature={onEachFeature}
+                      />
+                    </LayersControl.Overlay>
+                  )}
 
-                {/* Ground Overlays */}
-                {layer.groundOverlays && layer.groundOverlays.map((overlay, index) => (
-                  <LayersControl.Overlay
-                    key={`${layer.id}-overlay-${index}`}
-                    name={`${overlay.name} (Ground Overlay)`}
-                    checked
-                  >
-                    <ImageOverlay
-                      url={overlay.imageUrl}
-                      bounds={[
-                        [overlay.bounds.south, overlay.bounds.west],
-                        [overlay.bounds.north, overlay.bounds.east]
-                      ]}
-                      opacity={overlay.opacity || 1}
-                    />
-                  </LayersControl.Overlay>
-                ))}
-              </React.Fragment>
-            ))}
-          </LayersControl>
-        </MapContainer>
+                  {/* Ground Overlays */}
+                  {layer.groundOverlays && layer.groundOverlays.map((overlay, index) => (
+                    <LayersControl.Overlay
+                      key={`${layer.id}-overlay-${index}`}
+                      name={`${overlay.name} (Ground Overlay)`}
+                      checked
+                    >
+                      <ImageOverlay
+                        url={overlay.imageUrl}
+                        bounds={[
+                          [overlay.bounds.south, overlay.bounds.west],
+                          [overlay.bounds.north, overlay.bounds.east]
+                        ]}
+                        opacity={overlay.opacity || 1}
+                      />
+                    </LayersControl.Overlay>
+                  ))}
+                </React.Fragment>
+              ))}
+            </LayersControl>
+          </MapContainer>
+        </div>
       </div>
 
       {layers.length > 0 && (

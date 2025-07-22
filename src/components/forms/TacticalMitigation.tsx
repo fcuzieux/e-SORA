@@ -20,6 +20,7 @@ export function TacticalMitigation({ assessment, onChange }: TacticalMitigationP
     <div className="space-y-8">
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold">Tableau de Mitigation Tactique</h2>
+        <div>Les mesures d'atténuation tactiques sont appliquées pour réduire tout risque résiduel de collision en vol nécessaire pour atteindre l'objectif de sécurité de l'espace aérien applicable.</div>
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-blue-500 text-white">

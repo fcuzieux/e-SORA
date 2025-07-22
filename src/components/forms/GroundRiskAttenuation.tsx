@@ -1,6 +1,7 @@
 import React from 'react';
 import { RiskAssessmentInfo, mitigationStrategique, reduceImpactAttenuation, necessaryToReduceRisk, GRC_Final } from '../../types/sora';
 import { Tooltip } from '../common/Tooltip';
+import { HelpCircle } from 'lucide-react';
 
 interface GroundRiskAttenuationProps {
   assessment: RiskAssessmentInfo;
@@ -23,8 +24,8 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
     let FinalGRCint = Number(assessment.iGRC);
     if (assessment.mitigationStrategiqueM1A.includes('faible')) {
       FinalGRCint = FinalGRCint - 1;
-    // } else if (assessment.mitigationStrategiqueM1A.includes('moyenne')) {
-    //   FinalGRCint = FinalGRCint - 2;
+     } else if (assessment.mitigationStrategiqueM1A.includes('moyenne')) {
+      FinalGRCint = FinalGRCint - 2;
     // } else if (assessment.mitigationStrategiqueM1A.includes('élevée')) {
     //   FinalGRCint = FinalGRCint - 4;
     // 
@@ -73,14 +74,14 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
   };
 
   const tableMitigationGRCData = [
-    { MitigationGR: 'M1(A) – Atténuation Strategique - Abris'                       ,LowMitigation: '-1' ,MediumMitigation: 'N/A' ,HighMitigation: 'N/A' },
+    { MitigationGR: 'M1(A) – Atténuation Strategique - Abris'                       ,LowMitigation: '-1' ,MediumMitigation: '-2' ,HighMitigation: 'N/A' },
     { MitigationGR: 'M1(B) – Atténuation Strategique - Restrictions Operationelles' ,LowMitigation: 'N/A',MediumMitigation: '-1'  ,HighMitigation: '-2' },
     { MitigationGR: 'M1(C) – Atténuations Tactique – Observateur(s) au sol'         ,LowMitigation: '-1' ,MediumMitigation: 'N/A' ,HighMitigation: 'N/A' },
     { MitigationGR: 'M2 – Réduction des effets de l’impact au sol'                  ,LowMitigation: 'N/A',MediumMitigation: '-1'  ,HighMitigation: '-2' },
     ];
   return (
                   <div className="space-y-8">
-                  <h2 className="text-1xl font-semibold">Tableau de mitigation du Risque Sol</h2>
+                  <h2 className="text-2xl font-semibold">Tableau de mitigation du Risque Sol</h2>
                   <table className="min-w-full bg-white">
                     <thead>
                       <tr className="bg-white">
@@ -192,7 +193,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
                     </tbody>
                   </table>
 
-      <h2 className="text-2xl font-semibold">Tableau de Mitigation Tactique</h2>
+      <h2 className="text-1xl font-semibold">Tableau de Robustesse des moyens de mitigation</h2>
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-blue-500 text-white">
@@ -220,10 +221,17 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
           ))}
         </tbody>
       </table>
-      <h2 className="text-2xl font-semibold">Atténuation du risque sol</h2>
+      <h2 className="text-2xl font-semibold">Robustesse des Moyens d'Atténuation du risque sol</h2>
       <section className="space-y-4">   
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
-            <h2 className="text-lg font-medium">M1(A) – Atténuation Strategique - Abris</h2>
+            <h2 className="text-lg font-medium">M1(A) – Atténuation Strategique - Abris <button
+                type="button"
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Annex-B-Release.JAR_doc_27pdf.pdf', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation JARUS SORA v2.5 Annex B"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button></h2>
           <div>
               <label className="block text-sm font-medium text-gray-700">
                 L'atténuation M1(A) est liée au fait que les gens passent en moyenne très peu de temps à l'extérieur sans être protégés par une structure. Par conséquent, les opérateurs qui utilisent des UAS suffisamment petits peuvent s'attendre à ce qu'un grand pourcentage de la population soit à l'abri d'un impact. Cette hypothèse peut également s'appliquer à des UAS plus grands ; dans ce cas, l'efficacité de la mise à l'abri doit être démontrée.                                      
@@ -252,6 +260,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
               </option>
               <option value="Non">Non</option>
               <option value="Oui, faible">Oui, faible</option>
+              <option value="Oui, moyenne">Oui, moyenne</option>
             </select>
           </div>
           
@@ -274,7 +283,14 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
 
       <section className="space-y-4">   
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
-            <h2 className="text-lg font-medium">M1(B) – Atténuation Strategique - Restrictions Operationelles</h2>
+            <h2 className="text-lg font-medium">M1(B) – Atténuation Strategique - Restrictions Operationelles <button
+                type="button"
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Annex-B-Release.JAR_doc_27pdf.pdf', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation JARUS SORA v2.5 Annex B"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button></h2>
           <div>
               <label className="block text-sm font-medium text-gray-700">
                 Les mesures d'atténuation M1(B) visent à réduire le nombre de personnes en danger au sol, indépendamment de la mise à l'abri. Ces mesures d'atténuation sont appliquées avant le vol. Les mesures d'atténuation M1(B) sont des combinaisons de limitations concernant le temps et le lieu de l'opération afin de réduire le nombre de personnes exposées à un risque à un moment et dans un lieu donnés.
@@ -325,7 +341,23 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
 
       <section className="space-y-4">   
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
-            <h2 className="text-lg font-medium">M1(C) – Atténuations Tactique – Observateur(s) au sol</h2>
+            <h2 className="text-lg font-medium">M1(C) – Atténuations Tactique – Observateur(s) au sol <button
+                type="button"
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Annex-B-Release.JAR_doc_27pdf.pdf', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation JARUS SORA v2.5 Annex B"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button></h2>
+          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+            
+              <label className="block text-sm font-medium text-gray-700">
+                REMARQUE : Si un ou plusieurs observateurs au sol sont déclarés, ceux-ci devront être clairement identifiés à l'étape 2 sur vos fichier trajectoire ou zone de vol. 
+                <br />
+                Qui plus est, si votre opération est déclarée en EVLOS à l'étape 1, le nombre d'observateurs au sol devra être déclaré en cohérence.
+                <br />
+              </label>  
+          </div>
           <div>
               <label className="block text-sm font-medium text-gray-700">
                 L'atténuation M1(C) est une atténuation tactique dans laquelle l'équipage à distance ou le système peut observer la majeure partie de la ou des zones survolées, ce qui permet de détecter les personnes non impliquées dans la zone opérationnelle et de manœuvrer l'UA, de sorte que le nombre de personnes non impliquées survolées au cours de l'opération est considérablement réduit.
@@ -375,10 +407,40 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
 
       <section className="space-y-4">   
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
-            <h2 className="text-lg font-medium">M2 – Réduction des effets de l’impact au sol</h2>
+            <h2 className="text-lg font-medium">M2 – Réduction des effets de l’impact au sol <button
+                type="button"
+                onClick={() => window.open('https://www.easa.europa.eu/en/downloads/137609/en', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation EASA"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button></h2>
+            
+            {assessment.UsemaxCharacteristicDimension=='OUI' ? (
+                <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                
+                  <label className="block text-sm font-medium text-gray-700">
+                    ATTENTION : A l'étape 2, vous avez sélectionné l'option 'Utiliser la dimension caractéristique maximale Applicable selon le calcul de la crash Area'.
+                    <br />
+                    En conséquence, vos justifications apportées au titre d'un M2 devrons démontrer une réduction du risque par rapport à cette crash area de référence.
+                    <br />
+                  </label>  
+                </div>
+            ) : (
+                <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                
+                  <label className="block text-sm font-medium text-gray-700">
+                    REMARQUE : A l'étape 2, si vous avez déclaré une valeur de crash Area faisant déjà usage de votre M2, vous ne pouvez justifier de celle-ci une nouvelle fois.
+                    <br />
+                    En conséquence, il ne vous est pas possible de réduire le GRC Final en dessous de l'iGRC déclaré à l'étape 2 grâce à une seconde déclaration de ce même M2.
+                    <br />
+                  </label>  
+                </div>
+            )}
+              
           <div>
               <label className="block text-sm font-medium text-gray-700">
-                Les mesures d'atténuation M2 visent à réduire l'effet de l'impact au sol une fois que le contrôle de l'opération est perdu. Cela se fait soit en réduisant la probabilité de létalité d'un impact d'UA (c'est-à-dire l'énergie, l'impulsion, la dynamique de transfert d'énergie, etc.) et/ou en réduisant la taille de la zone critique prévue (voir le tableau 8 ci-dessous). Les exemples incluent, sans s'y limiter, les parachutes, l'autorotation, la frangibilité, le décrochage de l'aéronef pour ralentir la descente et augmenter l'angle d'impact. Le demandeur doit démontrer une réduction totale requise de l'un ou l'autre des facteurs, ou des deux.
+                Les mesures d'atténuation M2 visent à réduire l'effet de l'impact au sol une fois que le contrôle de l'opération est perdu. Cela se fait soit en réduisant la probabilité de létalité d'un impact d'UA (c'est-à-dire l'énergie, l'impulsion, la dynamique de transfert d'énergie, etc.) et/ou en réduisant la taille de la zone critique prévue. Les exemples incluent, sans s'y limiter, les parachutes, l'autorotation, la frangibilité, le décrochage de l'aéronef pour ralentir la descente et augmenter l'angle d'impact. Le demandeur doit démontrer une réduction totale requise de l'un ou l'autre des facteurs, ou des deux.
               </label>
           </div>
           <div className="flex-1">
@@ -505,7 +567,20 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
 
         <div>
           <h3 className="text-lg font-medium">Remarques complémentaires</h3>
-          <Tooltip text="Champ de texte libre pour l'ajout de toute remarque pertinente">
+          {/* <Tooltip text="Champ de texte libre pour l'ajout de toute remarque pertinente. ">
+            <label className="block text-sm font-medium text-gray-700">
+              Champ de texte libre pour l'ajout de toute remarque pertinente
+            </label>
+          </Tooltip> */}
+          <Tooltip text={
+                                <div>
+                                  Champ de texte libre pour l'ajout de toute remarque pertinente. 
+                                  <br />
+                                  Exemple : Atténuations partielles multiples
+                                  <br />
+                                  Dans les cas où des atténuations partielles multiples ne satisfont pas individuellement aux critères de l'annexe B mais que, prises ensemble, elles permettent d'obtenir des réductions cumulatives d'un ou plusieurs ordres de grandeur, l'autorité compétente peut accepter une réduction de la note finale du GRC.
+                                </div>
+                              }>
             <label className="block text-sm font-medium text-gray-700">
               Champ de texte libre pour l'ajout de toute remarque pertinente
             </label>
@@ -529,14 +604,13 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
 
 
       <h2 className="text-2xl font-semibold">GRC Final</h2>
-
       <div>
         <Tooltip text="GRC Final calculé à partir de l'iGRC et des gain d'atténuation. N.B. cette valeur ne peut être inférieure à l'iGRC 'Zone Contrôlé' de votre classe d'appareil identifiée à l'étape 2.">
           <label className="block text-sm font-medium text-gray-700">
             GRC Final Calculé : &ge;{assessment.iGRCControledZone}
           </label>
         </Tooltip>
-        <h2 className="text-2xl font-semibold">{CalculGRCFinal()}</h2>
+        <h2 className="text-2xl">{assessment.iGRC} is reduced to <b>{CalculGRCFinal()}</b></h2>
       </div>
 
       <div className="bg-gray-50 p-4 rounded-lg space-y-4">
@@ -547,7 +621,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             </label>
           </Tooltip>
           <select
-            value={assessment.GRC_Final}
+            value={assessment.GRC_Final }
             onChange={(e) =>
               onChange({
                 ...assessment,
@@ -566,6 +640,26 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             <option value="8">8</option>
           </select>
         </div>
+            {
+                            Number(assessment.GRC_Final)>7   ?  (
+                                <div>
+                                <Tooltip text="GRC Final.">
+                                  <label className="block text-lg font-bold text-red-700">
+                                    GRC Final - Trop élevé. Le processus SORA est inadapté. 
+                                  </label>  
+                                </Tooltip>
+                                
+                                </div>
+                            ) : (
+                                <div>
+                                <Tooltip text="GRC Final.">
+                                  <label className="block text-sm font-medium text-gray-700">
+                                    GRC Final - Valide. Vous pouvez procéder aux étapes suivantes du processus SORA.
+                                  </label>  
+                                </Tooltip>
+                                </div>
+                                )}
+
       </div>
     </div>
   );

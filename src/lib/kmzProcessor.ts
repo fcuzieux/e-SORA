@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import { kml } from '@tmcw/togeojson';
+import { DOMParser, XMLSerializer } from 'xmldom';
 
 export interface ProcessedGeoFile {
   name: string;
@@ -80,28 +81,35 @@ async function extractImagesFromKmz(zip: JSZip): Promise<ProcessedImage[]> {
 /**
  * Parses GroundOverlay elements from KML document
  */
-function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): GroundOverlay[] {
+function parseGroundOverlays(kmlDoc: any, images: ProcessedImage[]): GroundOverlay[] {
   const groundOverlays: GroundOverlay[] = [];
-  const overlayElements = kmlDoc.querySelectorAll('GroundOverlay');
+  const overlayElements = kmlDoc.getElementsByTagName('GroundOverlay');
 
   console.log(`Found ${overlayElements.length} GroundOverlay elements`);
 
-  overlayElements.forEach((overlay, index) => {
+  for (let i = 0; i < overlayElements.length; i++) {
+    const overlay = overlayElements[i];
     try {
-      const name = overlay.querySelector('name')?.textContent || `Ground Overlay ${index + 1}`;
-      const description = overlay.querySelector('description')?.textContent || '';
-      
+      const name = getElementTextContent(overlay, 'name') || `Ground Overlay ${i + 1}`;
+      const description = getElementTextContent(overlay, 'description') || '';
+
       // Get icon/image reference
-      const iconElement = overlay.querySelector('Icon href');
-      let imageUrl = iconElement?.textContent || '';
+      const iconElements = overlay.getElementsByTagName('Icon');
+      let imageUrl = '';
+      if (iconElements.length > 0) {
+        const hrefElements = iconElements[0].getElementsByTagName('href');
+        if (hrefElements.length > 0) {
+          imageUrl = hrefElements[0].textContent || '';
+        }
+      }
       console.log(`Extracted image: - URL: ${imageUrl}`);
       console.log(`KML : Processing overlay ${name} with image reference: ${imageUrl}`);
-      
+
       // If it's a relative path, find the corresponding extracted image
       if (imageUrl && !imageUrl.startsWith('http')) {
         // Try multiple matching strategies
-        const matchingImage = images.find(img => 
-          img.name === imageUrl || 
+        const matchingImage = images.find(img =>
+          img.name === imageUrl ||
           img.name.endsWith(imageUrl) ||
           img.name.toLowerCase() === imageUrl.toLowerCase() ||
           img.name.toLowerCase().endsWith(imageUrl.toLowerCase()) ||
@@ -109,7 +117,7 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
           img.name.replace(/\\/g, '/') === imageUrl.replace(/\\/g, '/') ||
           img.name.replace(/\\/g, '/').endsWith(imageUrl.replace(/\\/g, '/'))
         );
-        
+
         if (matchingImage) {
           imageUrl = matchingImage.url;
           console.log(`Matched image for overlay ${name}: ${imageUrl}`);
@@ -117,14 +125,14 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
           console.warn(`No matching image found for overlay ${name} with reference ${imageUrl}`);
           console.log('Available images:', images.map(img => img.name));
           console.log('Looking for:', imageUrl);
-          
+
           // Try a more flexible search as fallback
           const flexibleMatch = images.find(img => {
             const imgBasename = img.name.split('/').pop()?.toLowerCase() || '';
             const refBasename = imageUrl.split('/').pop()?.toLowerCase() || '';
             return imgBasename === refBasename;
           });
-          
+
           if (flexibleMatch) {
             imageUrl = flexibleMatch.url;
             console.log(`Found flexible match for overlay ${name}: ${imageUrl}`);
@@ -133,25 +141,25 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
       }
 
       // Get LatLonBox bounds
-      const latLonBox = overlay.querySelector('LatLonBox');
+      const latLonBox = getElement(overlay, 'LatLonBox');
       if (!latLonBox) {
         console.warn(`No LatLonBox found for overlay ${name}`);
-        return;
+        continue;
       }
       if (!imageUrl) {
         console.warn(`No image URL found for overlay ${name}`);
-        return;
+        continue;
       }
 
-      const north = parseFloat(latLonBox.querySelector('north')?.textContent || '0');
-      const south = parseFloat(latLonBox.querySelector('south')?.textContent || '0');
-      const east = parseFloat(latLonBox.querySelector('east')?.textContent || '0');
-      const west = parseFloat(latLonBox.querySelector('west')?.textContent || '0');
-      const rotation = parseFloat(latLonBox.querySelector('rotation')?.textContent || '0');
+      const north = parseFloat(getElementTextContent(latLonBox, 'north') || '0');
+      const south = parseFloat(getElementTextContent(latLonBox, 'south') || '0');
+      const east = parseFloat(getElementTextContent(latLonBox, 'east') || '0');
+      const west = parseFloat(getElementTextContent(latLonBox, 'west') || '0');
+      const rotation = parseFloat(getElementTextContent(latLonBox, 'rotation') || '0');
 
       console.log(`Overlay ${name} bounds:`, { north, south, east, west });
       // Get color/opacity if available
-      const colorElement = overlay.querySelector('color');
+      const colorElement = getElement(overlay, 'color');
       let opacity = 1;
       if (colorElement) {
         const colorValue = colorElement.textContent;
@@ -163,7 +171,7 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
       }
 
       groundOverlays.push({
-        id: `ground-overlay-${index}`,
+        id: `ground-overlay-${i}`,
         name,
         description,
         imageUrl,
@@ -171,15 +179,41 @@ function parseGroundOverlays(kmlDoc: Document, images: ProcessedImage[]): Ground
         rotation,
         opacity
       });
-      
+
       console.log(`Successfully added overlay ${name}`);
     } catch (error) {
-      console.warn(`Failed to parse ground overlay ${index}:`, error);
+      console.warn(`Failed to parse ground overlay ${i}:`, error);
     }
-  });
+  }
 
   console.log(`Total ground overlays parsed: ${groundOverlays.length}`);
   return groundOverlays;
+}
+
+/**
+ * Helper function to get element text content
+ */
+function getElementTextContent(parent: any, tagName: string, attribute?: string): string | undefined {
+  const elements = parent.getElementsByTagName(tagName);
+  if (elements.length > 0) {
+    const element = elements[0];
+    if (attribute) {
+      return element.getAttribute(attribute);
+    }
+    return element.textContent;
+  }
+  return undefined;
+}
+
+/**
+ * Helper function to get element by tag name
+ */
+function getElement(parent: any, tagName: string): any | undefined {
+  const elements = parent.getElementsByTagName(tagName);
+  if (elements.length > 0) {
+    return elements[0];
+  }
+  return undefined;
 }
 
 /**
@@ -201,9 +235,9 @@ export async function processKmzFile(file: File): Promise<ProcessedGeoFile[]> {
           const kmlContent = await zipEntry.async('text');
           const parser = new DOMParser();
           const kmlDoc = parser.parseFromString(kmlContent, 'text/xml');
-          
+
           // Check for parsing errors
-          const parserError = kmlDoc.querySelector('parsererror');
+          const parserError = getElement(kmlDoc, 'parsererror');
           if (parserError) {
             console.warn(`Error parsing KML file ${filename}:`, parserError.textContent);
             continue;
@@ -213,7 +247,7 @@ export async function processKmzFile(file: File): Promise<ProcessedGeoFile[]> {
           const groundOverlays = parseGroundOverlays(kmlDoc, images);
 
           const geoJson = kml(kmlDoc);
-          
+
           if (geoJson && geoJson.features && geoJson.features.length > 0) {
             results.push({
               name: `${file.name}/${filename}`,
@@ -255,7 +289,7 @@ export async function processKmzFile(file: File): Promise<ProcessedGeoFile[]> {
 export async function processGeoFile(file: File): Promise<ProcessedGeoFile[]> {
 
   const fileName = file.name.toLowerCase();
-  
+
   try {
     if (fileName.endsWith('.kmz')) {
       return await processKmzFile(file);
@@ -263,18 +297,33 @@ export async function processGeoFile(file: File): Promise<ProcessedGeoFile[]> {
       const fileContent = await file.text();
       const parser = new DOMParser();
       const kmlDoc = parser.parseFromString(fileContent, 'text/xml');
-      
+
       // Check for parsing errors
-      const parserError = kmlDoc.querySelector('parsererror');
+      const parserError = getElement(kmlDoc, 'parsererror');
       if (parserError) {
         throw new Error(`Invalid KML file: ${parserError.textContent}`);
       }
 
-      // Parse ground overlays (though KML files won't have embedded images)
-      const groundOverlays = parseGroundOverlays(kmlDoc, []);
+      // Extract image URLs from KML content
+      const imageUrls: ProcessedImage[] = [];
+      const iconElements = kmlDoc.getElementsByTagName('Icon');
+      for (let i = 0; i < iconElements.length; i++) {
+        const icon = iconElements[i];
+        const href = getElementTextContent(icon, 'href');
+        if (href) {
+          imageUrls.push({
+            name: href,
+            url: href,
+            blob: new Blob() // Placeholder, not used for KML
+          });
+        }
+      }
+
+      // Parse ground overlays with extracted image URLs
+      const groundOverlays = parseGroundOverlays(kmlDoc, imageUrls);
 
       const geoJson = kml(kmlDoc);
-      
+
       if (!geoJson || !geoJson.features || geoJson.features.length === 0) {
         if (groundOverlays.length === 0) {
           throw new Error('KML file contains no valid features or ground overlays');
@@ -290,12 +339,12 @@ export async function processGeoFile(file: File): Promise<ProcessedGeoFile[]> {
     } else if (fileName.endsWith('.geojson') || fileName.endsWith('.json')) {
       const fileContent = await file.text();
       const geoJson = JSON.parse(fileContent);
-      
+
       // Validate GeoJSON structure
       if (!geoJson || typeof geoJson !== 'object') {
         throw new Error('Invalid GeoJSON format');
       }
-      
+
       if (!geoJson.features && geoJson.type !== 'Feature' && geoJson.type !== 'FeatureCollection') {
         throw new Error('File does not contain valid GeoJSON features');
       }
