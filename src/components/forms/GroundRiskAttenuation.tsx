@@ -419,7 +419,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
             {assessment.UsemaxCharacteristicDimension=='OUI' ? (
                 <div className="bg-gray-50 p-4 rounded-lg space-y-4">
                 
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-red-700">
                     ATTENTION : A l'étape 2, vous avez sélectionné l'option 'Utiliser la dimension caractéristique maximale Applicable selon le calcul de la crash Area'.
                     <br />
                     En conséquence, vos justifications apportées au titre d'un M2 devrons démontrer une réduction du risque par rapport à cette crash area de référence.

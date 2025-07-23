@@ -263,6 +263,10 @@ export interface RiskAssessmentInfo {
   iGRCControledZone: number;
   AirCollisionRiskMap: AirCollisionRiskMap;
   AirCollisionRiskMapJustification: string;
+  IGDR: number;
+  AEC: string;
+  ARCI: string;
+  OpsEnv: string;
 }
 
 

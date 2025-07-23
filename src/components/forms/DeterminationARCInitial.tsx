@@ -27,7 +27,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
 
     // Clear any existing content and global functions
     chartRef.current.innerHTML = '';
-    
+
     // Clean up any existing global functions
     delete window.goBack;
     delete window.resetQuestionnaire;
@@ -162,7 +162,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       svg.setAttribute('width', '100%');
       svg.setAttribute('height', '100%');
       svg.setAttribute('viewBox', '0 0 1100 1650');
-      
+
       // Arrow marker definition
       const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
       const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
@@ -172,15 +172,15 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       marker.setAttribute('refX', '4.5');
       marker.setAttribute('refY', '1.75');
       marker.setAttribute('orient', 'auto');
-      
+
       const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       polygon.setAttribute('points', '0 0, 5 1.75, 0 3.5');
       polygon.setAttribute('fill', '#333');
-      
+
       marker.appendChild(polygon);
       defs.appendChild(marker);
       svg.appendChild(defs);
-      
+
       return svg;
     }
 
@@ -234,24 +234,24 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
     function buildFlowchart() {
       const svg = createSVG();
       chartRef.current!.appendChild(svg);
-      
+
       // Create all nodes
       Object.keys(flowData.nodes).forEach(nodeId => {
         const node = flowData.nodes[nodeId];
-        
+
         if (node.type === 'question') {
           // Create diamond with increased size
           const diamond = createDiamond(node.x, node.y, 180, 120, `node-${nodeId}`);
-          
+
           // Add conditional click listener
           diamond.addEventListener('click', function() {
             if (this.classList.contains('active')) {
               openModal(nodeId);
             }
           });
-          
+
           svg.appendChild(diamond);
-          
+
           // Create text with line breaks
           const lines = node.text.split(' ');
           if (lines.length > 6) {
@@ -272,13 +272,13 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             const text = createText(node.x, node.y, node.text, `text-${nodeId}`, 'small');
             svg.appendChild(text);
           }
-          
+
           // Create arrows with precise connections
           if (node.yes) {
             const yesNode = flowData.nodes[node.yes];
             let arrow: SVGLineElement | null = null;
             let yesText: SVGTextElement | null = null;
-            
+
             // Horizontal arrows for Yes
             if (nodeId === 'start' || nodeId === 'q2' || nodeId === 'q3' || nodeId === 'q4' || nodeId === 'q5') {
               const targetOffset = yesNode.width ? yesNode.width/2 : 75;
@@ -290,19 +290,19 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
               arrow = createArrow(node.x, node.y - 60, yesNode.x, yesNode.y + 30, `arrow-${nodeId}-yes`);
               yesText = createText(node.x+30, (node.y + yesNode.y) / 2, 'Yes', `label-${nodeId}-yes`);
             }
-            
+
             if (arrow) {
               arrow.addEventListener('click', () => handleAnswer(nodeId, 'yes'));
               svg.appendChild(arrow);
               if (yesText) svg.appendChild(yesText);
             }
           }
-          
+
           if (node.no) {
             const noNode = flowData.nodes[node.no];
             let arrow: SVGLineElement | null = null;
             let noText: SVGTextElement | null = null;
-            
+
             // Vertical arrows for No
             if (nodeId === 'start' || nodeId === 'q2' || nodeId === 'q3') {
               arrow = createArrow(node.x, node.y + 60, noNode.x, noNode.y - 60, `arrow-${nodeId}-no`);
@@ -329,21 +329,29 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
               arrow = createArrow(node.x + 90, node.y, noNode.x - targetOffset, noNode.y, `arrow-${nodeId}-no`);
               noText = createText((node.x+30 + noNode.x - targetOffset) / 2, node.y + 22.5, 'No', `label-${nodeId}-no`);
             }
-            
+
             if (arrow) {
               arrow.addEventListener('click', () => handleAnswer(nodeId, 'no'));
               svg.appendChild(arrow);
               if (noText) svg.appendChild(noText);
             }
           }
-          
+
         } else if (node.type === 'result' || node.type === 'intermediate') {
           // Create result box with increased size
           const width = node.width || 150;
           const height = node.height || 60;
           const box = createBox(node.x, node.y, width, height, `node-${nodeId}`, node.class || '');
+
+          // Add click event listener to result boxes
+          box.addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+              handleResultClick(nodeId);
+            }
+          });
+
           svg.appendChild(box);
-          
+
           if (node.text.length > 20) {
             const words = node.text.split(' ');
             const mid = Math.ceil(words.length / 2);
@@ -357,19 +365,108 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           }
         }
       });
-      
+
       // Automatic arrows with verified connections
       const opsArrow = createArrow(155, 1230, 190, 1230, 'arrow-ops-auto');
       svg.appendChild(opsArrow);
-      
+
       const ruralArcArrow1 = createArrow(950, 885, 950, 825, 'arrow-rural-auto1');
       svg.appendChild(ruralArcArrow1);
-      
+
       const ruralArcArrow2 = createArrow(950, 1185, 950, 1125, 'arrow-rural-auto2');
       svg.appendChild(ruralArcArrow2);
-      
+
       // Activate start node
       activateNode('start');
+    }
+
+    // Handle result click
+    function handleResultClick(nodeId: string) {
+      const resultMappings = {
+        'arc-a': {
+          OpsEnv: "OPS in Atypical or Segregated Airspace",
+          IGDR: 1,
+          AEC: 12,
+          ARCI: "ARC-a"
+        },
+        'arc-b': {
+          OpsEnv: "Operations above Flight Level 600",
+          IGDR: 1,
+          AEC: 11,
+          ARCI: "ARC-b"
+        },
+        'arc-c-1': {
+          OpsEnv: "OPS in Airport/Heliport Environment in Class E airspace or in Class F or G",
+          IGDR: 3,
+          AEC: 6,
+          ARCI: "ARC-c"
+        },
+        'arc-d-1': {
+          OpsEnv: "OPS in Airport/Heliport Environment in Class B, C or D airspace",
+          IGDR: 5,
+          AEC: 1,
+          ARCI: "ARC-d"
+        },
+        'arc-d-2': {
+          OpsEnv: "Operations above 500 feet AGL but below Flight level 600 in a Mode-S Veil or Transponder Mandatory Zone (TMZ)",
+          IGDR: 5,
+          AEC: 2,
+          ARCI: "ARC-d"
+        },
+        'arc-d-3': {
+          OpsEnv: "Operations above 500 feet AGL but below Flight level 600 in controlled airspace",
+          IGDR: 5,
+          AEC: 3,
+          ARCI: "ARC-d"
+        },
+        'arc-c-4': {
+          OpsEnv: "Operations above 500 feet AGL but below Flight level 600 in uncontrolled airspace over Urban Area",
+          IGDR: 3,
+          AEC: 4,
+          ARCI: "ARC-c"
+        },
+        'arc-c-5': {
+          OpsEnv: "Operations below 500 ft AGL OPS in a Mode-S Veil or Transponder Mandatory Zone (TMZ)",
+          IGDR: 3,
+          AEC: 7,
+          ARCI: "ARC-c"
+        },
+        'arc-c-6': {
+          OpsEnv: "Operations below 500 ft AGL OPS in controlled airspace",
+          IGDR: 3,
+          AEC: 8,
+          ARCI: "ARC-c"
+        },
+        'arc-c-7': {
+          OpsEnv: "Operations below 500 ft AGL OPS in uncontrolled airspace over Urban Area",
+          IGDR: 2,
+          AEC: 9,
+          ARCI: "ARC-c"
+        },
+        'arc-c-rural-1': {
+          OpsEnv: "Operations above 500 feet AGL but below Flight level 600 in uncontrolled airspace over Rural Area",
+          IGDR: 2,
+          AEC: 5,
+          ARCI: "ARC-c"
+        },
+        'arc-b-rural-2': {
+          OpsEnv: "Operations below 500 ft AGL in uncontrolled airspace over Rural Area",
+          IGDR: 1,
+          AEC: 10,
+          ARCI: "ARC-b"
+        }
+      };
+
+      const result = resultMappings[nodeId];
+      if (result) {
+        onChange({
+          ...assessment,
+          OpsEnv: result.OpsEnv,
+          IGDR: result.IGDR,
+          AEC: result.AEC,
+          ARCI: result.ARCI
+        });
+      }
     }
 
     // Activate node
@@ -377,7 +474,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       const node = flowData.nodes[nodeId];
       flowData.currentNode = nodeId;
       flowData.visitedNodes.add(nodeId);
-      
+
       // Activate current node
       const nodeElement = document.getElementById(`node-${nodeId}`);
       const textElements = [
@@ -386,7 +483,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
         document.getElementById(`text-${nodeId}-2`),
         document.getElementById(`text-${nodeId}-3`)
       ].filter(el => el);
-      
+
       if (nodeElement) {
         nodeElement.classList.remove('inactive');
         nodeElement.classList.add('active');
@@ -394,11 +491,11 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           nodeElement.classList.add('final');
         }
       }
-      
+
       textElements.forEach(textEl => {
         if (textEl) textEl.classList.remove('inactive');
       });
-      
+
       // Special handling for ops-500 (automatic transition)
       if (nodeId === 'ops-500') {
         const autoArrow = document.getElementById('arrow-ops-auto');
@@ -411,7 +508,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
         }, 1000);
         return;
       }
-      
+
       // Handling for rural-ops-1 with automatic transition to ARC-c
       if (nodeId === 'rural-ops-1') {
         const ruralArrow = document.getElementById('arrow-rural-auto1');
@@ -424,7 +521,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
         }, 1000);
         return;
       }
-      
+
       // Handling for rural-ops-2 with automatic transition to ARC-b
       if (nodeId === 'rural-ops-2') {
         const ruralArrow = document.getElementById('arrow-rural-auto2');
@@ -437,7 +534,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
         }, 1000);
         return;
       }
-      
+
       // Activate clickable arrows if it's a question
       if (node.type === 'question') {
         if (node.yes) {
@@ -465,7 +562,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
     function handleAnswer(nodeId: string, answer: string) {
       const node = flowData.nodes[nodeId];
       const nextNodeId = answer === 'yes' ? node.yes : node.no;
-      
+
       if (nextNodeId) {
         // Save current state in history
         const currentState = {
@@ -474,7 +571,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           visitedArrows: new Set(flowData.visitedArrows)
         };
         flowData.history.push(currentState);
-        
+
         // Mark arrow as active
         const arrow = document.getElementById(`arrow-${nodeId}-${answer}`);
         if (arrow) {
@@ -482,7 +579,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           arrow.classList.remove('clickable');
           flowData.visitedArrows.add(`arrow-${nodeId}-${answer}`);
         }
-        
+
         // Deactivate the other arrow if it exists
         const oppositeAnswer = answer === 'yes' ? 'no' : 'yes';
         const oppositeArrow = document.getElementById(`arrow-${nodeId}-${oppositeAnswer}`);
@@ -490,7 +587,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           oppositeArrow.classList.remove('clickable');
           oppositeArrow.classList.add('inactive');
         }
-        
+
         // Move to next node
         setTimeout(() => {
           activateNode(nextNodeId);
@@ -502,18 +599,18 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
     function goBack() {
       if (flowData.history.length > 0) {
         const previousState = flowData.history.pop()!;
-        
+
         // Reset current state with previous state
         flowData.currentNode = previousState.currentNode;
         flowData.visitedNodes = new Set(previousState.visitedNodes);
         flowData.visitedArrows = new Set(previousState.visitedArrows);
-        
+
         // Reset display
         document.querySelectorAll('.diamond, .result-box, .arrow, .text').forEach(el => {
           el.classList.remove('active', 'clickable', 'final');
           el.classList.add('inactive');
         });
-        
+
         // Reactivate visited nodes and arrows
         flowData.visitedNodes.forEach(nodeId => {
           const nodeElement = document.getElementById(`node-${nodeId}`);
@@ -522,7 +619,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             document.getElementById(`text-${nodeId}-1`),
             document.getElementById(`text-${nodeId}-2`)
           ].filter(el => el);
-          
+
           if (nodeElement) {
             nodeElement.classList.remove('inactive');
             nodeElement.classList.add('active');
@@ -531,7 +628,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             if (textEl) textEl.classList.remove('inactive');
           });
         });
-        
+
         flowData.visitedArrows.forEach(arrowId => {
           const arrowElement = document.getElementById(arrowId);
           if (arrowElement) {
@@ -539,7 +636,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             arrowElement.classList.add('active');
           }
         });
-        
+
         // Reactivate current node
         activateNode(flowData.currentNode);
       }
@@ -581,12 +678,12 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       flowData.visitedNodes.clear();
       flowData.visitedArrows.clear();
       flowData.history = [];
-      
+
       document.querySelectorAll('.diamond, .result-box, .arrow, .text').forEach(el => {
         el.classList.remove('active', 'clickable', 'final');
         el.classList.add('inactive');
       });
-      
+
       activateNode('start');
     }
 
@@ -693,32 +790,30 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
 
   return (
     <div className="space-y-8">
-        <h2 className="text-2xl font-semibold">Rappel des donnes :</h2>      
-            <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Limite verticale du Volume d'évolution (Flight Geometry) :
-              </label>
-              <div className="mt-1 p-2 bg-gray-100 rounded-md">
-                {assessment.FlightGeographyHeight} m
-              </div>
-              <label className="block text-sm font-medium text-gray-700">
-                Limite verticale du Volume de contingence (Contingency Volume) :
-              </label>
-              <div className="mt-1 p-2 bg-gray-100 rounded-md">
-                {assessment.ContingencyVolumeHeight} m
-              </div>
-              <label className="block text-sm font-medium text-gray-700">
-                Limite verticale du Volume Adjacent (Adjacent Volume) :
-              </label>
-              <div className="mt-1 p-2 bg-gray-100 rounded-md">
-                {assessment.AdjacentVolumeHeight} m
-              </div>
+      <h2 className="text-2xl font-semibold">Rappel des données :</h2>
+      <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Limite verticale du Volume d'évolution (Flight Geometry) :
+        </label>
+        <div className="mt-1 p-2 bg-gray-100 rounded-md">
+          {assessment.FlightGeographyHeight} m
+        </div>
+        <label className="block text-sm font-medium text-gray-700">
+          Limite verticale du Volume de contingence (Contingency Volume) :
+        </label>
+        <div className="mt-1 p-2 bg-gray-100 rounded-md">
+          {assessment.ContingencyVolumeHeight} m
+        </div>
+        <label className="block text-sm font-medium text-gray-700">
+          Limite verticale du Volume Adjacent (Adjacent Volume) :
+        </label>
+        <div className="mt-1 p-2 bg-gray-100 rounded-md">
+          {assessment.AdjacentVolumeHeight} m
+        </div>
+      </div>
 
-            </div>
-      
       <div className="space-y-8">
         <h2 className="text-2xl font-semibold">Volume d'espace aérien</h2>
-
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
           <div>
             <Tooltip text="Sélectionnez une ou plusieurs des neuf options. Sélectionnez 'Autre' si aucune des options précédentes ne s'applique (par exemple, les zones militaires).">
@@ -773,34 +868,32 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
               ))}
             </div>
           </div>
-            <Tooltip text="Si l'autorité compétente, l'ANSP ou le service UTM/U-space fournit une carte des risques de collision aérienne (statique ou dynamique), le candidat doit utiliser ce service pour déterminer l'ARC initiale/résiduelle.">
-              <label className="block text-sm font-medium text-gray-700">
-                Carte des risques de collision aérienne (statique ou dynamique)
-              </label>
-            </Tooltip>
-            <input
-              type="checkbox"
-              checked={(assessment.AirCollisionRiskMap || []).includes('OUI')}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  AirCollisionRiskMap: e.target.checked
-                    ? 'OUI'
-                    : 'NON',
-                })}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-              
-            />&nbsp;&nbsp;Le service est disponible et sera utilisé
-
+          <Tooltip text="Si l'autorité compétente, l'ANSP ou le service UTM/U-space fournit une carte des risques de collision aérienne (statique ou dynamique), le candidat doit utiliser ce service pour déterminer l'ARC initiale/résiduelle.">
+            <label className="block text-sm font-medium text-gray-700">
+              Carte des risques de collision aérienne (statique ou dynamique)
+            </label>
+          </Tooltip>
+          <input
+            type="checkbox"
+            checked={(assessment.AirCollisionRiskMap || []).includes('OUI')}
+            onChange={(e) =>
+              onChange({
+                ...assessment,
+                AirCollisionRiskMap: e.target.checked
+                  ? 'OUI'
+                  : 'NON',
+              })}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          />&nbsp;&nbsp;Le service est disponible et sera utilisé
           { assessment.AirCollisionRiskMap=='OUI' ? (
-              <div>
+            <div>
               <Tooltip text={
-                                    <div>
-                                      U-SPACE 
-                                      <br />
-                                      Si vous avez sélectionné "U-Space" comme classe d'espace aérien, veuillez indiquer le nom du fournisseur de service UTM (USSP) que vous utiliserez pour l'opération.
-                                    </div>
-                                  }>
+                <div>
+                  U-SPACE
+                  <br />
+                  Si vous avez sélectionné "U-Space" comme classe d'espace aérien, veuillez indiquer le nom du fournisseur de service UTM (USSP) que vous utiliserez pour l'opération.
+                </div>
+              }>
                 <label className="block text-sm font-medium text-gray-700">
                   Merci de préciser les informations sur votre fournisseur de service
                 </label>
@@ -816,96 +909,142 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 rows="4"
               ></textarea>
-              </div>
+            </div>
           ) :(
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Si vous n'avez pas de fournisseur de service, identifier l'ARC initial du volume opérationnel à l'aide de l'arbre de décision ci-dessous.
-                </label>
-              </div>)
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Si vous n'avez pas de fournisseur de service, identifier l'ARC initial du volume opérationnel à l'aide de l'arbre de décision ci-dessous.
+              </label>
+            </div>)
           }
         </div>
-
       </div>
-      
+
+
+
+
       {/* Enhanced ARC Interactive Questionnaire */}
-
       <div className="space-y-4">
-        { assessment.AirCollisionRiskMap=='OUI' ? ( 
-
           <h2 className="text-2xl font-semibold">Questionnaire ARC - Classification des Espaces Aériens</h2>
-          
-                ) : (
+
+        { assessment.AirCollisionRiskMap=='OUI' ? (
+          <label className="block text-sm font-medium text-gray-700">
+            Si votre service de carte des risques de collision aérienne est disponible, veuillez l'utiliser pour déterminer l'ARC initial. Vous pôuvez alors passer à l'étape suivante en bas de page en spécifiant vos Niveaux de Risque Air Initiaux.
+          </label>
+        ) : (
+        <label className="block text-sm font-medium text-gray-700">
+            Cliquez sur les nœuds pour répondre aux questions et déterminer l'ARC initial.
+        </label>
+        )} 
+        <div className="bg-white rounded-lg p-5 shadow-lg border border-gray-200">
+          <div
+            ref={chartRef}
+            className="w-full h-[1100px] border border-gray-300 rounded-md overflow-hidden"
+            id="flowchart"
+          />
+
+          <div className="flex gap-2 mt-5">
+            <button
+              onClick={() => {
+                if (window.goBack) window.goBack();
+              }}
+              className="px-5 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+            >
+              Revenir en arrière
+            </button>
+            <button
+              onClick={() => {
+                if (window.resetQuestionnaire) window.resetQuestionnaire();
+              }}
+              className="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+            >
+              Recommencer
+            </button>
+          </div>
+        </div>
+
+        {/* Modal */}
+        <div id="questionModal" className="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+          <div className="bg-white mx-auto mt-[15%] p-5 border border-gray-300 w-4/5 max-w-lg rounded-lg text-center">
+            <p id="modalQuestion" className="mb-5"></p>
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => {
+                  if (window.handleModalAnswer) window.handleModalAnswer('yes');
+                }}
+                className="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => {
+                  if (window.handleModalAnswer) window.handleModalAnswer('no');
+                }}
+                className="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                No
+              </button>
+              <button
+                onClick={() => {
+                  if (window.closeModal) window.closeModal();
+                }}
+                className="px-5 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-gray-400 p-4 md:col-span-2 rounded-md">
+            <label className="block text-sm font-medium text-blue-700 mt-4">
+              <i>Cliquer sur le nœud ARC précédemment identifier pour valider et afficher les détails de l'ARC initial.</i>
+            </label>
+            <label className="block text-sm font-bold text-gray-700 mt-4">
+              Volume Opérationnel, AEC and ARC.
+            </label>
             <div>
-              </div>
-          )}
-          <div className="bg-white rounded-lg p-5 shadow-lg border border-gray-200">
-            <div 
-              ref={chartRef}
-              className="w-full h-[1100px] border border-gray-300 rounded-md overflow-hidden"
-              id="flowchart"
-            />
-            
-            <div className="flex gap-2 mt-5">
-              <button
-                onClick={() => {
-                  if (window.goBack) window.goBack();
-                }}
-                className="px-5 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
-              >
-                Revenir en arrière
-              </button>
-              <button
-                onClick={() => {
-                  if (window.resetQuestionnaire) window.resetQuestionnaire();
-                }}
-                className="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-              >
-                Recommencer
-              </button>
-            </div>
-          </div>
-          
-          {/* Modal */}
-          <div id="questionModal" className="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-            <div className="bg-white mx-auto mt-[15%] p-5 border border-gray-300 w-4/5 max-w-lg rounded-lg text-center">
-              <p id="modalQuestion" className="mb-5"></p>
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => {
-                    if (window.handleModalAnswer) window.handleModalAnswer('yes');
-                  }}
-                  className="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => {
-                    if (window.handleModalAnswer) window.handleModalAnswer('no');
-                  }}
-                  className="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                >
-                  No
-                </button>
-                <button
-                  onClick={() => {
-                    if (window.closeModal) window.closeModal();
-                  }}
-                  className="px-5 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
-                >
-                  Dismiss
-                </button>
+              <div className="mt-1 p-2 bg-gray-50 rounded-md">
+                {/* {assessment.DroseraResTable && assessment.DroseraResTable.length > 0 ? ( */}
+                <label className="block text-sm font-medium text-gray-700">
+                  {assessment.OpsEnv}
+                </label>  
+                  <table className="min-w-full bg-white">
+                    <thead>
+                      <tr className="bg-gray-100 text-black">
+                        <th className="py-2 px-4 border-b">Taux initial de densité généralisée</th>
+                        <th className="py-2 px-4 border-b">Catégories de rencontres dans l'espace aérien</th>
+                        <th className="py-2 px-4 border-b">ARC Initial</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="bg-gray-50 text-gray-700">
+                        <td className="py-2 px-4 border-b">{assessment.IGDR}</td>
+                        <td className="py-2 px-4 border-b">{assessment.AEC}</td>
+                        <td className="py-2 px-4 border-b">{assessment.ARCI}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                {/* ) : (
+                  <div className="text-gray-600">
+                    Aucune donnée disponible. Veuillez télécharger un fichier DROSERA valide.
+                  </div>
+                )} */}
               </div>
             </div>
           </div>
-          
+        </div>
       </div>
 
-      <div className="space-y-8">
-        <h2 className="text-2xl font-semibold">Niveau de Risque Résiduel</h2>
+
+
+
+
+        <h2 className="text-2xl font-semibold">Niveau de Risque Air Initial</h2>
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
           <div>
-            <Tooltip text="Sélectionnez le niveau de risque résiduel pour l'opération envisagée.">
+            <Tooltip text="Sélectionnez le Niveau de Risque Air Initial pour l'opération envisagée.">
               <label className="block text-sm font-medium text-gray-700">
                 Volume Opérationnel
               </label>
@@ -913,11 +1052,11 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             <select
               value={assessment.OperationalVolumeLevel}
               onChange={(e) =>
-                            onChange({
-                              ...assessment,
-                              OperationalVolumeLevel: e.target.value as OperationalVolumeLevel,
-                            })
-                          }
+                onChange({
+                  ...assessment,
+                  OperationalVolumeLevel: e.target.value as OperationalVolumeLevel,
+                })
+              }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="ARC-a">ARC-a</option>
@@ -927,7 +1066,7 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             </select>
           </div>
           <div>
-            <Tooltip text="Sélectionnez le niveau de risque résiduel pour le volume adjacent.">
+            <Tooltip text="Sélectionnez le Niveau de Risque Air Initial pour le volume adjacent.">
               <label className="block text-sm font-medium text-gray-700">
                 Volume Adjacent
               </label>
@@ -949,58 +1088,10 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
             </select>
           </div>
         </div>
-        <h2 className="text-2xl font-semibold">Solutions Additionnels</h2>
-        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Detect And Avoid
-            </label>
-            <input
-              type="text"
-              value={assessment.detectAndAvoid}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  detectAndAvoid: e.target.value,
-                })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Detect And Avoid"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Détection du trafic environnant
-            </label>
-            <input
-              type="text"
-              value={assessment.trafficDetection}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  trafficDetection: e.target.value,
-                })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Détection du trafic environnant"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Autre, préciser
-            </label>
-            <input
-              type="text"
-              value={assessment.additionalDetails}
-              onChange={(e) =>
-                onChange({
-                  ...assessment,
-                  additionalDetails: e.target.value,
-                })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Autre, préciser"
-            />
-          </div>
-        </div>
-      </div>
+
+
+
+
     </div>
   );
 }

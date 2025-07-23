@@ -230,8 +230,8 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
           />
         </div>
         <div>
-          <Tooltip text="Masse Maximale au décolage MTOW (kg) ">
-            <label className="block text-sm font-medium text-gray-700">MTOW (kg)</label>
+          <Tooltip text="Masse Maximale au décolage MTOM (kg) ">
+            <label className="block text-sm font-medium text-gray-700">MTOM (kg)</label>
           </Tooltip>
           <input
             type="number"
@@ -290,7 +290,18 @@ export function DroneForm({ drone, onChange }: DroneFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Type de propulsion/moteur</label>
+            <Tooltip  text={
+                                          <div>
+                                            text="Type de propulsion et moteur utilisés :
+                                            <br />
+                                            <li>Electrique</li> 
+                                            <li>Combustion</li>
+                                            <li>Hybride, préciser le type</li>
+                                            <li>Autre, veuillez préciser</li>
+                                          </div>
+                                        }>
+              <label className="block text-sm font-medium text-gray-700">Type de propulsion/moteur</label>
+            </Tooltip>
             <textarea
               value={drone.propulsionType}
               onChange={(e) => onChange({ ...drone, propulsionType: e.target.value })}

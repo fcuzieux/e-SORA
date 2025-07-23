@@ -19,11 +19,18 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
         </div>
         <div className="bg-gray-50 p-4 rounded-lg space-y-4">
           <div>
-            <Tooltip text="Les restrictions opérationnelles sont contrôlées4 par l'opérateur et visent à réduire les risques de collision avant le décollage. Cette section fournit des détails sur les restrictions opérationnelles et des exemples sur la façon dont elles peuvent être appliquées aux opérations UAS.
-Les restrictions opérationnelles sont le principal moyen dont dispose un exploitant pour réduire les risques de collision au moyen d'une ou plusieurs mesures d'atténuation stratégiques. Les mesures d'atténuation les plus courantes sont les suivantes :
- Atténuation(s) qui limite(nt) le volume géographique dans lequel l'UAS opère (par exemple, certaines frontières ou volumes d'espace aérien)
- Atténuation(s) qui limite(nt) le cadre temporel opérationnel (par exemple, limité à certaines heures de la journée, comme voler seulement la nuit)
-En plus de ce qui précède, une autre approche pour limiter l'exposition au risque est de limiter le temps d'exposition. C'est ce qu'on appelle « l'atténuation par l'exposition ». L'atténuation par l'exposition limite simplement la durée d'exposition au risque opérationnel.">
+            <Tooltip text={
+                                          <div>
+                                            Les restrictions opérationnelles sont contrôlées4 par l'opérateur et visent à réduire les risques de collision avant le décollage. Cette section fournit des détails sur les restrictions opérationnelles et des exemples sur la façon dont elles peuvent être appliquées aux opérations UAS.
+                                            <br />
+                                            Les restrictions opérationnelles sont le principal moyen dont dispose un exploitant pour réduire les risques de collision au moyen d'une ou plusieurs mesures d'atténuation stratégiques. Les mesures d'atténuation les plus courantes sont les suivantes :
+                                            <br />
+                                            <li>Atténuation(s) qui limite(nt) le volume géographique dans lequel l'UAS opère (par exemple, certaines frontières ou volumes d'espace aérien)</li>
+                                            <li>Atténuation(s) qui limite(nt) le cadre temporel opérationnel (par exemple, limité à certaines heures de la journée, comme voler seulement la nuit)</li>
+                                            <br />
+                                            En plus de ce qui précède, une autre approche pour limiter l'exposition au risque est de limiter le temps d'exposition. C'est ce qu'on appelle « l'atténuation par l'exposition ». L'atténuation par l'exposition limite simplement la durée d'exposition au risque opérationnel.
+                                          </div>
+                                        }>
               <label className="block text-sm font-medium text-gray-700">
                 Atténuations Stratégique par des restrictions opérationnelles <button
                 type="button"
@@ -78,7 +85,18 @@ En plus de ce qui précède, une autre approche pour limiter l'exposition au ris
 
 
           <div>
-            <Tooltip text="L'atténuation stratégique par des structures et des règles communes exige que tous les aéronefs d'une certaine classe d'espace aérien suivent les mêmes structures et règles ; ces structures et règles visent à réduire le risque de collision dans l'espace aérien. Tous les aéronefs évoluant dans cet espace aérien doivent y participer et seules les autorités compétentes et/ou les ANSP sont habilitées à fixer des exigences pour ces aéronefs. L'opérateur de l'UAS n'a aucun contrôle6 sur l'existence ou le niveau de participation à la structure de l'espace aérien ou sur l'application des règles de vol. Par conséquent, l'atténuation stratégique par des structures et des règles communes n'est appliquée que par les autorités compétentes et/ou les ANSP. Elle est à la disposition de l'opérateur UAS ou non.">
+            
+            <Tooltip text={
+                                          <div>
+                                            L'atténuation stratégique par des structures et des règles communes exige que tous les aéronefs d'une certaine classe d'espace aérien suivent les mêmes structures et règles ; ces structures et règles visent à réduire le risque de collision dans l'espace aérien.
+                                            <br />
+                                            Tous les aéronefs évoluant dans cet espace aérien doivent y participer et seules les autorités compétentes et/ou les ANSP sont habilitées à fixer des exigences pour ces aéronefs.
+                                            <br />
+                                            L'opérateur de l'UAS n'a aucun contrôle sur l'existence ou le niveau de participation à la structure de l'espace aérien ou sur l'application des règles de vol.
+                                            <br />
+                                            Par conséquent, l'atténuation stratégique par des structures et des règles communes n'est appliquée que par les autorités compétentes et/ou les ANSP. Elle est à la disposition de l'opérateur UAS ou non.
+                                          </div>
+                                        }>
               <label className="block text-sm font-medium text-gray-700">
                 Atténuations Stratégique par des structures communes et des règles <button
                 type="button"
