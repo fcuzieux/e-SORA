@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Tooltip } from '../common/Tooltip';
 import { RiskAssessmentInfo, airspaceClasses, OperationalVolumeLevel, AdjacentVolumeLevel } from '../../types/sora';
+import { HelpCircle } from 'lucide-react';
 
 interface DeterminationARCInitialProps {
   assessment: RiskAssessmentInfo;
@@ -921,21 +922,21 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       </div>
 
 
-
-
+    { assessment.AirCollisionRiskMap=='NON' ? (
+      <div>
       {/* Enhanced ARC Interactive Questionnaire */}
       <div className="space-y-4">
           <h2 className="text-2xl font-semibold">Questionnaire ARC - Classification des Espaces Aériens</h2>
 
-        { assessment.AirCollisionRiskMap=='OUI' ? (
+        {/* { assessment.AirCollisionRiskMap=='OUI' ? (
           <label className="block text-sm font-medium text-gray-700">
-            Si votre service de carte des risques de collision aérienne est disponible, veuillez l'utiliser pour déterminer l'ARC initial. Vous pôuvez alors passer à l'étape suivante en bas de page en spécifiant vos Niveaux de Risque Air Initiaux.
+            Si votre service de carte des risques de collision aérienne est disponible, veuillez l'utiliser pour déterminer l'ARC initial. Vous pouvez alors passer à l'étape suivante en bas de page en spécifiant vos Niveaux de Risque Air Initiaux.
           </label>
         ) : (
         <label className="block text-sm font-medium text-gray-700">
             Cliquez sur les nœuds pour répondre aux questions et déterminer l'ARC initial.
         </label>
-        )} 
+        )}  */}
         <div className="bg-white rounded-lg p-5 shadow-lg border border-gray-200">
           <div
             ref={chartRef}
@@ -1000,7 +1001,14 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           <div className="bg-gray-400 p-4 md:col-span-2 rounded-md">
             <label className="block text-sm font-medium text-blue-700 mt-4">
               <i>Cliquer sur le nœud ARC précédemment identifier pour valider et afficher les détails de l'ARC initial.</i>
-            </label>
+            <button
+                type="button"
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-Annex-C-v1.0.pdf', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation JARUS : SORA-Annex-C-v1.0"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button></label>
             <label className="block text-sm font-bold text-gray-700 mt-4">
               Volume Opérationnel, AEC and ARC.
             </label>
@@ -1036,6 +1044,8 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
           </div>
         </div>
       </div>
+      </div>
+    ) : null }
 
 
 

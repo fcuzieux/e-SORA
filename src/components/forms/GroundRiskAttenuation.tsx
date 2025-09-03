@@ -285,7 +285,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
             <h2 className="text-lg font-medium">M1(B) – Atténuation Strategique - Restrictions Operationelles <button
                 type="button"
-                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Annex-B-Release.JAR_doc_27pdf.pdf', '_blank')}
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Annex-B-Release.JAR_doc_27pdf.pdf#page=10', '_blank')}
                 className="text-blue-500 hover:text-blue-700 transition-colors"
                 title="Ouvrir la documentation JARUS SORA v2.5 Annex B"
               >
@@ -411,7 +411,15 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
                 type="button"
                 onClick={() => window.open('https://www.easa.europa.eu/en/downloads/137609/en', '_blank')}
                 className="text-blue-500 hover:text-blue-700 transition-colors"
-                title="Ouvrir la documentation EASA"
+                title="Ouvrir la documentation EASA : MOC Light-UAS.2512-01 (medium robustness)"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => window.open('https://www.easa.europa.eu/en/downloads/139843/en', '_blank')}
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Attention : statut 'Proposed' Ouvrir la documentation EASA : MOC Light-UAS.2512-01 (high robustness)"
               >
                 <HelpCircle className="w-4 h-4" />
               </button></h2>
