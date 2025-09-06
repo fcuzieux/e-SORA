@@ -65,6 +65,9 @@ export function TacticalMitigation({ assessment, onChange }: TacticalMitigationP
                             })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
+              <option value="Indiquer une valeur">
+                        Indiquer une valeur
+                        </option>
               <option value="OUI">OUI</option>
               <option value="NON">NON</option>
             </select>

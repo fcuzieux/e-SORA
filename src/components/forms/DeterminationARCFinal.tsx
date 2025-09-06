@@ -167,6 +167,9 @@ export function DeterminationARCFinal({ assessment, onChange }: DeterminationARC
                 })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
+              <option value="Indiquer une valeur">
+                        Indiquer une valeur
+                        </option>
               <option value='ARC-a'>ARC-a</option>
               <option value='ARC-b'>ARC-b</option>
               <option value='ARC-c'>ARC-c</option>

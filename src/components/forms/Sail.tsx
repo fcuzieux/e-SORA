@@ -26,15 +26,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 1' 
+             assessment.SAILNumber=1;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 2' 
+              assessment.SAILNumber=2;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 4' 
+              assessment.SAILNumber=4;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -43,15 +47,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 1' 
+              assessment.SAILNumber=1;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 2' 
+              assessment.SAILNumber=2;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 4' 
+              assessment.SAILNumber=4;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -60,15 +68,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 2' 
+             assessment.SAILNumber=2;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 2' 
+              assessment.SAILNumber=2;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 4' 
+              assessment.SAILNumber=4;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+             assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -77,15 +89,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 3' 
+             assessment.SAILNumber=3;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 3' 
+              assessment.SAILNumber=3;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 4' 
+              assessment.SAILNumber=4;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -94,15 +110,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 4' 
+             assessment.SAILNumber=4;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 4' 
+              assessment.SAILNumber=4;
              break;
            case 'ARC-c':
-             assessment.SAIL = 'SAIL 4' 
+             assessment.SAIL = 'SAIL 4'
+              assessment.SAILNumber=4;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -111,15 +131,19 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 5' 
+             assessment.SAILNumber=5;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 5' 
+              assessment.SAILNumber=5;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 5' 
+              assessment.SAILNumber=5;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
@@ -128,25 +152,31 @@ export function Sail({ assessment, onChange }: SailProps) {
          switch (assessment.OperationalVolumeLevelMitigated) {
            case 'ARC-a':
              assessment.SAIL = 'SAIL 6' 
+             assessment.SAILNumber=6;
              break;
            case 'ARC-b':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;
            case 'ARC-c':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;
            case 'ARC-d':
              assessment.SAIL = 'SAIL 6' 
+              assessment.SAILNumber=6;
              break;            
          } 
         break;
     case '8':
          FinalGRCint ='>7'
          assessment.SAIL = 'Certifié' 
+          assessment.SAILNumber=7;
         break;
     default:
          FinalGRCint ='0'
          assessment.SAIL = 'Certifié' 
+          assessment.SAILNumber=7;
    }
         return (
      <div className="space-y-8">

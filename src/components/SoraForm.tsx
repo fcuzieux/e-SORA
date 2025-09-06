@@ -190,6 +190,7 @@ export function SoraForm() {
 
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">{currentStepInfo.title}</h1>
+        <h2 className="text-lg text-gray-600 mt-2">{currentStepInfo.subtitle}</h2>
         <p className="mt-2 text-gray-600">
           {currentStepInfo.description}
         </p>

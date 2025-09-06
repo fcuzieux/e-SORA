@@ -459,11 +459,13 @@ export function RiskAssessmentForm({
 // ADJACENT VOLUME SECTION
     const CalculAdjacentVolumeWidth = () => {
       let AdjacentVolumeWidth = Number(1);
-      if (assessment.AdjacentVolumeWidthEqualMaxRange === 'NON') {
-        AdjacentVolumeWidth=Math.max(3*60.0*assessment.maxSpeed*1.0,5000.0); // Minimum width of 5000 m
+      if (assessment.AdjacentVolumeWidthEqualMaxRange === 'OUI') {
+        AdjacentVolumeWidth=3*60.0*assessment.maxSpeed*1.0;
       } else {
-        AdjacentVolumeWidth=Math.min(3*60.0*assessment.maxSpeed*1.0,35000.0); // Minimum width of 35000 m
+        AdjacentVolumeWidth=Math.max(3*60.0*assessment.maxSpeed*1.0,5000.0); // Minimum width of 5000 m
+        AdjacentVolumeWidth=Math.min(AdjacentVolumeWidth,35000.0); // Minimum width of 35000 m
       }
+      assessment.AdjacentVolumeWidth = parseFloat((AdjacentVolumeWidth).toFixed(1));
       return parseFloat((AdjacentVolumeWidth).toFixed(1));
     }
 
@@ -3497,7 +3499,7 @@ export function RiskAssessmentForm({
                             AdjacentVolumeWidthEqualMaxRange: e.target.checked
                               ? 'OUI'
                               : 'NON',
-                              // AdjacentVolumeWidth: CalculAdjacentVolumeWidth(),
+                              AdjacentVolumeWidth: CalculAdjacentVolumeWidth(),
                           })}
                         className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                         

@@ -46,7 +46,8 @@ export type AdjacentVolumeWidthEqualMaxRange = 'OUI' | 'NON';
 export type GRB_FixedWingPowerOff = 'ACTIVATED' | 'NONACTIVE';
 export type StrategicMitigationOperationalRestrictionsAvailable = 'OUI' | 'NON';
 export type StrategicMitigationCommonStructuresAvailable = 'OUI' | 'NON';
-
+export type OutdoorAssembliesAllowed = '> 400k' | 'Assemblies of 40k to 400k' | 'Assemblies < 40k people';
+export type ShelterApplicable = 'OUI' | 'NON';
 export type OperationalVolumeLevelMitigated = 'ARC-a' | 'ARC-b' | 'ARC-c' | 'ARC-d';
 export type TacticalMitigationAvailable = 'OUI' | 'NON';
 export type assessmentTypeHauteurVol =
@@ -201,6 +202,7 @@ export interface RiskAssessmentInfo {
   SAILJustification: string;
   iGRCcomputation: number;
   SAIL: SailLevel;
+  SAILNumber: number;
   maxCharacteristicDimension: number;
   VCruise: number;
   CruiseSpeed: number;
@@ -267,6 +269,8 @@ export interface RiskAssessmentInfo {
   AEC: string;
   ARCI: string;
   OpsEnv: string;
+  OutdoorAssembliesAllowed:OutdoorAssembliesAllowed;
+  ShelterApplicable:ShelterApplicable;
 }
 
 
