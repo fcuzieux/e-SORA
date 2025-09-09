@@ -1,50 +1,30 @@
-# React + TypeScript + Vite
+# e-SORA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a first version of an e-SORA tool.
+It aims at simplify the task of redaction of the SORA 2.5 process for the UAS specific category. 
 
-Currently, two official plugins are available:
+Currently, it is under devlopment and has no guaranty.
+
+
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+## Installation in local
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The code is based on React working in Vite with HMR and some ESLint rules.
 
-- Configure the top-level `parserOptions` property like this:
+- First install jsnode and npm
+- Then run #npm install
+- You can now run #npm run dev
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Enjoy the server in your favorite browser.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Warning
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+For now, evrything is linked to a supabase database owned by the devlopper. 
+Link to its supabase instance is provided with no maintenance garantee and the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY defined in the .env file are subject to modiifications. 
+If needed ask the devlopper for a copy of the database structure to implement your own supabase instance. 
+
+
