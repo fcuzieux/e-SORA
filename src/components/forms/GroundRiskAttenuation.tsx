@@ -81,7 +81,14 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
     ];
   return (
                   <div className="space-y-8">
-                  <h2 className="text-2xl font-semibold">Tableau de mitigation du Risque Sol</h2>
+                  <h2 className="text-2xl font-semibold">Tableau de mitigation du Risque Sol<button
+                      type="button"
+                      onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Main-Body-Release-JAR_doc_25.pdf#page=33', '_blank')}  
+                      className="text-blue-500 hover:text-blue-700 transition-colors"
+                      title="Ouvrir la documentation JARUS SORA v2.5 Main Body - Section 4.3 Step #3 – Final Ground Risk Class (GRC) determination (optional)  "
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                  </button></h2>
                   <table className="min-w-full bg-white">
                     <thead>
                       <tr className="bg-white">
@@ -193,7 +200,15 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
                     </tbody>
                   </table>
 
-      <h2 className="text-1xl font-semibold">Tableau de Robustesse des moyens de mitigation</h2>
+      <h2 className="text-1xl font-semibold">Tableau de Robustesse des moyens de mitigation<button
+                      type="button"
+                      onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Main-Body-Release-JAR_doc_25.pdf#page=33', '_blank')}  
+                      className="text-blue-500 hover:text-blue-700 transition-colors"
+                      title="Ouvrir la documentation JARUS SORA v2.5 Main Body - Section 2.4 Robustess "
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                  </button>
+      </h2>
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-blue-500 text-white">

@@ -13,6 +13,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
   if (!osos) {
     return <div>Loading...</div>;
   } else {
+
     const ReqInfoSail = ['Non Requis' , 'Faible' , 'Moyen' , 'Élevé'];
     let Tableau: number[] = [];
     // switch (assessment.SAIL.toString()) {
@@ -54,7 +55,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO2',
         number: '02',
         description: 'Constructeur UAS compétent et/ou approuvé',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(1)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -63,7 +64,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO3',
         number: '03',
         description: 'Maintenance UAS assurée par une entité compétente et/ou approuvée',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(2)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -72,7 +73,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO4',
         number: '04',
         description: 'UAS développé selon des standards reconnus par l’autorité',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(3)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -81,7 +82,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO5',
         number: '05',
         description: 'UAS conçu selon des standards de fiabilité et de sécurité',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(4)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -90,7 +91,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO6',
         number: '06',
         description: 'Performances du Lien C3 appropriées pour la mission',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(5)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -99,7 +100,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO7',
         number: '07',
         description: 'Inspections de l’UAS pour assurer la validité du ConOps',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(6)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -108,7 +109,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO8',
         number: '08',
         description: 'Procédures opérationnelles définies, validées et appliquées',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(7)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -117,7 +118,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO9',
         number: '09',
         description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(8)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -126,7 +127,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO10',
         number: '10',
         description: 'Retour à la normale en toute sécurité après un problème technique',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(9)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -135,7 +136,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO11',
         number: '11',
         description: 'Des procédures sont en place pour supporter la détérioration des systèmes externes de soutien à l’opération',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(10)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -144,7 +145,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO12',
         number: '12',
         description: 'L’UAS est conçu pour supporter la détérioration des systèmes externes de soutien',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(11)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -153,7 +154,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO13',
         number: '13',
         description: 'Les systèmes externes de soutien sont adéquats pour l’opération',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(12)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -162,7 +163,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO14',
         number: '14',
         description: 'Procédures opérationnelles définies, validées et appliquées',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(13)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -171,7 +172,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO15',
         number: '15',
         description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(14)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -180,7 +181,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO16',
         number: '16',
         description: 'Coordination intra-équipage',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(15)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -189,7 +190,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO17',
         number: '17',
         description: 'Equipage en capacité d’exploiter',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(16)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -198,7 +199,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO18',
         number: '18',
         description: 'Protection automatique de l’enveloppe de vol, résistance à l’erreur humaine',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(17)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -207,7 +208,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         id: 'OSO19',
         number: '19',
         description: 'Retour à la normale en toute sécurité après une erreur humaine',
-        requiredLevel: 'Faible',
+        requiredLevel: ReqInfoSail.at(SAILMap.at(18)),
         status: 'Faible',
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
@@ -251,9 +252,10 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
                 })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
               >
-                <option value="Low">Faible</option>
-                <option value="Medium">Moyen</option>
-                <option value="High">Élevé</option>
+                <option value="Sélectionner une valeur">Sélectionner une valeur</option>
+                <option value="Faible">Faible</option>
+                <option value="Moyen">Moyen</option>
+                <option value="Élevé">Élevé</option>
               </select>
             </div>
           </div>

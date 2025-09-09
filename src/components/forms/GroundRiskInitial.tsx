@@ -32,6 +32,7 @@ import JARUSorHIModel_AC from '../../image/JARUSorHIModel_AC.png';
 import JARUSorHIModel_HC_High from '../../image/JARUSorHIModel_HC_High.png';
 import JARUSorHIModel_HC_Low from '../../image/JARUSorHIModel_HC_Low.png';
 import AdjacenteArea from '../../image/AdjacenteArea.png';
+import { HelpCircle } from 'lucide-react';
 
 interface RiskAssessmentFormProps {
   assessment: RiskAssessmentInfo;
@@ -1097,66 +1098,23 @@ export function RiskAssessmentForm({
           
 
             <h2 className="text-lg font-medium">
-            Etape 1 : Determination de la surface critique de crash (Ac).
+            Etape 1 : Determination de la surface critique de crash (Ac).<button
+                type="button"
+                onClick={() => window.open('https://www.easa.europa.eu/sites/default/files/dfu/d2_-_consolidated_gm-for_publication-02052024.pdf', '_blank')}  
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation EASA Final Guidelines for the Assessment of the Critical Area of an Unmanned Aircraft"
+              >
+                <HelpCircle className="w-4 h-4" />
+            </button>
             </h2>
-            {/* <div>
-              <label className="block text-sm font-medium text-gray-700">
-                  Valeur indicative de la Surface Critique Nominale
-              </label>
-              <div>
-                <table className="min-w-full bg-white">
-                  <thead>
-                    <tr className="bg-black text-black">
-                      <th className="bg-gray-200 py-2 px-4 border-b">Max. characteristic dimension (m)</th>
-                      <th className="bg-white py-2 px-4 border-b">≤1</th>
-                      <th className="bg-white py-2 px-4 border-b">≤3</th>
-                      <th className="bg-white py-2 px-4 border-b">≤8</th>
-                      <th className="bg-white py-2 px-4 border-b">≤20</th>
-                      <th className="bg-white py-2 px-4 border-b">≤40</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="bg-gray-200">
-                      <th className="bg-gray-200 py-2 px-4 border-b">Nominal Critical area (m²)</th>
-                      <th className="bg-white py-2 px-4 border-b">8</th>
-                      <th className="bg-white py-2 px-4 border-b">80</th>
-                      <th className="bg-white py-2 px-4 border-b">800</th>
-                      <th className="bg-white py-2 px-4 border-b">8000</th>
-                      <th className="bg-white py-2 px-4 border-b">80000</th>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div>
-              <Tooltip  text={
-                                <div>
-                                  Valeur de la Surface Critique Nominale (m²) selon les tables SORA.
-                                  <br />
-                                  Cette valeur est donnée à titre indicatif et devra être minimiser de 90% en cas d'application d'une mitigation M2 de type 1 lors de l'étape 3.
-                                </div>
-                              }>
-                <label className="block text-sm font-medium text-gray-700">
-                  Valeur de la Surface Critique <b>Nominale</b> selon les tables (m²). 
-                </label>
-              </Tooltip>
-              <input
-                type="number"
-                value={ACtable()}
-                onChange={(e) =>
-                  onChange({
-                    ...assessment,
-                    NominalCriticalArea: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="mt-1 block w-full rounded-md border-black-500 text-gray-500 border-2 font-bold shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                disabled
-              />
-              </div>
-            </div> */}
+             
+            
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                  Valeur indicative du seuil de Surface Critique associée à la dimension caractéristique maximale de l'UAS
-              </label>
+              <Tooltip text="En surligné bleu la valeur cortrespondant à la dimension caractéristique maximale de l'UAS et en vert la valeur seuil associée à votre valeur de surface critique de crash.">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Valeur indicative du seuil de Surface Critique associée à la dimension caractéristique maximale de l'UAS
+                        </label>
+              </Tooltip>
               <div>
                 <table className="min-w-full bg-white">
                   <thead>
@@ -1775,10 +1733,11 @@ export function RiskAssessmentForm({
                         </div>           
                     </div>
                     <div>
-                      
-                        <label className="block text-sm font-medium text-gray-700">
-                          tsafe (s)
-                        </label>
+                        <Tooltip text="Time to safe speed [s]">
+                          <label className="block text-sm font-medium text-gray-700">
+                            tsafe (s)
+                          </label>
+                        </Tooltip>
                         <div className="mt-1 p-2 bg-gray-50 rounded-md">
                           {assessment.tsafe}
                         </div>           
@@ -1928,7 +1887,14 @@ export function RiskAssessmentForm({
         </div> 
 
         <div className="bg-gray-50 p-4 rounded-lg space-y-4"> 
-          <h2 className="text-lg font-medium">Etape 2 : Determination des Volumes d'évolution, de Contingence Zone Tampon et Adjacente  (Flight Geometry).</h2>
+          <h2 className="text-lg font-medium">Etape 2 : Determination des Volumes d'évolution, de Contingence Zone Tampon et Adjacente  (Flight Geometry).<button
+                type="button"
+                onClick={() => window.open('https://www.lba.de/SharedDocs/Downloads/DE/B/B5_UAS/Leitfaden_FG_CV_GRB_eng.pdf?__blob=publicationFile&v=12', '_blank')}  
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Basé sur la documentation du Luftfahrt-Bundesamt (LBA) - Leitfaden zur Ermittlung des Fluggeometrie- und Kontingenzvolumens sowie der Ground Risk Buffer Zone"
+              >
+                <HelpCircle className="w-4 h-4" />
+            </button></h2>
           <img 
 
             src={DefinitionOfVolumes}
@@ -2362,10 +2328,12 @@ export function RiskAssessmentForm({
                   </div>
 
                   <div>
-                    <div>                    
+                    <div>  
+                      <Tooltip  text="S_RZ=𝑉0∙1 s ">                  
                       <label className="block text-sm font-medium text-gray-700">
                       Distance de réaction S_RZ (m)
-                      </label>                    
+                      </label>                                          
+                      </Tooltip>
                       <input
                         type="number"
                         value={assessment.ContingencyVolumeSRZ}
@@ -2377,10 +2345,12 @@ export function RiskAssessmentForm({
                   </div>
                   
                   <div>
-                    <div>                   
+                    <div>    
+                      <Tooltip  text="𝐻RZ=V0∙0.7∙1 s  ">                
                       <label className="block text-sm font-medium text-gray-700">
                       Altitude de réaction H_RZ (m)
-                      </label>                    
+                      </label>                                                        
+                      </Tooltip>    
                       <input
                         type="number"
                         value={assessment.ContingencyVolumeHRZ}
@@ -3562,7 +3532,15 @@ export function RiskAssessmentForm({
       <section className="space-y-4">  
         <div className="bg-gray-200 p-4 rounded-lg space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-            <h2 className="text-lg font-medium">Ground Risk Assessment Initial</h2>
+            <h2 className="text-lg font-medium">Ground Risk Assessment Initial<button
+                type="button"
+                onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Main-Body-Release-JAR_doc_25.pdf#page=33', '_blank')}  
+                className="text-blue-500 hover:text-blue-700 transition-colors"
+                title="Ouvrir la documentation JARUS SORA v2.5 Main Body - Section 4.2 Step #2 – Determination of the intrinsic Ground Risk Class (iGRC) "
+              >
+                <HelpCircle className="w-4 h-4" />
+              </button>
+            </h2>
             <div>
                 <Tooltip text={
                                   <div>
@@ -3968,7 +3946,9 @@ export function RiskAssessmentForm({
                   <table className="min-w-full bg-white md:col-span-2">
                     <thead>
                       <tr className="bg-gray-100 text-black">
+                        <Tooltip text="En bleu l'iGRC selon les tables SORA, en gris l'iGRC moyen dans la zone adjacente. Si vous avez utilisé les calculs DROSERA ces valeurs sont potentiellement majorante.">
                         <th colspan="7" className='  py-2 px-4 border-b'>Classe d'iGRC</th>
+                        </Tooltip>
                       </tr>
                       <tr className="bg-blue-500 text-white">
                         <th colspan="2" className="bg-blue-400 py-2 px-4 border-b">Dimension caractéristique Maimale</th>

@@ -12,7 +12,7 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
 
     const Compute_containmentRobustess = () => {
     let containmentRobustess = 'Aucun minimum1';
-    let maxCharacteristicDimensionClass = assessment.maxCharacteristicDimension;
+    //let maxCharacteristicDimensionClass = assessment.maxCharacteristicDimension;
     //populationDensityAdjacentArea = 'Zone Contrôlée' | '<5' | '<50' | '<500' | '<5,000' | '<50,000' | '>50,000' ;
     let indexcolAveragePeopleDensity=-1;
     if (assessment.populationDensityAdjacentArea==='Zone Contrôlée') {
@@ -45,7 +45,7 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
     // }
     // iGRC_colIndex = 1 | 2 | 3 | 4 | 5 | 6 ;
 
-    if (assessment.iGRC_colIndex==1) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 49 =>Table 8 - Containment requirements 1 m UA
+    if (assessment.iGRC_colIndex==1) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 49 =>Table 8 - Containment requirements 1 m UA (<25m/s)
       if (assessment.SAILNumber>=4) { 
         containmentRobustess = 'Faible_dim1-sail4';
       } else if (assessment.SAILNumber==3) {
@@ -75,120 +75,279 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
           else if (indexcolOutdoorAssembliesAllowed<=400) {
           containmentRobustess = 'Moyen_dim1-sail12a';
           } else {
-          containmentRobustess = 'High_dim1-sail12a';
-          }
-
-          
+          containmentRobustess = 'Haut_dim1-sail12a';
+          }          
         } else {
           if (indexcolOutdoorAssembliesAllowed<=400) {
           containmentRobustess = 'Moyen_dim1-sail12b';
           } else {
-          containmentRobustess = 'High_dim1-sail12b';
+          containmentRobustess = 'Haut_dim1-sail12b';
           }
         }
       }
+    
+    } else if (assessment.iGRC_colIndex==2) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 49-50 =>Table 9 or 10 - Containment requirements 3 m UA (<35m/s) with or without sheltering
+      if (assessment.ShelterApplicable==='OUI') {// SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 49 =>Table 9 - Containment requirements 3 m UA (<35m/s) with sheltering
+        //containmentRobustess = 'Cas2_shelter';
+        if (assessment.SAILNumber>=5) { //SAIL 5 et 6
+          containmentRobustess = 'Faible_dim3sh-sail56';
+        } else if (assessment.SAILNumber>=4) { //SAIL 4           
+          if (indexcolOutdoorAssembliesAllowed>400) {
+            containmentRobustess = 'Moyen_dim3sh-sail4';
+          } else {
+            containmentRobustess = 'Faible_dim3sh-sail4';
+          }       
+        } else if (assessment.SAILNumber==3) { //SAIL 3
+          if (indexcolAveragePeopleDensity>50000) {
+            if (indexcolOutdoorAssembliesAllowed>400) {
+              containmentRobustess = 'Out of Scope_dim3sh-sail3';
+            } else {
+              containmentRobustess = 'Moyen_dim3sh-sail3';
+            }
+          } else {  
+            if (indexcolOutdoorAssembliesAllowed>400) {
+              containmentRobustess = 'Out of Scope_dim3sh-sail3';
+            } else if (indexcolOutdoorAssembliesAllowed>40) {
+              containmentRobustess = 'Moyen_dim3sh-sail3';
+            } else {
+              containmentRobustess = 'Faible_dim3sh-sail3';
+            }  
+          }
+        } else if (assessment.SAILNumber<=2) { //SAIL 1 et 2
+          if (indexcolAveragePeopleDensity>50000) {
+            
+            if (indexcolOutdoorAssembliesAllowed<=400) {
+            containmentRobustess = 'Haut_dim3sh-sail12';
+            } else {
+            containmentRobustess = 'Out of Scope_dim3sh-sail12';
+            }
+
+          } else {
+
+            if (indexcolOutdoorAssembliesAllowed<=40) {
+            containmentRobustess = 'Faible_dim3sh-sail12';
+            } else if (indexcolOutdoorAssembliesAllowed<=400) {
+            containmentRobustess = 'Haut_dim3sh-sail12';
+            } else{
+            containmentRobustess = 'Out of Scope_dim3sh-sail12';
+            }
+          }
+        } 
 
 
-      
-      
-    } else if (assessment.iGRC_colIndex==2) {
-      if (assessment.ShelterApplicable==='OUI') {
-        containmentRobustess = 'Cas2_shelter';
-      } else {
-        containmentRobustess = 'Cas2_no-shelter';
+      } else {// SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 50 =>Table 10 - Containment requirements 3 m UA (<35m/s) without sheltering
+        //containmentRobustess = 'Cas2_no-shelter';
+        if (assessment.SAILNumber>=5) { //SAIL 5 et 6
+          containmentRobustess = 'Faible_dim3Nosh-sail56';
+        } else if (assessment.SAILNumber>=4) { //SAIL 4           
+          if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+            containmentRobustess = 'Moyen_dim3Nosh-sail4';
+          } else {
+            containmentRobustess = 'Faible_dim3Nosh-sail4';
+          }       
+        } else if (assessment.SAILNumber==3) { //SAIL 3      
+          if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+            containmentRobustess = 'Out of Scope_dim3Nosh-sail3';
+          } else if (indexcolOutdoorAssembliesAllowed>40 || indexcolAveragePeopleDensity>5000) {
+            containmentRobustess = 'Moyen_dim3Nosh-sail3';
+          } else {
+            containmentRobustess = 'Faible_dim3Nosh-sail3';
+          }  
+
+        } else if (assessment.SAILNumber<=2) { //SAIL 1 et 2
+
+          if (indexcolOutdoorAssembliesAllowed<40 && indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Faible_dim3Nosh-sail12';
+          } else if (indexcolOutdoorAssembliesAllowed<40 && indexcolAveragePeopleDensity<5000) {
+            containmentRobustess = 'Moyen_dim3Nosh-sail12';
+          } else if (indexcolAveragePeopleDensity<=50000) {
+            if (indexcolOutdoorAssembliesAllowed<=400) {
+              containmentRobustess = 'Haut_dim3Nosh-sail12';
+            } else {
+              containmentRobustess = 'Out of Scope_dim3Nosh-sail12';
+            }
+          } else if (indexcolAveragePeopleDensity>50000) {
+            containmentRobustess = 'Out of Scope_dim3Nosh-sail12';
+          }
+        }  
       }
-    } else if (assessment.iGRC_colIndex==3) {
-      containmentRobustess = 'Cas3';
-    } else if (assessment.iGRC_colIndex==4) {
+
+    } else if (assessment.iGRC_colIndex==3) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 50 =>Table 11 - Containment requirements 8 m UA (<75m/s)
+      //containmentRobustess = 'Cas3';
+
+      if (assessment.SAILNumber==6) { //SAIL 6
+        containmentRobustess = 'Faible_dim8-sail6';
+      } else if (assessment.SAILNumber==5) { //SAIL 5
+        if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+          containmentRobustess = 'Moyen_dim8-sail5';
+        } else {
+          containmentRobustess = 'Faible_dim8-sail5';
+        }
+      } else if (assessment.SAILNumber>=4) { //SAIL 4           
+        if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+          containmentRobustess = 'Out of Scope_dim8-sail4';
+        } else if (indexcolOutdoorAssembliesAllowed>40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Moyen_dim8-sail4';
+        } else {
+          containmentRobustess = 'Faible_dim8-sail4';
+        }      
+      } else if (assessment.SAILNumber==3) { //SAIL 3      
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim8-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim8-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Faible_dim8-sail3';
+          } else {
+          containmentRobustess = 'Moyen_dim8-sail3';
+          }
+        }  
+
+      } else if (assessment.SAILNumber<=2) { //SAIL 1 et 2     
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim8-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim8-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Moyen_dim8-sail3';
+          } else {
+          containmentRobustess = 'Haut_dim8-sail3';
+          }
+        } 
+      }      
+    } else if (assessment.iGRC_colIndex==4) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 50 =>Table 12 - Containment requirements 20 m UA (<125m/s)
       containmentRobustess = 'Cas4';
-    } else if (assessment.iGRC_colIndex==5) {
+
+      if (assessment.SAILNumber==6) { //SAIL 6
+        if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+          containmentRobustess = 'Moyen_dim20-sail6';
+        } else {
+          containmentRobustess = 'Faible_dim20-sail6';
+        }
+      } else if (assessment.SAILNumber==5) { //SAIL 5           
+        if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+          containmentRobustess = 'Out of Scope_dim20-sail5';
+        } else if (indexcolOutdoorAssembliesAllowed>40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Moyen_dim20-sail5';
+        } else {
+          containmentRobustess = 'Faible_dim20-sail5';
+        }     
+      } else if (assessment.SAILNumber>=4) { //SAIL 4      
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim20-sail4';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim20-sail4';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Faible_dim20-sail4';
+          } else {
+          containmentRobustess = 'Moyen_dim20-sail4';
+          }
+        }  
+      } else if (assessment.SAILNumber==3) { //SAIL 3      
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim20-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim20-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Moyen_dim20-sail3';
+          } else {
+          containmentRobustess = 'Out of Scope_dim20-sail3';
+          }
+        }  
+
+      } else if (assessment.SAILNumber<=2) { //SAIL 1 et 2     
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim20-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Moyen_dim20-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Haut_dim20-sail3';
+          } else {
+          containmentRobustess = 'Out of Scope_dim20-sail3';
+          }
+        } 
+      }
+
+
+    } else if (assessment.iGRC_colIndex==5) { // SORA-v2.5-Main-Body-Release-JAR_doc25.pdf page 51 =>Table 13 - Containment requirements 40 m UA (<200m/s)
       containmentRobustess = 'Cas5';
+
+      if (assessment.SAILNumber==6) { //SAIL 6           
+        if (indexcolOutdoorAssembliesAllowed>400 || indexcolAveragePeopleDensity>50000) {
+          containmentRobustess = 'Out of Scope_dim40-sail6';
+        } else if (indexcolOutdoorAssembliesAllowed>40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Moyen_dim40-sail6';
+        } else {
+          containmentRobustess = 'Faible_dim40-sail6';
+        }     
+      } else if (assessment.SAILNumber==5) { //SAIL 5       
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim40-sail5';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim40-sail5';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Faible_dim40-sail5';
+          } else {
+          containmentRobustess = 'Moyen_dim40-sail5';
+          }
+        }  
+      } else if (assessment.SAILNumber>=4) { //SAIL 4         
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim40-sail4';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Faible_dim40-sail4';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Moyen_dim40-sail4';
+          } else {
+          containmentRobustess = 'Out of Scope_dim40-sail4';
+          }
+        }  
+      } else if (assessment.SAILNumber==3) { //SAIL 3      
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim40-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Moyen_dim40-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Out of Scope_dim40-sail3';
+          } else {
+          containmentRobustess = 'Out of Scope_dim40-sail3';
+          }
+        }  
+
+      } else if (assessment.SAILNumber<=2) { //SAIL 1 et 2     
+        if (indexcolOutdoorAssembliesAllowed>=40 || indexcolAveragePeopleDensity>5000) {
+          containmentRobustess = 'Out of Scope_dim40-sail3';
+        } else {
+          if (indexcolAveragePeopleDensity<50) {
+            containmentRobustess = 'Haut_dim40-sail3';
+          } else if (indexcolAveragePeopleDensity<500) {
+            containmentRobustess = 'Out of Scope_dim40-sail3';
+          } else {
+          containmentRobustess = 'Out of Scope_dim40-sail3';
+          }
+        } 
+      }
+
+
+
+
     } else if (assessment.iGRC_colIndex==6) {
-      containmentRobustess = 'Cas6';
+      //containmentRobustess = 'Cas6';
+      containmentRobustess = 'Out of Scope-iGRC_colIndex=6';
     } else {
-      containmentRobustess = 'Aucun minimum2';
+      containmentRobustess = 'ERREUR-iGRC_colIndex voir Etape 2';
     }
+  return containmentRobustess;
 
-
-    // if (maxCharacteristicDimensionClass <= 1.0) {
-    //   containmentRobustess = 'Cas2';
-    //     if (assessment.maxSpeed <= 25.0) {
-    //       containmentRobustess = 'Cas3';
-    //       if (assessment.SAIL.includes('1') || assessment.SAIL.includes('2')) {
-    //         if (assessment.OutdoorAssembliesAllowed.includes('people')  && assessment.ShelterApplicable === 'OUI') {
-    //           containmentRobustess = 'Cas4';
-    //         } else if (assessment.OutdoorAssembliesAllowed.includes('of') && assessment.ShelterApplicable === 'NON') {
-    //           containmentRobustess = 'Cas5';
-    //         } else {
-    //           containmentRobustess = 'Cas6';
-    //         }
-    //       } else {
-    //         if (assessment.OutdoorAssembliesAllowed === 'OUI' && assessment.ShelterApplicable === 'OUI') {
-    //           containmentRobustess = 'Faible';
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     containmentRobustess = 'Tutu';
-    //   }
-
-
-
-
-      //     iGRC_colIndex = 1;
-      //   } else if (assessment.maxSpeed <= 35.0) {
-      //     iGRC_colIndex = 2;
-      //   } else if (assessment.maxSpeed <= 75.0) {
-      //     iGRC_colIndex = 3;
-      //   } else if (assessment.maxSpeed <= 150.0) {
-      //     iGRC_colIndex = 4;
-      //   } else if (assessment.maxSpeed <= 200.0) {  
-      //     iGRC_colIndex = 5;
-      //   }  else {
-      //     iGRC_colIndex = 6;
-      //   }
-      // } else if (maxCharacteristicDimensionClass <= 3.0) {
-      //   if (assessment.maxSpeed <= 35.0) {
-      //     iGRC_colIndex = 2;
-      //   } else if (assessment.maxSpeed <= 75.0) {
-      //     iGRC_colIndex = 3;
-      //   } else if (assessment.maxSpeed <= 150.0) {
-      //     iGRC_colIndex = 4;
-      //   } else if (assessment.maxSpeed <= 200.0) {  
-      //     iGRC_colIndex = 5;
-      //   }  else {
-      //     iGRC_colIndex = 6;
-      //   }
-      // } else if (maxCharacteristicDimensionClass <= 8.0) {
-      //   if (assessment.maxSpeed <= 75.0) {
-      //     iGRC_colIndex = 3;
-      //   } else if (assessment.maxSpeed <= 150.0) {
-      //     iGRC_colIndex = 4;
-      //   } else if (assessment.maxSpeed <= 200.0) {  
-      //     iGRC_colIndex = 5;
-      //   }  else {
-      //     iGRC_colIndex = 6;
-      //   }
-      // } else if (maxCharacteristicDimensionClass <= 20.0) {
-      //   if (assessment.maxSpeed <= 150.0) {
-      //     iGRC_colIndex = 4;
-      //   } else if (assessment.maxSpeed <= 200.0) {  
-      //     iGRC_colIndex = 5;
-      //   }  else {
-      //     iGRC_colIndex = 6;
-      //   }
-      // } else if (maxCharacteristicDimensionClass <= 40.0) {
-      //   if (assessment.maxSpeed <= 200.0) {  
-      //     iGRC_colIndex = 5;
-      //   }  else {
-      //     iGRC_colIndex = 6;
-      //   }
-      // } else {
-      //   iGRC_colIndex = 6;
-      // }
-      return containmentRobustess;
-  
-    }
+}
  
    return (
      <div className="space-y-8"> 
@@ -294,9 +453,9 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
 
           <div className="space-y-8">
             <h2 className="text-2xl font-semibold">Niveau de robustesse du confinent requis</h2>
-            <label className="block text-sm font-medium text-gray-300">
+            {/* <label className="block text-sm font-medium text-gray-300">
               Val. assessment.iGRC_colIndex={assessment.iGRC_colIndex} | assessment.populationDensityAdjacentArea={assessment.populationDensityAdjacentArea}
-            </label>
+            </label> */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
                     <label className="block text-sm font-medium text-gray-700">
                       Assemblées en plein air autorisées dans un rayon de 1 km autour du volume OPS
@@ -363,7 +522,22 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
                     }
                   </div>
             <div className="mt-1 p-2 bg-gray-50 rounded-md">
-                      {Compute_containmentRobustess()}
+              <label className="block text-sm font-medium text-gray-700">
+                Niveau de robustesse du confinent requis :
+              </label>
+                      {Compute_containmentRobustess().startsWith('Out of Scope') ? (
+                        <div className="text-grey-600 font-bold">Hors du champ d'application</div>
+                      ) : Compute_containmentRobustess().startsWith('ERREUR') ? (
+                        <div className="text-purple-600 font-bold">ERREUR : vérifier la complétude des étapes précédantes!</div>
+                      ) : Compute_containmentRobustess().startsWith('Faible') ? (
+                        <div className="text-orange-600 font-bold">Faible</div>
+                      ) : Compute_containmentRobustess().startsWith('Moyen') ? (
+                        <div className="text-yellow-600 font-bold">Moyen</div>
+                      ) : Compute_containmentRobustess().startsWith('Haut') ? (
+                        <div className="text-red-600 font-bold">Haut</div>
+                      ) : (
+                        <div className="text-green-600 font-bold">Niveau de robustesse du confinent requis : {Compute_containmentRobustess()}</div>
+                      )}
             </div>
           </div>
 

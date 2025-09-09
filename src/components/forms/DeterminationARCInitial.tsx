@@ -926,7 +926,14 @@ export function DeterminationARCInitial({ assessment, onChange }: DeterminationA
       <div>
       {/* Enhanced ARC Interactive Questionnaire */}
       <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Questionnaire ARC - Classification des Espaces Aériens</h2>
+          <h2 className="text-2xl font-semibold">Questionnaire ARC - Classification des Espaces Aériens<button
+                      type="button"
+                      onClick={() => window.open('http://jarus-rpas.org/wp-content/uploads/2024/06/SORA-v2.5-Main-Body-Release-JAR_doc_25.pdf#page=33', '_blank')}  
+                      className="text-blue-500 hover:text-blue-700 transition-colors"
+                      title="Ouvrir la documentation JARUS SORA v2.5 Main Body - 4.4 Step #4 – Determination of the initial Air Risk Class (ARC)    "
+                    >
+                <HelpCircle className="w-4 h-4" />
+              </button></h2>
 
         {/* { assessment.AirCollisionRiskMap=='OUI' ? (
           <label className="block text-sm font-medium text-gray-700">
