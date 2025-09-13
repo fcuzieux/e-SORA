@@ -59,6 +59,12 @@ export function SummaryView({ formData }: SummaryViewProps) {
           <div>
             <span className="font-medium">SAIL :</span> {formData.riskAssessment.sailLevel}
           </div>
+          <div>
+            <span className="font-medium">OSO#1 :</span> {formData.riskAssessment.OSOS_Levels ? formData.riskAssessment.OSOS_Levels[0] : 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">OSO#2 :</span> {formData.riskAssessment.OSOS_Levels ? formData.riskAssessment.OSOS_Levels[1] : 'N/A'}
+          </div>
         </div>
       </section>
 

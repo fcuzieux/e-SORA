@@ -9,15 +9,13 @@ import { DroneForm } from './forms/DroneForm';
 import { OperationForm } from './forms/OperationForm';
 //import { MitigationForm } from './forms/MitigationForm';
 import { OsoForm } from './forms/OsoForm';
-import GroundRiskInitial from './forms/GroundRiskInitial';
+import { GroundRiskInitial } from './forms/GroundRiskInitial';
 import { GroundRiskAttenuation } from './forms/GroundRiskAttenuation';
 import { DeterminationARCInitial } from './forms/DeterminationARCInitial';
 import { DeterminationARCFinal } from './forms/DeterminationARCFinal';
 import { TacticalMitigation } from './forms/TacticalMitigation';
 import { AdjacentAreas } from './forms/AdjacentAreas';
 import { Sail } from './forms/Sail';
-//import { OsoForm } from './forms/OsoForm';
-//import { AdjacentAreas } from './forms/AdjacentAreas';
 import { SummaryView } from './forms/SummaryView';
 import { SaveButton } from './SaveButton';
 import { HomeButton } from './HomeButton';
@@ -189,7 +187,54 @@ export function SoraForm() {
       <HomeButton />
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">{currentStepInfo.title}</h1>
+        <div className="flex justify-between mt-8">
+          {currentStep !== 'operator-info' && (
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Retour
+            </button>
+          )}
+
+          {currentStep === 'operator-info' ? (
+            <button
+              onClick={handleNext}
+              disabled={!isOperatorInfoValid()}
+              className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Continuer
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          ) : currentStep === 'oso' ? (
+            <button
+              onClick={handleNext}
+              className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Voir le résumé
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          ) : currentStep === 'summary' ? (
+            <button
+              // onClick={() => exportToExcel(formData)}
+              onClick={() => generate(formData)}
+              className="ml-auto flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <FileText className="w-5 h-5" />
+              Télécharger le dossier SORA
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Continuer
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900"><br></br>{currentStepInfo.title}</h1>
         <h2 className="text-lg text-gray-600 mt-2">{currentStepInfo.subtitle}</h2>
         <p className="mt-2 text-gray-600">
           {currentStepInfo.description}
@@ -197,6 +242,7 @@ export function SoraForm() {
       </div>
 
       <div className="bg-white shadow-lg rounded-lg p-6">
+        
         {renderStepContent()}
 
         <div className="flex justify-between mt-8">

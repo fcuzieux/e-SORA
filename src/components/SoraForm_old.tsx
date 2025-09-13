@@ -194,6 +194,15 @@ export function SoraForm() {
       </div>
 
       <div className="bg-white shadow-lg rounded-lg p-6">
+        {currentStep !== 'operator-info' && (
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Retour
+            </button>
+          )}
         {renderStepContent()}
 
         <div className="flex justify-between mt-8">

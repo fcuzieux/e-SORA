@@ -42,7 +42,8 @@ interface RiskAssessmentFormProps {
   showOnly?: Array<keyof RiskAssessmentInfo>;
 }
 
-export function RiskAssessmentForm({
+// export function GroundRiskInitial({
+export function GroundRiskInitial({
   assessment,
   drone,
   operation,
@@ -723,6 +724,11 @@ export function RiskAssessmentForm({
     onChange({ ...assessment, droseraOutputFile: newFiles });
   };
   const generateDroseraInputFile = () => {
+    if (!assessment.trajgeoFiles) {
+      setErrorMessage('Veuillez sélectionner un fichier de trajectoire ou de zone avant de générer le fichier d\'entrée Drosera.');
+      return;
+    }
+    
     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="DroseraDataModel.xsl"?><DroseraDataModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="drosera.xsd">
 <DroseraLite id="1">
@@ -4158,4 +4164,5 @@ export function RiskAssessmentForm({
   );
 }
 
-export default RiskAssessmentForm;
+ export default GroundRiskInitial;
+// export default RiskAssessmentForm;

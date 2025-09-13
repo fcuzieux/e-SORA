@@ -41,13 +41,14 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         Tableau=[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3] ;
      }
      const SAILMap=Tableau;
+
     osos = [
       {
         id: 'OSO1',
         number: '01',
         description: 'Opérateur UAS compétent et/ou approuvé',
         requiredLevel: ReqInfoSail.at(SAILMap.at(0)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[0],
         evidence: '',
         tooltip:'<div>Elément de réponse attendu :<br /> (a) Plan de formation générale. <br /> (b) Formation de l’équipage spécifique sur l’UAS concerné. <br />(c) Expérience de l’opérateur et précédentes opérations. <br />(d) Checklist et manuel d’entretien</div>',
       },
@@ -56,7 +57,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '02',
         description: 'Constructeur UAS compétent et/ou approuvé',
         requiredLevel: ReqInfoSail.at(SAILMap.at(1)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[1],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -65,7 +66,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '03',
         description: 'Maintenance UAS assurée par une entité compétente et/ou approuvée',
         requiredLevel: ReqInfoSail.at(SAILMap.at(2)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[2],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -74,7 +75,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '04',
         description: 'UAS développé selon des standards reconnus par l’autorité',
         requiredLevel: ReqInfoSail.at(SAILMap.at(3)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[3],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -83,7 +84,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '05',
         description: 'UAS conçu selon des standards de fiabilité et de sécurité',
         requiredLevel: ReqInfoSail.at(SAILMap.at(4)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[4],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -92,7 +93,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '06',
         description: 'Performances du Lien C3 appropriées pour la mission',
         requiredLevel: ReqInfoSail.at(SAILMap.at(5)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[5],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -101,7 +102,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '07',
         description: 'Inspections de l’UAS pour assurer la validité du ConOps',
         requiredLevel: ReqInfoSail.at(SAILMap.at(6)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[6],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -110,7 +111,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '08',
         description: 'Procédures opérationnelles définies, validées et appliquées',
         requiredLevel: ReqInfoSail.at(SAILMap.at(7)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[7],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -119,7 +120,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '09',
         description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
         requiredLevel: ReqInfoSail.at(SAILMap.at(8)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[8],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -128,7 +129,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '10',
         description: 'Retour à la normale en toute sécurité après un problème technique',
         requiredLevel: ReqInfoSail.at(SAILMap.at(9)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[9],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -137,7 +138,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '11',
         description: 'Des procédures sont en place pour supporter la détérioration des systèmes externes de soutien à l’opération',
         requiredLevel: ReqInfoSail.at(SAILMap.at(10)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[10],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -146,7 +147,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '12',
         description: 'L’UAS est conçu pour supporter la détérioration des systèmes externes de soutien',
         requiredLevel: ReqInfoSail.at(SAILMap.at(11)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[11],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -155,7 +156,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '13',
         description: 'Les systèmes externes de soutien sont adéquats pour l’opération',
         requiredLevel: ReqInfoSail.at(SAILMap.at(12)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[12],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -164,7 +165,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '14',
         description: 'Procédures opérationnelles définies, validées et appliquées',
         requiredLevel: ReqInfoSail.at(SAILMap.at(13)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[13],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -173,7 +174,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '15',
         description: 'Equipage formé, entrainé régulièrement et capable de faire face aux situations anormales',
         requiredLevel: ReqInfoSail.at(SAILMap.at(14)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[14],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -182,7 +183,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '16',
         description: 'Coordination intra-équipage',
         requiredLevel: ReqInfoSail.at(SAILMap.at(15)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[15],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -191,7 +192,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '17',
         description: 'Equipage en capacité d’exploiter',
         requiredLevel: ReqInfoSail.at(SAILMap.at(16)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[16],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -200,7 +201,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '18',
         description: 'Protection automatique de l’enveloppe de vol, résistance à l’erreur humaine',
         requiredLevel: ReqInfoSail.at(SAILMap.at(17)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[17],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
@@ -209,18 +210,39 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '19',
         description: 'Retour à la normale en toute sécurité après une erreur humaine',
         requiredLevel: ReqInfoSail.at(SAILMap.at(18)),
-        status: 'Faible',
+        status: assessment.OSOS_Levels[18],
         evidence: '',
         tooltip:'Elément de réponse attendu : ',
       },
     ];
   }
 
+  const isRequiredLevelMet = (oso: Oso, assessmentLevel: string) => {
+
+    const OsoRobustnessLevelOptions = {
+      options: [
+        { value: 'Non Requis', label: 'Non Requis' },
+        { value: 'Faible', label: 'Faible' },
+        { value: 'Moyen', label: 'Moyen' },
+        { value: 'Élevé', label: 'Élevé' },
+      ],
+    };
+    const indexrequiredLevel = OsoRobustnessLevelOptions.options.findIndex(
+    (option) => option.value === oso.requiredLevel
+    );
+    
+    const indexLeveldeclared = OsoRobustnessLevelOptions.options.findIndex(
+    (option) => option.value === assessmentLevel
+    );
+    return (indexLeveldeclared-indexrequiredLevel) //oso.requiredLevel === assessmentLevel;
+  };
+
   const handleOsoChange = (index: number, updates: Partial<Oso>) => {
     const updatedOsos = osos.map((oso, i) =>
       i === index ? { ...oso, ...updates } : oso
     );
     onChange(updatedOsos);
+    assessment.OSOS_Levels = updatedOsos.map(oso => oso.status);
   };
 
   return (
@@ -236,7 +258,16 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
               <label className="block text-sm font-medium text-gray-700">
                 Niveau requis
               </label>
-              <div className="mt-1 p-2 bg-gray-50 rounded-md">
+
+              <div className={
+                          oso.requiredLevel=='Faible'
+                          ? 'mt-1 p-2 bg-yellow-400 rounded-md'
+                          : oso.requiredLevel=='Moyen'
+                            ? 'mt-1 p-2 bg-orange-400 rounded-md'
+                          : oso.requiredLevel=='Élevé'
+                            ? 'mt-1 p-2 bg-red-400 rounded-md'
+                            : 'mt-1 p-2 bg-green-400 rounded-md'
+                          }>
                 {oso.requiredLevel}
               </div>
             </div>
@@ -246,19 +277,39 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
                 Niveau atteint
               </label>
               <select
-                value={oso.status}
+                value={assessment.OSOS_Levels[index]}
+                //value={assessment.OSOS_Levels ? assessment.OSOS_Levels[index] : 'Sélectionner une valeur'}
                 onChange={(e) => handleOsoChange(index, {
                   status: e.target.value as OsoRobustnessLevel
                 })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className={
+                          assessment.OSOS_Levels[index]=='Faible'
+                          ? 'mt-1 p-2 bg-yellow-400 rounded-md'
+                          : assessment.OSOS_Levels[index]=='Moyen'
+                            ? 'mt-1 p-2 bg-orange-400 rounded-md'
+                          : assessment.OSOS_Levels[index]=='Élevé'
+                            ? 'mt-1 p-2 bg-red-400 rounded-md'
+                          : assessment.OSOS_Levels[index]=='Non Requis'
+                            ? 'mt-1 p-2 bg-green-400 rounded-md'
+                            : 'mt-1 p-2 bg-grey-400 rounded-md'
+                          }
               >
                 <option value="Sélectionner une valeur">Sélectionner une valeur</option>
+                <option value="Non Requis">Non Requis</option>
                 <option value="Faible">Faible</option>
                 <option value="Moyen">Moyen</option>
                 <option value="Élevé">Élevé</option>
               </select>
             </div>
           </div>
+          {
+            isRequiredLevelMet(oso, assessment.OSOS_Levels[index])==0
+              ? <label className="block text-sm font-medium text-green-700">Niveau requis atteint </label>
+            : isRequiredLevelMet(oso, assessment.OSOS_Levels[index])>0
+              ? <label className="block text-sm font-medium text-green-700">Niveau requis dépassé </label>
+            : <label className="block text-sm font-medium text-red-700">Niveau requis non atteint</label>
+          }
+          
 
           <div>
           <Tooltip

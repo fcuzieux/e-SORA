@@ -62,15 +62,17 @@ export type assessmentiGRC =
   | 'Calcul selon les tables SORA'
   | 'Calcul DROSERA'
   | 'Spécifiée par le déposant';
-  export type assessmentGRB =
+export type assessmentGRB =
   | 'Approche Simplifiée, Règle 1:1'
   | 'Approche Balistique (Hélicoptère ou Multirotor)'
   | 'Terminaison Aile Fixe'
   | 'Terminaison avec parachute'
   | 'Spécifiée par le déposant';
-  export type assessmentContingencyVolume =
+export type assessmentContingencyVolume =
   | 'Spécifiée par le déposant'
   | 'Calcul selon le Guide';
+
+export type OsoRobustnessLevel = 'Non Requis' | 'Faible' | 'Moyen' | 'Élevé';
 export interface DroneDimensions {
   length: number;
   width: number;
@@ -271,6 +273,7 @@ export interface RiskAssessmentInfo {
   OpsEnv: string;
   OutdoorAssembliesAllowed:OutdoorAssembliesAllowed;
   ShelterApplicable:ShelterApplicable;
+  OSOS_Levels: OsoRobustnessLevel[];
 }
 
 
@@ -321,7 +324,6 @@ export interface OperatorInfo {
   riskAssessmentVersion?: string;
 }
 
-export type OsoRobustnessLevel = 'Non Requis' | 'Faible' | 'Moyen' | 'Élevé';
 
 export interface MitigationMeasure {
   id: string;

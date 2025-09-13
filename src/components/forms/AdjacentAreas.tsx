@@ -530,9 +530,9 @@ export function AdjacentAreas({ assessment, onChange }: AdjacentAreasProps) {
                       ) : Compute_containmentRobustess().startsWith('ERREUR') ? (
                         <div className="text-purple-600 font-bold">ERREUR : vérifier la complétude des étapes précédantes!</div>
                       ) : Compute_containmentRobustess().startsWith('Faible') ? (
-                        <div className="text-orange-600 font-bold">Faible</div>
+                        <div className="text-yellow-600 font-bold">Faible</div>
                       ) : Compute_containmentRobustess().startsWith('Moyen') ? (
-                        <div className="text-yellow-600 font-bold">Moyen</div>
+                        <div className="text-orange-600 font-bold">Moyen</div>
                       ) : Compute_containmentRobustess().startsWith('Haut') ? (
                         <div className="text-red-600 font-bold">Haut</div>
                       ) : (

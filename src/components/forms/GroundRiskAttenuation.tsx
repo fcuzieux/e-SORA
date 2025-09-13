@@ -130,71 +130,7 @@ export function GroundRiskAttenuation({ assessment, onChange }: GroundRiskAttenu
                           'py-2 px-4 border-b'
                           }>{row.HighMitigation}</th>
                           
-                          {/* <th className={
-                            iGRC_colIndex == 1
-                              ?  (
-                                row.MitigationGR.endsWith(assessment.populationDensity) && row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
-                                  : row.MitigationGR.endsWith(assessment.populationDensity)
-                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
-                                    : row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
-                                    : 'py-2 px-4 border-b'
-                              )
-                              : 'py-2 px-4 border-b'
-                          }>{row.MaxdimCS1}    </th>
-                          <th className={
-                           iGRC_colIndex==2
-                              ?  (
-                                row.MitigationGR.endsWith(assessment.populationDensity) && row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
-                                  : row.MitigationGR.endsWith(assessment.populationDensity)
-                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
-                                    : row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
-                                    : 'py-2 px-4 border-b'
-                              )
-                              : 'py-2 px-4 border-b'
-                          }>{row.MaxdimCS2}</th>
-                          <th className={
-                           iGRC_colIndex==3
-                              ? (
-                                row.MitigationGR.endsWith(assessment.populationDensity) && row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
-                                  : row.MitigationGR.endsWith(assessment.populationDensity)
-                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
-                                    : row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
-                                    : 'py-2 px-4 border-b'
-                              )
-                              : 'py-2 px-4 border-b'
-                          }>{row.MaxdimCS3}</th>
-                          <th className={
-                           iGRC_colIndex==4
-                              ?  (
-                                row.MitigationGR.endsWith(assessment.populationDensity) && row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
-                                  : row.MitigationGR.endsWith(assessment.populationDensity)
-                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
-                                    : row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
-                                    : 'py-2 px-4 border-b'
-                              )
-                              : 'py-2 px-4 border-b'
-                          }>{row.MaxdimCS4}</th>
-                          <th className={
-                           iGRC_colIndex==5
-                              ?  (
-                                row.MitigationGR.endsWith(assessment.populationDensity) && row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                  ? 'bg-blue-400 text-white border-2 border-gray-500'
-                                  : row.MitigationGR.endsWith(assessment.populationDensity)
-                                    ? 'bg-blue-400 border-2 border-blue-500 text-white'
-                                    : row.MitigationGR.endsWith(assessment.populationDensityAdjacentArea)
-                                    ? 'bg-gray-400 border-2 border-gray-500 text-white'
-                                    : 'py-2 px-4 border-b'
-                              )
-                              : 'py-2 px-4 border-b'
-                          }>{row.MaxdimCS5}</th> */}
+                          
                         </tr>
                       ))}
                     </tbody>
