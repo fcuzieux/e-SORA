@@ -27,6 +27,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO2',
@@ -35,6 +36,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO3',
@@ -43,6 +45,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO4',
@@ -51,6 +54,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO5',
@@ -59,6 +63,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO6',
@@ -67,6 +72,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO7',
@@ -75,6 +81,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO8',
@@ -83,6 +90,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO9',
@@ -91,6 +99,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO10',
@@ -99,6 +108,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO11',
@@ -107,6 +117,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO12',
@@ -115,6 +126,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO13',
@@ -123,6 +135,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO14',
@@ -131,6 +144,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO15',
@@ -139,6 +153,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO16',
@@ -147,6 +162,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO17',
@@ -155,6 +171,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO18',
@@ -163,6 +180,7 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
   {
     id: 'OSO19',
@@ -171,7 +189,53 @@ export const initialOsos: Oso[] = [
     requiredLevel: 'Faible',
     status: 'Faible',
     evidence: '',
+    tooltip: '',
   },
+  {
+    id: 'OSO20',
+    number: '20',
+    description: "Une évaluation des facteurs humains a été réalisée et l'interface homme-machine (IHM) a été jugée appropriée pour la mission.",
+    requiredLevel: 'Non Requis',
+    status: 'Faible',
+    evidence: '',
+    tooltip:'Elément de réponse attendu : ',
+  },
+  {
+    id: 'OSO21',
+    number: '21',
+    description: "Removed from SORA2.0",
+    requiredLevel: 'Non Requis',
+    status: 'Faible',
+    evidence: '',
+    tooltip:'Elément de réponse attendu : ',
+  },
+  {
+    id: 'OSO22',
+    number: '22',
+    description: "Removed from SORA2.0",
+    requiredLevel: 'Non Requis',
+    status: 'Faible',
+    evidence: '',
+    tooltip:'Elément de réponse attendu : ',
+  },
+  {
+    id: 'OSO23',
+    number: '23',
+    description: "Conditions environnementales pour des opérations sûres définies, mesurables et respectées.",
+    requiredLevel: 'Non Requis',
+    status: 'Faible',
+    evidence: '',
+    tooltip:'Elément de réponse attendu : ',
+  },
+  { 
+    id: 'OSO24',
+    number: '24',
+    description: "UAS conçu et qualifié pour des conditions environnementales défavorables.",
+    requiredLevel: 'Non Requis',
+    status: 'Faible',
+    evidence: '',
+    tooltip:'Elément de réponse attendu : ',
+  }
 ];
 
 

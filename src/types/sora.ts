@@ -18,7 +18,7 @@ export type UasType =
   | 'Autre';
 export type OperationType =
   | 'VLOS – Vol en vue'
-  | 'EVLOS – Vol en vue Etendu'
+  | 'EVLOS – Vol en vue Etendue'
   | 'BVLOS – Vol hors vue';
 export type DangerousGoods = 'OUI' | 'NON';
 export type PopulationDensityModulation = 'OUI' | 'NON';

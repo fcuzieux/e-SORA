@@ -88,7 +88,7 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
                   ...operation,
                   operationType: e.target.value as OperationType,
                   visualObserversCount:
-                    e.target.value === 'EVLOS – Vol en vue Etendu'
+                    e.target.value === 'EVLOS – Vol en vue Etendue'
                       ? operation.visualObserversCount
                       : 0,
                 })
@@ -96,14 +96,14 @@ export function OperationForm({ operation, onChange }: OperationFormProps) {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="VLOS – Vol en vue">VLOS – Vol en vue</option>
-              <option value="EVLOS – Vol en vue Etendu">
-                EVLOS – Vol en vue Etendu
+              <option value="EVLOS – Vol en vue Etendue">
+                EVLOS – Vol en vue Etendue
               </option>
               <option value="BVLOS – Vol hors vue">BVLOS – Vol hors vue</option>
             </select>
           </div>
 
-          {operation.operationType === 'EVLOS – Vol en vue Etendu' && (
+          {operation.operationType === 'EVLOS – Vol en vue Etendue' && (
             <div>
               <Tooltip text="Penser à préciser sur la cartographie un fichier kml précisant la position des observateurs.">
                 <label className="block text-sm font-medium text-gray-700">

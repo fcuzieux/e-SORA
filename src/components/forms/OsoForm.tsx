@@ -54,7 +54,7 @@ export function OsoForm({ osos,assessment, onChange }: OsoFormProps) {
         number: '01',
         description: 'Opérateur UAS compétent et/ou approuvé',
         requiredLevel: ReqInfoSail.at(SAILMap.at(0)),
-        status: assessment.OSOS_Levels[0],
+        status: assessment.OSOS_Levels[0] || 'Sélectionner une valeur',
         evidence: '',
         tooltip:'<div>Elément de réponse attendu :<br /> (a) Plan de formation générale. <br /> (b) Formation de l’équipage spécifique sur l’UAS concerné. <br />(c) Expérience de l’opérateur et précédentes opérations. <br />(d) Checklist et manuel d’entretien</div>',
       },
